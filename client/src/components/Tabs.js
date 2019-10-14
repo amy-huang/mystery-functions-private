@@ -132,13 +132,25 @@ export default function SimpleTabs(props) {
   var guessField;
   function showAnswer() {
     if (finalGuess === "") {
-      var inputType = funcObj.inputType()
-      var outputType = funcObj.outputType()
-      alert("Please submit a final guess. What does this function do with inputs of type " + inputType + " and outputs of type " + outputType + "?");
+      var text = "Please submit a final guess."
+      alert(text);
       return;
     }
     alert(guessField.placeHolder = funcObj.answerText());
     // TODO: RELOAD THE PAGE to reset console, tab textfields, etc
+  }
+
+  function toNextPageButton() {
+    if (props.children.nextPage === undefined) {
+      return (<div></div>)
+    }
+    return (
+      <div>
+        <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { window.location.reload() }}>
+          <Link style={{ color: '#FFF' }} to={props.children.nextPage}> go to next mystery function</Link>
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -215,11 +227,7 @@ export default function SimpleTabs(props) {
             </div>
           </Grid>
           <Grid item>
-            <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { window.location.reload() }}>
-                <Link style={{ color: '#FFF' }} to={props.children.nextPage}> go to next mystery function</Link>
-              </Button>
-            </div>
+            {toNextPageButton()}
           </Grid>
         </Grid>
       </TabPanel>

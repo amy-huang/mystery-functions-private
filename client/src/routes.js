@@ -2,7 +2,6 @@ import React from 'react'
 import { Route, HashRouter, Switch } from 'react-router-dom'
 import GuessingScreen from './screens/GuessingScreen'
 import StartScreen from './screens/StartScreen'
-import IsPalindromeInts from './functions/IsPalindrome'
 import MakePalindrome from './functions/MakePalindrome';
 import SumParity from './functions/SumParity';
 
@@ -16,9 +15,8 @@ export default props => (
   <HashRouter>
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
-      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={IsPalindromeInts} nextPage={'/second'}></GuessingScreen>} />
-      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={MakePalindrome} nextPage={'/third'}></GuessingScreen>} />
-      <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={SumParity}></GuessingScreen>} />
+      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={SumParity} nextPage={'/second'}></GuessingScreen>} />
+      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={MakePalindrome}></GuessingScreen>} />
     </Switch>
   </HashRouter>
 )
