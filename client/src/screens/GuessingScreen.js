@@ -193,14 +193,13 @@ class GuessingScreen extends Component {
                   This mystery function takes an input of type
                   <ul>
                     <li>
-                      <b>list of integers</b> :
-                    comma separated numbers surrounded by square brackets like so: [1,2,3,4,5]
+                      {this.props.funcObj.inputType()}
                     </li>
                   </ul>
                   and an output of type
                   <ul>
                     <li>
-                      <b>boolean</b> : the strings <b>true</b> or <b>false</b>, no capitalization
+                      {this.props.funcObj.outputType()}
                     </li>
                   </ul>
                 </Typography>

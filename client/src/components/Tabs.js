@@ -80,15 +80,8 @@ export default function SimpleTabs(props) {
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
 
-  function asIntEvaluator(item) {
-    if (Number.isInteger(item)) {
-      return true;
-    }
-    return false;
-  }
-
   function evalInput() {
-    if (!funcObj.validListInput(evalInputStr, asIntEvaluator)) {
+    if (!funcObj.validInput(evalInputStr)) {
       alert("'" + evalInputStr + "' is not a valid input to this function");
       return;
     }
@@ -108,7 +101,7 @@ export default function SimpleTabs(props) {
   }
 
   function evalInputOutputPair() {
-    if (!funcObj.validListInput(evalPairInput, asIntEvaluator)) {
+    if (!funcObj.validInput(evalPairInput)) {
       alert("'" + evalPairInput + "' is not a valid input to this function");
       return;
     }
@@ -126,7 +119,7 @@ export default function SimpleTabs(props) {
     guess.type = "eval_guess";
     guess.in = funcObj.parseInput(evalPairInput);
     guess.out = funcObj.parseOutput(evalPairOutput);
-    if (funcObj.function(funcObj.parseInput(evalPairInput)) === guess.out) {
+    if (funcObj.equivalentOutputs(funcObj.function(guess.in), guess.out)) {
       guess.result = "YES";
     } else {
       guess.result = "NO";
@@ -145,6 +138,7 @@ export default function SimpleTabs(props) {
       return;
     }
     alert(guessField.placeHolder = funcObj.answerText());
+    // TODO: RELOAD THE PAGE to reset console, tab textfields, etc
   }
 
   return (

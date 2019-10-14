@@ -1,14 +1,14 @@
-class IsPalindromeInts {
+class SumParity {
   static inputType(): string {
     return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
   }
 
   static outputType(): string {
-    return "boolean, represented by the words 'true' and 'false' without the quotation marks or capitalization";
+    return "integer, represented by a positve or negative number (or 0) that is not fractional"
   }
 
   static answerText(): string {
-    return "This function returns whether or not the given list is palindromic - if reversing the list would yield the same list.";
+    return "This function returns the parity of the sum of the elements of the input list.";
   }
 
   private static asIntEvaluator(item: any) {
@@ -28,7 +28,7 @@ class IsPalindromeInts {
       as_list = JSON.parse(input);
       if (as_list.length > 0) {
         for (var i = 0; i < as_list.length; i++) {
-          // Make sure elements are all integers
+          // Make sure item types are same as passed in param
           if (!this.asIntEvaluator(as_list[i])) {
             return false;
           }
@@ -40,39 +40,35 @@ class IsPalindromeInts {
     }
   }
 
-  static validOutput(input: any): boolean {
-    var trimmed = input.trim();
-    return trimmed === 'true' || trimmed === 'false';
+  static validOutput(output: any): boolean {
+    var parsed
+    try {
+      parsed = JSON.parse(output)
+    } catch {
+      return false
+    }
+    return this.asIntEvaluator(parsed)
   }
 
   static parseInput(input: any): any[] {
     return JSON.parse(input);
   }
 
-  static parseOutput(output: any): boolean {
-    var as_str = String(output).trim();
-    return as_str === 'true';
+  static parseOutput(output: any): number {
+    return JSON.parse(output)
   }
 
-  static function(items: any[]): boolean {
-    if (items.length < 2) {
-      return true;
+  static function(items: number[]): number {
+    var sum = 0
+    for (var i = 0; i < items.length; i++) {
+      sum += items[i]
     }
-    var start = 0;
-    var end = items.length - 1;
-    while (start < end) {
-      if (items[start] !== items[end]) {
-        return false;
-      }
-      start += 1;
-      end -= 1;
-    }
-    return true;
+    return sum % 2
   }
 
-  static equivalentOutputs(first: boolean, second: boolean): boolean {
+  static equivalentOutputs(first: number, second: number): boolean {
     return first === second
   }
 }
 
-export default IsPalindromeInts;
+export default SumParity;
