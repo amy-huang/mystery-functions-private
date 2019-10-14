@@ -4,12 +4,12 @@ import { withRouter } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import TabsWrapper from './TabsWrapper';
+import TabsWrapper from '../components/TabsWrapper';
 import Paper from '@material-ui/core/Paper';
 import { GridList, GridListTile } from '@material-ui/core';
-import EvalGuessLine from './EvalGuessLine';
-import EvalInputLine from './EvalInputLine';
-import DummyLine from './DummyLine';
+import EvalGuessLine from '../components/EvalGuessLine';
+import EvalInputLine from '../components/EvalInputLine';
+import DummyLine from '../components/DummyLine';
 
 const gridListHeight = 500;
 
@@ -112,6 +112,8 @@ const styles = theme => ({
   },
 });
 
+// Creates blank tiles to go in the console gridlist, so that new submissions
+// appear at the bottom and not the top 
 function dummyTiles() {
   var guesses = [];
   var numTiles = gridListHeight / 80
@@ -205,7 +207,7 @@ class GuessingScreen extends Component {
               </Grid>
 
               <Grid item xs={12} >
-                <TabsWrapper guesses={this.guesses} funcObj={classes.funcObj} updateFunc={this.guessMade}></TabsWrapper>
+                <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} nextPage={this.props.nextPage}></TabsWrapper>
               </Grid>
             </Grid>
 

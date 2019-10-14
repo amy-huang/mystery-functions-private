@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box';
 import { TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import IsPalindrome from '../functions/IsPalindrome';
+import Link from 'react-router-dom/Link';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -57,6 +57,7 @@ function newKey() {
   return newKey.key;
 }
 
+// For storing user input
 var evalInputStr = "";
 var evalInputReason = "";
 var evalPairInput = "";
@@ -73,6 +74,12 @@ export default function SimpleTabs(props) {
     setValue(newValue);
   }
 
+  // Passed down from GuessingScreen for adding to guesses
+  // and evaluating expressions with mystery function
+  var guesses = props.children.guesses
+  var updateFunc = props.children.updateFunc
+  var funcObj = props.children.funcObj
+
   function asIntEvaluator(item) {
     if (Number.isInteger(item)) {
       return true;
@@ -81,7 +88,7 @@ export default function SimpleTabs(props) {
   }
 
   function evalInput() {
-    if (!IsPalindrome.validListInput(evalInputStr, asIntEvaluator)) {
+    if (!funcObj.validListInput(evalInputStr, asIntEvaluator)) {
       alert("'" + evalInputStr + "' is not a valid input to this function");
       return;
     }
@@ -93,19 +100,19 @@ export default function SimpleTabs(props) {
     var guess = {};
     guess.key = newKey();
     guess.type = "eval_input";
-    guess.in = IsPalindrome.parseInput(evalInputStr);
-    guess.out = IsPalindrome.function(IsPalindrome.parseInput(evalInputStr));
+    guess.in = funcObj.parseInput(evalInputStr);
+    guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
     guess.reason = evalInputReason.trim();
     props.children.guesses.push(guess);
     props.children.updateFunc();
   }
 
   function evalInputOutputPair() {
-    if (!IsPalindrome.validListInput(evalPairInput, asIntEvaluator)) {
+    if (!funcObj.validListInput(evalPairInput, asIntEvaluator)) {
       alert("'" + evalPairInput + "' is not a valid input to this function");
       return;
     }
-    if (!IsPalindrome.validOutput(evalPairOutput)) {
+    if (!funcObj.validOutput(evalPairOutput)) {
       alert("'" + evalPairOutput + "' is not a valid output of this function");
       return;
     }
@@ -117,9 +124,9 @@ export default function SimpleTabs(props) {
     var guess = {};
     guess.key = newKey();
     guess.type = "eval_guess";
-    guess.in = IsPalindrome.parseInput(evalPairInput);
-    guess.out = IsPalindrome.parseOutput(evalPairOutput);
-    if (IsPalindrome.function(IsPalindrome.parseInput(evalPairInput)) === guess.out) {
+    guess.in = funcObj.parseInput(evalPairInput);
+    guess.out = funcObj.parseOutput(evalPairOutput);
+    if (funcObj.function(funcObj.parseInput(evalPairInput)) === guess.out) {
       guess.result = "YES";
     } else {
       guess.result = "NO";
@@ -132,13 +139,12 @@ export default function SimpleTabs(props) {
   var guessField;
   function showAnswer() {
     if (finalGuess === "") {
-      var inputType = IsPalindrome.inputType()
-      var outputType = IsPalindrome.outputType()
+      var inputType = funcObj.inputType()
+      var outputType = funcObj.outputType()
       alert("Please submit a final guess. What does this function do with inputs of type " + inputType + " and outputs of type " + outputType + "?");
       return;
     }
-    alert(guessField.placeHolder = IsPalindrome.answerText());
-    // TODO: redirect to next page
+    alert(guessField.placeHolder = funcObj.answerText());
   }
 
   return (
@@ -212,6 +218,13 @@ export default function SimpleTabs(props) {
               <Button color='primary' variant="contained" className={classes.actionButton} onClick={showAnswer}>
                 Submit final guess
                 </Button>
+            </div>
+          </Grid>
+          <Grid item>
+            <div>
+              <Button color='primary' variant="contained" className={classes.actionButton}>
+                <Link to={props.children.nextPage}> go to next mystery function</Link>
+              </Button>
             </div>
           </Grid>
         </Grid>

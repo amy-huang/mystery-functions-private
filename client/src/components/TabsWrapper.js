@@ -6,7 +6,9 @@ class TabsWrapper extends Component {
   render() {
     const children = {
       guesses: this.props.guesses,
-      updateFunc: this.props.updateFunc
+      updateFunc: this.props.updateFunc,
+      funcObj: this.props.funcObj,
+      nextPage: this.props.nextPage
     };
     return (
       <Tabs>{children}</Tabs>

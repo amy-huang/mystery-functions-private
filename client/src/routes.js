@@ -1,11 +1,20 @@
 import React from 'react'
 import { Route, HashRouter, Switch } from 'react-router-dom'
-import GuessingScreen from './components/GuessingScreen'
+import GuessingScreen from './screens/GuessingScreen'
+import StartScreen from './screens/StartScreen'
+import IsPalindrome from './functions/IsPalindrome'
+
+// Logic to randomize screen order would go here
+// -> have a start page that is just a button
+// have an array of random paths and also funcObjs
+// shuffle the funcObjs, and then assign at random with the links 
 
 export default props => (
   <HashRouter>
     <Switch>
-      <Route exact path='/' component={GuessingScreen}/>
+      <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
+      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={IsPalindrome} nextPage={'/second'}></GuessingScreen>} />
+      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={IsPalindrome}></GuessingScreen>} />
     </Switch>
   </HashRouter>
 )
