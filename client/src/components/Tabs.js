@@ -202,7 +202,7 @@ export default function SimpleTabs(props) {
         </Grid>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <Grid container spacing={7} direction="column">
+        <Grid container spacing={4} direction="column">
           <Grid item>
             <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value; }} ref={(elem) => { guessField = elem; }}>
             </TextField>
@@ -210,14 +210,14 @@ export default function SimpleTabs(props) {
           <Grid item>
             <div>
               <Button color='primary' variant="contained" className={classes.actionButton} onClick={showAnswer}>
-                Submit final guess
+                SUBMIT FINAL GUESS AND SEE ANSWER
                 </Button>
             </div>
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton}>
-                <Link to={props.children.nextPage}> go to next mystery function</Link>
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { window.location.reload() }}>
+                <Link style={{ color: '#FFF' }} to={props.children.nextPage}> go to next mystery function</Link>
               </Button>
             </div>
           </Grid>
