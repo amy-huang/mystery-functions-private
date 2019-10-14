@@ -1,11 +1,11 @@
 {
-  "name": "heroku-react-express",
+  "name": "mystery-functions",
   "version": "1.0.0",
   "main": "server.js",
   "license": "MIT",
   "author": {
-    "name": "Esau Silva (@_esausilva)",
-    "url": "https://esausilva.com"
+    "name": "Amy Huang",
+    "url": "https://amy-huang.github.io"
   },
   "scripts": {
     "dev": "run-p dev:**",
@@ -25,15 +25,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/esausilva/react-production-deployment"
+    "url": "https://github.com/amy-huang/mysteryfunctions"
   },
   "bugs": {
-    "url": "https://github.com/esausilva/react-production-deployment/issues"
+    "url": "https://github.com/amy-huang/mysteryfunctions/issues"
   },
   "keywords": [
     "heroku",
-    "express",
-    "create-react-app",
     "react"
   ]
 }
