@@ -13,13 +13,13 @@ const client = new Client({
 
 // Create table for log actions
 client.connect();
+
 client.query('create table actions ( id varchar(255), actionType varchar(255), time varchar(255) )', (err, res) => {
   // if (err) throw err;
   client.end();
 });
 
 // To see if table got made
-client.connect();
 client.query('show tables;', (err, res) => {
   // if (err) throw err;
   // for (let row of res.rows) {
@@ -48,7 +48,7 @@ app.post('/api/id', (req, res) => {
 // Stores info
 app.post('/api/store', (req, res) => {
   logEvent = req.body
-  client.query(`insert into actions (${req.connection.remoteAddress}, ${req.body.type}, ${req.body.time})`, (err, res) => {
+  client.query(`insert into actions (${req.connection.remoteAddress}, ${req.body.type}, convert(datetime, ${req.body.time}, 20))`, (err, res) => {
     // if (err) throw err;
     res.send(
       `Got this: ${req.body} from ${req.connection.remoteAddress}`,
