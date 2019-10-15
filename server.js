@@ -17,7 +17,8 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-function storeHandler(req, res) {
+// Stores info in heroku postgres database
+app.post('/api/store', (req, res) => {
   var action = req.body
   var id = req.connection.remoteAddress
   var time = action.time
@@ -27,28 +28,26 @@ function storeHandler(req, res) {
   //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
   // });
 
+  console.log(action)
   console.log(action.key)
   console.log(action.in)
   console.log(time)
   console.log(id)
 
   if (action.type === "eval_input") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, time, action.in], (err, res) => {
+    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, action.in], (err, res) => {
       res.status(201).json({ status: 'success', message: 'eval_input row inserted' })
     });
   } else if (action.type === "eval_pair") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
+    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.key}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
       res.status(201).json({ status: 'success', message: 'eval_pair row inserted' })
     });
   } else if (action.type === "final_answer") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
+    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.key}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
       res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
     });
   }
-}
-
-// Stores info in heroku postgres database
-app.post('/api/store', storeHandler);
+});
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
