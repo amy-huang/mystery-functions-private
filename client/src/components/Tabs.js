@@ -54,7 +54,7 @@ function newKey() {
   } else {
     newKey.key += 1;
   }
-  return newKey.key;
+  return newKey.key.toString()
 }
 
 // For storing user input

@@ -44,28 +44,23 @@ function toDbString(a_list) {
 app.post('/api/store', (req, res) => {
   var action = req.body
   var id = req.connection.remoteAddress
+  var key = action.key
   var time = action.time
+
+  console.log(typeof action.id, "id: ", id)
+  console.log(typeof action.key, "key: ", action.key)
+  console.log(typeof action.time, "time: ", time)
+
   var type = action.type
-  // For datetime, use yyy-mm-dd hh:mi:ss formatting
-
-  // console.log("action: ", action)
-  // console.log("key: ", action.key)
-  // console.log("in: ", action.in)
-  // console.log("time: ", time)
-  // console.log("id: ", id)
-
-  // var client = new Client({
-  //   connectionString: process.env.DATABASE_URL,
-  //   ssl: true,
-  // });
-  // client.connect()
-
   if (type === "eval_input") {
     in_str = toDbString(action.in)
-    // console.log("in str: ", in_str)
-    conPool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
+    console.log("in: ", in_str)
+    conPool.query(`insert into actions (userID, actionID, actionType, time, input) values ($1, $2, $3, $4, $5);`, [id, key, type, time, in_str], (err, result) => {
       if (!err) {
         res.send(`Success!`)
+      } else {
+        res.end()
+        throw err
       }
     });
   } else if (type === "eval_pair") {
@@ -75,16 +70,21 @@ app.post('/api/store', (req, res) => {
     conPool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
       if (!err) {
         res.send(`Success!`)
+      } else {
+        res.end()
+        throw err
       }
     });
   } else if (type === "final_answer") {
     conPool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
       if (!err) {
         res.send(`Success!`)
+      } else {
+        res.end()
+        throw err
       }
     });
   }
-  res.end()
   // client.end()
 });
 
