@@ -37,27 +37,27 @@ app.post('/api/store', (req, res) => {
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
-  // This test query works.
-  // pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
-  //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
-  // });
-
   console.log("action: ", action)
   console.log("key: ", action.key)
   console.log("in: ", action.in)
   console.log("time: ", time)
   console.log("id: ", id)
 
-  const pool = new Pool({
+  var client = new Client({
     connectionString: process.env.DATABASE_URL,
     ssl: true,
-    max: 20,
   });
+  client.connect()
+
+  // This test query works.
+  // pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
+  //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
+  // });
 
   if (action.type === "eval_input") {
     in_str = toDbString(action.in)
     console.log("in str: ", in_str)
-    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
@@ -67,19 +67,19 @@ app.post('/api/store', (req, res) => {
     in_str = toDbString(action.in)
     out_str = toDbString(action.out)
 
-    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
     });
   } else if (action.type === "final_answer") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
     });
   }
-  pool.end
+  client.end()
 });
 
 if (process.env.NODE_ENV === 'production') {
