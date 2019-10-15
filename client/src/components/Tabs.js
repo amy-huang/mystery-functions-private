@@ -74,6 +74,12 @@ export default function SimpleTabs(props) {
     setValue(newValue);
   }
 
+  function sendToServer(obj) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", '/store', true);
+    xhr.send(JSON.stringify(obj));
+  }
+
   // Passed down from GuessingScreen for adding to guesses
   // and evaluating expressions with mystery function
   var guesses = props.children.guesses
@@ -90,14 +96,25 @@ export default function SimpleTabs(props) {
       return;
     }
 
+    // Create guess
     var guess = {};
     guess.key = newKey();
     guess.type = "eval_input";
     guess.in = funcObj.parseInput(evalInputStr);
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
     guess.reason = evalInputReason.trim();
-    props.children.guesses.push(guess);
-    props.children.updateFunc();
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date + ' ' + time;
+    guess.time = dateTime
+
+    // Send to server for storing
+    sendToServer(guess)
+
+    // Update console
+    guesses.push(guess);
+    updateFunc();
   }
 
   function evalInputOutputPair() {
@@ -125,8 +142,8 @@ export default function SimpleTabs(props) {
       guess.result = "NO";
     }
     guess.reason = evalPairReason.trim();
-    props.children.guesses.push(guess);
-    props.children.updateFunc();
+    guesses.push(guess);
+    updateFunc();
   }
 
   var guessField;
