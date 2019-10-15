@@ -35,16 +35,22 @@ app.post('/api/store', (req, res) => {
   console.log(id)
 
   if (action.type === "eval_input") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, action.in], (err, res) => {
-      res.status(201).json({ status: 'success', message: 'eval_input row inserted' })
+    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, action.in], (err, result) => {
+      if (!err) {
+        res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
+      }
     });
   } else if (action.type === "eval_pair") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.key}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
-      res.status(201).json({ status: 'success', message: 'eval_pair row inserted' })
+    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, action.in, action.out, action.result], (err, result) => {
+      if (!err) {
+        res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
+      }
     });
   } else if (action.type === "final_answer") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.key}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
-      res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
+    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
+      if (!err) {
+        res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
+      }
     });
   }
 });
