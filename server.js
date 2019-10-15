@@ -17,6 +17,16 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+function toDbString(a_list) {
+  as_str = ""
+  for (var i = 0; i < a_list.length; i++) {
+    if (as_str.length > 0) {
+      as_str += " "
+    }
+    as_str += JSON.stringify(a_list[i])
+  }
+}
+
 // Stores info in heroku postgres database
 app.post('/api/store', (req, res) => {
   var action = req.body
@@ -24,18 +34,21 @@ app.post('/api/store', (req, res) => {
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
+  // This test query works.
   // pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
   //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
   // });
 
-  console.log(action)
-  console.log(action.key)
-  console.log(action.in)
-  console.log(time)
-  console.log(id)
+  console.log("action: ", action)
+  console.log("key: ", action.key)
+  console.log("in: ", action.in)
+  console.log("time: ", time)
+  console.log("id: ", id)
 
   if (action.type === "eval_input") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, action.in], (err, result) => {
+    in_str = toDbString(action.in)
+    console.log("in str: ", in_str)
+    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }

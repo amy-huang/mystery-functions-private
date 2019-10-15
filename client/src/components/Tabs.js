@@ -168,11 +168,11 @@ export default function SimpleTabs(props) {
 
   var guessField;
   function showAnswer() {
-    // if (finalGuess === "") {
-    //   var text = "Please submit a final guess."
-    //   alert(text);
-    //   return;
-    // }
+    if (finalGuess === "") {
+      var text = "Please submit a final guess."
+      alert(text);
+      return;
+    }
     alert(guessField.placeHolder = funcObj.answerText());
     var guess = Object()
     guess.key = newKey()
