@@ -91,6 +91,18 @@ const styles = theme => ({
     top: '40%',
     left: '40%'
   },
+  gridList: {
+    width: 400,
+    height: gridListHeight,
+    alignContent: 'flex-start',
+  },
+  gridListWrapper: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
 });
 
 class StartScreen extends Component {
@@ -101,7 +113,7 @@ class StartScreen extends Component {
         <CssBaseline />
         < div className={classes.root} >
           {/* Center all Grids */}
-          < Grid container justify="center" direction="column" spacing={4} padding={4}>
+          < Grid container alightContent="center" justify="center" direction="column" spacing={4} padding={4}>
 
               <Grid item className={classes.panel}>
                 <Typography>

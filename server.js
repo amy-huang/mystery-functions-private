@@ -13,7 +13,6 @@ conPool.query('create table if not exists actions ( userID varchar (255), action
 
 // This test query works.
 conPool.query(`insert into actions (userID) values ('test');`, (err, result) => {
-  res.status(201).json({ status: 'success', message: 'test row inserted.' })
 });
 
 const app = express();
