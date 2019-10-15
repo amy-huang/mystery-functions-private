@@ -11,7 +11,6 @@ var tableClient = new Client({
 tableClient.connect();
 // Create table for log actions
 tableClient.query('create table actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
-  if (err) throw err;
   tableClient.end();
 });
 
@@ -35,7 +34,6 @@ function storeHandler(req, res) {
 
   if (action.type === "eval_input") {
     client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
-      if (err) throw err;
       res.send(
         `Received`,
       );
@@ -43,7 +41,6 @@ function storeHandler(req, res) {
     });
   } else if (action.type === "eval_pair") {
     client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
-      if (err) throw err;
       res.send(
         `Received`,
       );
@@ -51,7 +48,6 @@ function storeHandler(req, res) {
     });
   } else if (action.type === "final_answer") {
     client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
-      if (err) throw err;
       res.send(
         `Received`,
       );
