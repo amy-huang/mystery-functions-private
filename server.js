@@ -23,17 +23,8 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Give client a unique ID to use for logging
-app.post('/api/id', (req, res) => {
-  res.send(
-    `${userId}`,
-  );
-  userId += 1
-});
-
 // Stores info in heroku postgres database
 app.post('/api/store', (req, res) => {
-  logEvent = req.body
   var action = req.body
   var id = req.connection.remoteAddress
   var time = action.time

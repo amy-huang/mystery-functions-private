@@ -80,9 +80,9 @@ export default function SimpleTabs(props) {
     // xhr.send(JSON.stringify(obj));
     const response = await fetch('/api/store', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
       body: JSON.stringify(obj),
     });
     const body = await response.text();
