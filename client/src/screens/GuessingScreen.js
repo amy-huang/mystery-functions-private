@@ -164,7 +164,7 @@ class GuessingScreen extends Component {
         <EvalInputLine in={tile.in} out={tile.out}></EvalInputLine>
       );
     }
-    if (tile.type === "eval_guess") {
+    if (tile.type === "eval_pair") {
       return (
         <Grid container spacing={1}>
           <Grid item>

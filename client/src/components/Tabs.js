@@ -142,7 +142,7 @@ export default function SimpleTabs(props) {
 
     var guess = {};
     guess.key = newKey();
-    guess.type = "eval_guess";
+    guess.type = "eval_pair";
     guess.in = funcObj.parseInput(evalPairInput);
     guess.out = funcObj.parseOutput(evalPairOutput);
     if (funcObj.equivalentOutputs(funcObj.function(guess.in), guess.out)) {

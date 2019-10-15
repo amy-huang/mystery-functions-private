@@ -14,7 +14,7 @@ const client = new Client({
 // Create table for log actions
 client.connect();
 
-client.query('create table actions ( id varchar(255), actionType varchar(255), time varchar(255) )', (err, res) => {
+client.query('create table actions ( id varchar(255), actionType varchar(255), time datetime, in varchar(255) )', (err, res) => {
   // if (err) throw err;
   client.end();
 });
@@ -48,13 +48,23 @@ app.post('/api/id', (req, res) => {
 // Stores info
 app.post('/api/store', (req, res) => {
   logEvent = req.body
-  client.query(`insert into actions (${req.connection.remoteAddress}, ${req.body.type}, convert(datetime, ${req.body.time}, 20))`, (err, res) => {
-    // if (err) throw err;
-    res.send(
-      `Got this: ${req.body} from ${req.connection.remoteAddress}`,
-    );
-    client.end();
-  });
+  // For datetime, use yyy-mm-dd hh:mi:ss formatting
+  var action = req.body
+  var id = req.connection.remoteAddress
+  var time = action.time
+
+  if (action.type === "eval_input") {
+
+    client.query(`insert into actions (${id}, ${action.type}, convert(datetime, ${time}, 20, ${action.in})`, (err, res) => {
+      // if (err) throw err;
+      res.send(
+        `Got this: ${req.body} from ${req.connection.remoteAddress}`,
+      );
+      client.end();
+    });
+  } else if (action.type === "eval_pair") {
+
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
