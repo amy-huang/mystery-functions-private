@@ -1,17 +1,27 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { Client } = require('pg');
+const { Client, Pool } = require('pg');
 
 // Initialize database
-var tableClient = new Client({
+// var tableClient = new Client({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true,
+// });
+// tableClient.connect();
+// // Create table for log actions. TODO: check if table exists already, if not, replace
+// tableClient.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
+//   tableClient.end();
+// });
+
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
+  max: 20,
 });
-tableClient.connect();
+// tableClient.connect();
 // Create table for log actions. TODO: check if table exists already, if not, replace
-tableClient.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
-  tableClient.end();
+pool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
 
 const app = express();
@@ -26,15 +36,13 @@ function storeHandler(req, res) {
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
-  var client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: true,
-  });
-  client.connect();
-  client.query(`insert into actions (userID) values ('test');`, (err, res) => {
-    res.send(
-      `Received`,
-    );
+  // var client = new Client({
+  //   connectionString: process.env.DATABASE_URL,
+  //   ssl: true,
+  // });
+  // client.connect();
+  pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
+    res.status(201).json({ status: 'success', message: 'test row inserted.' })
   });
 
   // if (action.type === "eval_input") {
@@ -56,7 +64,7 @@ function storeHandler(req, res) {
   //     );
   //   });
   // }
-  client.end();
+  // client.end();
 }
 
 // Stores info in heroku postgres database
