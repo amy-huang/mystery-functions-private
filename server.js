@@ -3,24 +3,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { Client, Pool } = require('pg');
 
-// Initialize database
-// var tableClient = new Client({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true,
-// });
-// tableClient.connect();
-// // Create table for log actions. TODO: check if table exists already, if not, replace
-// tableClient.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
-//   tableClient.end();
-// });
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
   max: 20,
 });
-// tableClient.connect();
-// Create table for log actions. TODO: check if table exists already, if not, replace
 pool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
 
@@ -36,35 +23,19 @@ function storeHandler(req, res) {
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
-  // var client = new Client({
-  //   connectionString: process.env.DATABASE_URL,
-  //   ssl: true,
-  // });
-  // client.connect();
-  pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
-    res.status(201).json({ status: 'success', message: 'test row inserted.' })
-  });
-
-  // if (action.type === "eval_input") {
-  //   client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
-  //     res.send(
-  //       `Received`,
-  //     );
-  //   });
-  // } else if (action.type === "eval_pair") {
-  //   client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
-  //     res.send(
-  //       `Received`,
-  //     );
-  //   });
-  // } else if (action.type === "final_answer") {
-  //   client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
-  //     res.send(
-  //       `Received`,
-  //     );
-  //   });
-  // }
-  // client.end();
+  if (action.type === "eval_input") {
+    pool.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
+      res.status(201).json({ status: 'success', message: 'eval_input row inserted' })
+    });
+  } else if (action.type === "eval_pair") {
+    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
+      res.status(201).json({ status: 'success', message: 'eval_pair row inserted' })
+    });
+  } else if (action.type === "final_answer") {
+    pool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
+      res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
+    });
+  }
 }
 
 // Stores info in heroku postgres database
