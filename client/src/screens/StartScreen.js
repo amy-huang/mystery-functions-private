@@ -91,11 +91,6 @@ const styles = theme => ({
     top: '40%',
     left: '40%'
   },
-  gridList: {
-    width: 400,
-    height: gridListHeight,
-    alignContent: 'flex-start',
-  },
   gridListWrapper: {
     display: 'flex',
     flexWrap: 'wrap',
