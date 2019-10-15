@@ -3,13 +3,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const { Client, Pool } = require('pg');
 
-const pool = new Pool({
+const conPool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
   max: 20,
 });
-pool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
+conPool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
+conPool.end()
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -47,6 +48,12 @@ app.post('/api/store', (req, res) => {
   console.log("time: ", time)
   console.log("id: ", id)
 
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true,
+    max: 20,
+  });
+
   if (action.type === "eval_input") {
     in_str = toDbString(action.in)
     console.log("in str: ", in_str)
@@ -72,6 +79,7 @@ app.post('/api/store', (req, res) => {
       }
     });
   }
+  pool.end()
 });
 
 if (process.env.NODE_ENV === 'production') {
