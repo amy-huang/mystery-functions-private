@@ -101,21 +101,23 @@ class StartScreen extends Component {
         <CssBaseline />
         < div className={classes.root} >
           {/* Center all Grids */}
-          < Grid container justify="center" direction="column" spacing={4}>
-            <Grid item className={classes.panel}>
-              <Typography>
-                Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: 1) given any input of valid type, we will tell you what the function outputs; 2) given any input and output pair of valid types, we will tell you if that is a correct pair for the function.
+          < Grid container justify="center" direction="column" spacing={4} padding={4}>
 
-                Feel free to switch between the two modes as you wish in the tabs on the left half of the screen - output will appear in the console on the right half. Once you would like to end the session, go to the third tab to make a final submission as to what the function is, and you'll be shown a description of what the function does. Then, you can click the link to the next function.
-
-                There are 2 mystery functions. Good luck!
+              <Grid item className={classes.panel}>
+                <Typography>
+                  Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: 1) given any input of valid type, we will tell you what the function outputs; 2) given any input and output pair of valid types, we will tell you if that is a correct pair for the function.
+  
+                  Feel free to switch between the two modes as you wish in the tabs on the left half of the screen - output will appear in the console on the right half. Once you would like to end the session, go to the third tab to make a final submission as to what the function is, and you'll be shown a description of what the function does. Then, you can click the link to the next function.
+  
+                  There are 2 mystery functions. Good luck!
               </Typography>
-            </Grid>
-            <Grid item>
-              <Button type="submit">
-                <Link to={this.props.nextPage}>Begin!</Link>
-              </Button>
-            </Grid>
+              </Grid>
+              <Grid item>
+                <Button type="submit">
+                  <Link to={this.props.nextPage}>Begin!</Link>
+                </Button>
+              </Grid>
+
           </Grid>
         </div>
       </React.Fragment >

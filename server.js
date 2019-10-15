@@ -17,6 +17,7 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// TODO: make this generic for any input, output types we use: no special charas
 function toDbString(a_list) {
   as_str = ""
   for (var i = 0; i < a_list.length; i++) {
@@ -25,6 +26,7 @@ function toDbString(a_list) {
     }
     as_str += JSON.stringify(a_list[i])
   }
+  return as_str
 }
 
 // Stores info in heroku postgres database
@@ -53,8 +55,12 @@ app.post('/api/store', (req, res) => {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
     });
+
   } else if (action.type === "eval_pair") {
-    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, action.in, action.out, action.result], (err, result) => {
+    in_str = toDbString(action.in)
+    out_str = toDbString(action.out)
+
+    pool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
