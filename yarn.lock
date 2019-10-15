@@ -1135,6 +1135,11 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
+js-string-escape@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/js-string-escape/-/js-string-escape-1.0.1.tgz#e2625badbc0d67c7533e9edc1068c587ae4137ef"
+  integrity sha1-4mJbrbwNZ8dTPp7cEGjFh65BN+8=
+
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
@@ -1335,6 +1340,11 @@ nan@^2.9.2:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
   integrity sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
+
+nan@~0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-0.6.0.tgz#a54ebe59717b467c77425302bd7c17574c887aaa"
+  integrity sha1-pU6+WXF7Rnx3QlMCvXwXV0yIeqo=
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -1621,13 +1631,23 @@ path-type@^3.0.0:
   dependencies:
     pify "^3.0.0"
 
-pg@^1:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-1.3.0.tgz#aee995a2b8cda786756555de833adc4ca7eec12e"
-  integrity sha1-rumVorjNp4Z1ZVXegzrcTKfuwS4=
+pg@^2:
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-2.11.2.tgz#a78e2bc6bc5e24c3963696daf21620ba6083b800"
+  integrity sha1-p44rxrxeJMOWNpba8hYgumCDuAA=
   dependencies:
     buffer-writer "1.0.0"
     generic-pool "2.0.3"
+    js-string-escape "1.0.1"
+    nan "~0.6.0"
+    pgpass "0.0.1"
+
+pgpass@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/pgpass/-/pgpass-0.0.1.tgz#39bea2df1e36f776ff069ed22966ea187646c405"
+  integrity sha1-Ob6i3x4293b/Bp7SKWbqGHZGxAU=
+  dependencies:
+    split "~0.2.10"
 
 pidtree@^0.3.0:
   version "0.3.0"
@@ -1992,6 +2012,13 @@ split-string@^3.0.1, split-string@^3.0.2:
   dependencies:
     extend-shallow "^3.0.0"
 
+split@~0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/split/-/split-0.2.10.tgz#67097c601d697ce1368f418f06cd201cf0521a57"
+  integrity sha1-Zwl8YB1pfOE2j0GPBs0gHPBSGlc=
+  dependencies:
+    through "2"
+
 static-extend@^0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/static-extend/-/static-extend-0.1.2.tgz#60809c39cbff55337226fd5e0b520f341f1fb5c6"
@@ -2098,6 +2125,11 @@ term-size@^1.2.0:
   integrity sha1-RYuDiH8oj8Vtb/+/rSYuJmOO+mk=
   dependencies:
     execa "^0.7.0"
+
+through@2:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
+  integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
 timed-out@^4.0.0:
   version "4.0.1"
