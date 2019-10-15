@@ -84,6 +84,7 @@ app.post('/api/store', (req, res) => {
       }
     });
   }
+  res.end()
   // client.end()
 });
 
