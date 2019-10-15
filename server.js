@@ -23,8 +23,7 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Stores info in heroku postgres database
-app.post('/api/store', (req, res) => {
+async function storeHandler(req, res) {
   var action = req.body
   var id = req.connection.remoteAddress
   var time = action.time
@@ -33,30 +32,24 @@ app.post('/api/store', (req, res) => {
   client.connect();
   if (action.type === "eval_input") {
     client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
-      // if (err) throw err;
-      res.send(
-        `Got this: ${req.body} from ${req.connection.remoteAddress}`,
-      );
+      if (err) throw err;
       client.end();
     });
   } else if (action.type === "eval_pair") {
     client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
-      // if (err) throw err;
-      res.send(
-        `Got this: ${req.body} from ${req.connection.remoteAddress}`,
-      );
+      if (err) throw err;
       client.end();
     });
   } else if (action.type === "final_answer") {
     client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
-      // if (err) throw err;
-      res.send(
-        `Got this: ${req.body} from ${req.connection.remoteAddress}`,
-      );
+      if (err) throw err;
       client.end();
     });
   }
-});
+}
+
+// Stores info in heroku postgres database
+app.post('/api/store', storeHandler);
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
