@@ -57,7 +57,8 @@ app.post('/api/store', (req, res) => {
   if (type === "eval_input") {
     in_str = toDbString(action.in)
     console.log("in: ", in_str)
-    conPool.query(`insert into actions (userID, actionID, actionType, time, input) values ($1, $2, $3, $4, $5);`, [id, key, type, time, in_str], (err, result) => {
+
+    conPool.query(`insert into actions (actionID, actionType, time, input) values ($1, $2, $3, $4);`, [key, type, time, in_str], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
@@ -68,8 +69,12 @@ app.post('/api/store', (req, res) => {
   } else if (type === "eval_pair") {
     in_str = toDbString(action.in)
     out_str = toDbString(action.out)
-    // console.log("in str: ", in_str)
-    conPool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
+    result = action.result
+    console.log("in: ", in_str)
+    console.log("out: ", out_str)
+    console.log("result: ", result)
+
+    conPool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ($1, $2, $3, $4, $5, $6, $7);`, [id, key, type, time, in_str, out_str, result], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
@@ -78,7 +83,9 @@ app.post('/api/store', (req, res) => {
       }
     });
   } else if (type === "final_answer") {
-    conPool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
+    reason = action.reason
+
+    conPool.query(`insert into actions (userID, actionID, actionType, time, reason) values ($1, $2, $3, $4);`, [id, key, type, time, reason], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
