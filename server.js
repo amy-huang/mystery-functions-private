@@ -43,15 +43,17 @@ function toDbString(a_list) {
 // Stores info in heroku postgres database
 app.post('/api/store', (req, res) => {
   var action = req.body
-  var id = req.connection.remoteAddress
+  var id = JSON.stringify(req.connection.remoteAddress).replace(/\"/g, "")
+
   var key = action.key
+  var type = action.type
   var time = action.time
 
   console.log(typeof action.id, "id: ", id)
-  console.log(typeof action.key, "key: ", action.key)
+  console.log(typeof action.key, "key: ", key)
+  console.log(typeof action.key, "type: ", type)
   console.log(typeof action.time, "time: ", time)
 
-  var type = action.type
   if (type === "eval_input") {
     in_str = toDbString(action.in)
     console.log("in: ", in_str)
