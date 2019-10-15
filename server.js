@@ -12,10 +12,8 @@ const client = new Client({
 });
 
 client.connect();
-
 // Create table for log actions
 client.query('create table actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
-  // if (err) throw err;
   client.end();
 });
 
@@ -41,6 +39,7 @@ app.post('/api/store', (req, res) => {
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
+  client.connect();
   if (action.type === "eval_input") {
     client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
       // if (err) throw err;
