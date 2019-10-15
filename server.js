@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 function storeHandler(req, res) {
-  var action = JSON.parse(req.body)
+  var action = req.body
   var id = req.connection.remoteAddress
   var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
@@ -27,7 +27,6 @@ function storeHandler(req, res) {
   //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
   // });
 
-  console.log(action)
   console.log(action.key)
   console.log(action.in)
   console.log(time)
