@@ -10,7 +10,8 @@ const conPool = new Pool({
 });
 conPool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
-conPool.end()
+conPool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
+});
 
 // This test query works.
 
@@ -33,6 +34,9 @@ function toDbString(a_list) {
     }
     as_str += JSON.stringify(a_list[i])
   }
+  if (as_str.length === 0) {
+    return "empty"
+  }
   return as_str
 }
 
@@ -49,16 +53,16 @@ app.post('/api/store', (req, res) => {
   console.log("time: ", time)
   console.log("id: ", id)
 
-  var client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: true,
-  });
-  client.connect()
+  // var client = new Client({
+  //   connectionString: process.env.DATABASE_URL,
+  //   ssl: true,
+  // });
+  // client.connect()
 
   if (action.type === "eval_input") {
     in_str = toDbString(action.in)
     console.log("in str: ", in_str)
-    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
+    conPool.query(`insert into actions (userID, actionID, actionType, time, input) values ('$1', '$2', '$3', '$4', '$5');`, [id, action.key, action.type, time, in_str], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
@@ -68,19 +72,19 @@ app.post('/api/store', (req, res) => {
     in_str = toDbString(action.in)
     out_str = toDbString(action.out)
 
-    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
+    conPool.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('$1', '$2', '$3', '$4', '$5', '$6', '$7');`, [id, action.key, action.type, time, in_str, out_str, action.result], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
     });
   } else if (action.type === "final_answer") {
-    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
+    conPool.query(`insert into actions (userID, actionID, actionType, time, reason) values ('$1', '$2', '$3', '$4');`, [id, action.key, action.type, time, action.reason], (err, result) => {
       if (!err) {
         res.status(201).json({ status: 'success', message: 'final_answer row inserted' })
       }
     });
   }
-  client.end()
+  // client.end()
 });
 
 if (process.env.NODE_ENV === 'production') {
