@@ -23,29 +23,30 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-async function storeHandler(req, res) {
-  var action = req.body
-  var id = req.connection.remoteAddress
-  var time = action.time
+function storeHandler(req, res) {
+  // var action = req.body
+  // var id = req.connection.remoteAddress
+  // var time = action.time
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
   client.connect();
-  if (action.type === "eval_input") {
-    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
-      if (err) throw err;
-      client.end();
-    });
-  } else if (action.type === "eval_pair") {
-    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
-      if (err) throw err;
-      client.end();
-    });
-  } else if (action.type === "final_answer") {
-    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
-      if (err) throw err;
-      client.end();
-    });
-  }
+  client.query(`insert into actions (userID) values ('HEYHEYHEY')`, (err, res) => {
+    if (err) throw err;
+  });
+  // if (action.type === "eval_input") {
+  //   client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
+  //     if (err) throw err;
+  //   });
+  // } else if (action.type === "eval_pair") {
+  //   client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
+  //     if (err) throw err;
+  //   });
+  // } else if (action.type === "final_answer") {
+  //   client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
+  //     if (err) throw err;
+  //   });
+  // }
+  client.end();
 }
 
 // Stores info in heroku postgres database
