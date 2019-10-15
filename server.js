@@ -11,23 +11,11 @@ const client = new Client({
   ssl: true,
 });
 
-// Create table for log actions
 client.connect();
 
-client.query('create table actions ( id varchar(255), actionType varchar(255), time datetime, in varchar(255), out varchar(255) )', (err, res) => {
+// Create table for log actions
+client.query('create table actions ( userID varchar(255), actionID int, actionType varchar(255), time datetime, input varchar(255), output varchar(255), result varchar(255), reason varchar(255) );', (err, res) => {
   // if (err) throw err;
-  client.end();
-});
-
-// To see if table got made
-client.query('show tables;', (err, res) => {
-  // if (err) throw err;
-  // for (let row of res.rows) {
-  //   console.log(JSON.stringify(row));
-  // }
-  res.send(
-    `Got this: ${res.rows} from ${req.connection.remoteAddress}`,
-  );
   client.end();
 });
 
@@ -45,16 +33,16 @@ app.post('/api/id', (req, res) => {
   userId += 1
 });
 
-// Stores info
+// Stores info in heroku postgres database
 app.post('/api/store', (req, res) => {
   logEvent = req.body
-  // For datetime, use yyy-mm-dd hh:mi:ss formatting
   var action = req.body
   var id = req.connection.remoteAddress
   var time = action.time
+  // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
   if (action.type === "eval_input") {
-    client.query(`insert into actions ('${id}', '${action.type}', convert(datetime, ${time}, 20), '${action.in}', '')`, (err, res) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.in}');`, (err, res) => {
       // if (err) throw err;
       res.send(
         `Got this: ${req.body} from ${req.connection.remoteAddress}`,
@@ -62,14 +50,22 @@ app.post('/api/store', (req, res) => {
       client.end();
     });
   } else if (action.type === "eval_pair") {
-    client.query(`insert into actions ('${id}', '${action.type}', convert(datetime, ${time}, 20), '${action.in}', '${action.out}')`, (err, res) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
       // if (err) throw err;
       res.send(
         `Got this: ${req.body} from ${req.connection.remoteAddress}`,
       );
       client.end();
     });
-  } // TODO: start, end times
+  } else if (action.type === "final_answer") {
+    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.reason}');`, (err, res) => {
+      // if (err) throw err;
+      res.send(
+        `Got this: ${req.body} from ${req.connection.remoteAddress}`,
+      );
+      client.end();
+    });
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {

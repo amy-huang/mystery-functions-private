@@ -89,11 +89,19 @@ export default function SimpleTabs(props) {
     console.log(body)
   }
 
+  function getCurrentTime() {
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    return date + ' ' + time;
+  }
+
   // Passed down from GuessingScreen for adding to guesses
   // and evaluating expressions with mystery function
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
+  var whichEvent = 0
 
   function evalInput() {
     if (!funcObj.validInput(evalInputStr)) {
@@ -112,11 +120,8 @@ export default function SimpleTabs(props) {
     guess.in = funcObj.parseInput(evalInputStr);
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
     guess.reason = evalInputReason.trim();
-    var today = new Date();
-    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date + ' ' + time;
-    guess.time = dateTime
+    guess.time = getCurrentTime()
+    guess.when = whichEvent++
 
     // Send to server for storing
     sendToServer(guess)
@@ -151,19 +156,30 @@ export default function SimpleTabs(props) {
       guess.result = "NO";
     }
     guess.reason = evalPairReason.trim();
+    guess.time = getCurrentTime()
+    guess.when = whichEvent++
+
+    sendToServer(guess)
+
     guesses.push(guess);
     updateFunc();
   }
 
   var guessField;
   function showAnswer() {
-    if (finalGuess === "") {
-      var text = "Please submit a final guess."
-      alert(text);
-      return;
-    }
+    // if (finalGuess === "") {
+    //   var text = "Please submit a final guess."
+    //   alert(text);
+    //   return;
+    // }
     alert(guessField.placeHolder = funcObj.answerText());
-    // TODO: RELOAD THE PAGE to reset console, tab textfields, etc
+    var guess = Object()
+    guess.type = "final_answer"
+    guess.reason = finalGuess
+    guess.time = getCurrentTime()
+    guess.when = whichEvent++
+
+    sendToServer(guess)
   }
 
   function toNextPageButton() {
