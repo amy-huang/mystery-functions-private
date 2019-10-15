@@ -74,10 +74,19 @@ export default function SimpleTabs(props) {
     setValue(newValue);
   }
 
-  function sendToServer(obj) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", '/store', true);
-    xhr.send(JSON.stringify(obj));
+  async function sendToServer(obj) {
+    // var xhr = new XMLHttpRequest();
+    // xhr.open("POST", '/store', true);
+    // xhr.send(JSON.stringify(obj));
+    const response = await fetch('/api/world', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ post: "hey!!" }),
+    });
+    const body = await response.text();
+    console.log(body)
   }
 
   // Passed down from GuessingScreen for adding to guesses
