@@ -12,6 +12,12 @@ conPool.query('create table if not exists actions ( userID varchar (255), action
 });
 conPool.end()
 
+// This test query works.
+
+// pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
+//   res.status(201).json({ status: 'success', message: 'test row inserted.' })
+// });
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -48,11 +54,6 @@ app.post('/api/store', (req, res) => {
     ssl: true,
   });
   client.connect()
-
-  // This test query works.
-  // pool.query(`insert into actions (userID) values ('test');`, (err, result) => {
-  //   res.status(201).json({ status: 'success', message: 'test row inserted.' })
-  // });
 
   if (action.type === "eval_input") {
     in_str = toDbString(action.in)
