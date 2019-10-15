@@ -78,6 +78,7 @@ export default function SimpleTabs(props) {
     // var xhr = new XMLHttpRequest();
     // xhr.open("POST", '/store', true);
     // xhr.send(JSON.stringify(obj));
+    console.log(JSON.stringify(obj))
     const response = await fetch('/api/store', {
       method: 'POST',
       // headers: {
@@ -174,6 +175,7 @@ export default function SimpleTabs(props) {
     // }
     alert(guessField.placeHolder = funcObj.answerText());
     var guess = Object()
+    guess.key = newKey()
     guess.type = "final_answer"
     guess.reason = finalGuess
     guess.time = getCurrentTime()
