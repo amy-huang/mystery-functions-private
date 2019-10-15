@@ -7,6 +7,10 @@
     "name": "Amy Huang",
     "url": "https://amy-huang.github.io"
   },
+  "engines": {
+    "node": "12.10.0",
+    "npm": "6.11.3"
+  },
   "scripts": {
     "dev": "run-p dev:**",
     "dev:server": "nodemon server.js",
