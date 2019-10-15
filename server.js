@@ -14,7 +14,7 @@ const client = new Client({
 client.connect();
 
 // Create table for log actions
-client.query('create table actions ( userID varchar(255), actionID int, actionType varchar(255), time datetime, input varchar(255), output varchar(255), result varchar(255), reason varchar(255) );', (err, res) => {
+client.query('create table actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, res) => {
   // if (err) throw err;
   client.end();
 });
@@ -42,7 +42,7 @@ app.post('/api/store', (req, res) => {
   // For datetime, use yyy-mm-dd hh:mi:ss formatting
 
   if (action.type === "eval_input") {
-    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.in}');`, (err, res) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}');`, (err, res) => {
       // if (err) throw err;
       res.send(
         `Got this: ${req.body} from ${req.connection.remoteAddress}`,
@@ -50,7 +50,7 @@ app.post('/api/store', (req, res) => {
       client.end();
     });
   } else if (action.type === "eval_pair") {
-    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, input, output, result) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.in}', '${action.out}', '${action.result}');`, (err, res) => {
       // if (err) throw err;
       res.send(
         `Got this: ${req.body} from ${req.connection.remoteAddress}`,
@@ -58,7 +58,7 @@ app.post('/api/store', (req, res) => {
       client.end();
     });
   } else if (action.type === "final_answer") {
-    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', convert(datetime, '${time}', 20), '${action.reason}');`, (err, res) => {
+    client.query(`insert into actions (userID, actionID, actionType, time, reason) values ('${id}', '${action.when}', '${action.type}', '${time}', '${action.reason}');`, (err, res) => {
       // if (err) throw err;
       res.send(
         `Got this: ${req.body} from ${req.connection.remoteAddress}`,
