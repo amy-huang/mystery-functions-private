@@ -79,7 +79,7 @@ app.post('/api/store', (req, res) => {
       }
     });
   }
-  pool.end()
+  pool.end
 });
 
 if (process.env.NODE_ENV === 'production') {
