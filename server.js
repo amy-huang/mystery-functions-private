@@ -13,15 +13,15 @@ const client = new Client({
 
 // Create table for log actions
 client.connect();
-client.query('create table actions ( id int, actionType varchar(255), time varchar(255) )', (err, res) => {
-  if (err) throw err;
+client.query('create table actions ( id varchar(255), actionType varchar(255), time varchar(255) )', (err, res) => {
+  // if (err) throw err;
   client.end();
 });
 
 // To see if table got made
 client.connect();
 client.query('show tables;', (err, res) => {
-  if (err) throw err;
+  // if (err) throw err;
   // for (let row of res.rows) {
   //   console.log(JSON.stringify(row));
   // }
@@ -48,9 +48,13 @@ app.post('/api/id', (req, res) => {
 // Stores info
 app.post('/api/store', (req, res) => {
   logEvent = req.body
-  res.send(
-    `Got this: ${req.body} from ${req.connection.remoteAddress}`,
-  );
+  client.query(`insert into actions (${req.connection.remoteAddress}, ${req.body.type}, ${req.body.time})`, (err, res) => {
+    // if (err) throw err;
+    res.send(
+      `Got this: ${req.body} from ${req.connection.remoteAddress}`,
+    );
+    client.end();
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
