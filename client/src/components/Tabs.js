@@ -78,12 +78,12 @@ export default function SimpleTabs(props) {
     // var xhr = new XMLHttpRequest();
     // xhr.open("POST", '/store', true);
     // xhr.send(JSON.stringify(obj));
-    const response = await fetch('/api/world', {
+    const response = await fetch('/api/store', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ post: "hey!!" }),
+      body: JSON.stringify(obj),
     });
     const body = await response.text();
     console.log(body)
@@ -100,10 +100,10 @@ export default function SimpleTabs(props) {
       alert("'" + evalInputStr + "' is not a valid input to this function");
       return;
     }
-    if (evalInputReason === "") {
-      alert("Please submit a reason that you evaluated this input: " + evalInputStr);
-      return;
-    }
+    // if (evalInputReason === "") {
+    //   alert("Please submit a reason that you evaluated this input: " + evalInputStr);
+    //   return;
+    // }
 
     // Create guess
     var guess = {};
@@ -135,10 +135,10 @@ export default function SimpleTabs(props) {
       alert("'" + evalPairOutput + "' is not a valid output of this function");
       return;
     }
-    if (evalPairReason === "") {
-      alert("Please submit a reason that you evaluated this input/output pair: " + evalPairInput + " -> " + evalPairOutput);
-      return;
-    }
+    // if (evalPairReason === "") {
+    //   alert("Please submit a reason that you evaluated this input/output pair: " + evalPairInput + " -> " + evalPairOutput);
+    //   return;
+    // }
 
     var guess = {};
     guess.key = newKey();

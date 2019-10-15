@@ -1,6 +1,35 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const { Client } = require('pg');
+
+var userId = 0;
+
+// Initialize database
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+// Create table for log actions
+client.connect();
+client.query('create table actions ( id int, actionType varchar(255), time varchar(255) )', (err, res) => {
+  if (err) throw err;
+  client.end();
+});
+
+// To see if table got made
+client.connect();
+client.query('show tables;', (err, res) => {
+  if (err) throw err;
+  // for (let row of res.rows) {
+  //   console.log(JSON.stringify(row));
+  // }
+  res.send(
+    `Got this: ${res.rows} from ${req.connection.remoteAddress}`,
+  );
+  client.end();
+});
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -8,14 +37,19 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// API calls
-app.get('/api/hello', (req, res) => {
-  res.send({ express: 'Hello From Express' });
+// Give client a unique ID to use for logging
+app.post('/api/id', (req, res) => {
+  res.send(
+    `${userId}`,
+  );
+  userId += 1
 });
 
-app.post('/api/world', (req, res) => {
+// Stores info
+app.post('/api/store', (req, res) => {
+  logEvent = req.body
   res.send(
-    `I received your POST request. This is what you sent me: ${req.body.post}`,
+    `Got this: ${req.body} from ${req.connection.remoteAddress}`,
   );
 });
 
@@ -24,7 +58,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
 
   // Handle React routing, return all requests to React app
-  app.get('*', function(req, res) {
+  app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
