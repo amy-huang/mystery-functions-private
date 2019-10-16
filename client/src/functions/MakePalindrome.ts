@@ -1,8 +1,4 @@
 class MakePalindrome {
-  static nameOf(): String {
-    return "make palindrome"
-  }
-
   static inputType(): string {
     return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
   }

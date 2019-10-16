@@ -65,45 +65,26 @@ var evalPairOutput = "";
 var evalPairReason = "";
 var finalGuess = "";
 
-async function storeInServer(obj) {
-  // console.log(JSON.stringify(obj))
-  const response = await fetch('/api/store', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(obj),
-  });
-  const body = await response.text();
-  console.log(body)
-}
-
-async function getMyID() {
-  // console.log(JSON.stringify(obj))
-  const response = await fetch('/api/id', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(Object()),
-  });
-  console.log(response.json())
-  console.log(response.body)
-  return response.json().id
-}
-
-// ID for logging
-var myID = -1
-
 export default function SimpleTabs(props) {
-  myID = getMyID()
-  console.log(myID)
   const classes = useStyles();
 
   // For switching tabs
   const [value, setValue] = React.useState(0);
   function handleChange(event, newValue) {
     setValue(newValue);
+  }
+
+  async function sendToServer(obj) {
+    // console.log(JSON.stringify(obj))
+    const response = await fetch('/api/store', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(obj),
+    });
+    const body = await response.text();
+    console.log(body)
   }
 
   function getCurrentTime() {
@@ -131,9 +112,7 @@ export default function SimpleTabs(props) {
 
     // Create guess
     var guess = {};
-    guess.sessionID = myID
     guess.key = newKey();
-    guess.funcName = funcObj.nameOf()
     guess.type = "eval_input";
     guess.in = funcObj.parseInput(evalInputStr);
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
@@ -141,7 +120,7 @@ export default function SimpleTabs(props) {
     guess.time = getCurrentTime()
 
     // Send to server for storing
-    storeInServer(guess)
+    sendToServer(guess)
 
     // Update console
     guesses.push(guess);
@@ -163,9 +142,7 @@ export default function SimpleTabs(props) {
     // }
 
     var guess = {};
-    guess.sessionID = myID
     guess.key = newKey();
-    guess.funcName = funcObj.nameOf()
     guess.type = "eval_pair";
     guess.in = funcObj.parseInput(evalPairInput);
     guess.out = funcObj.parseOutput(evalPairOutput);
@@ -177,7 +154,7 @@ export default function SimpleTabs(props) {
     guess.reason = evalPairReason.trim();
     guess.time = getCurrentTime()
 
-    storeInServer(guess)
+    sendToServer(guess)
 
     guesses.push(guess);
     updateFunc();
@@ -192,14 +169,12 @@ export default function SimpleTabs(props) {
     }
     alert(guessField.placeHolder = funcObj.answerText());
     var guess = Object()
-    guess.sessionID = myID
     guess.key = newKey()
-    guess.funcName = funcObj.nameOf()
     guess.type = "final_answer"
     guess.reason = finalGuess
     guess.time = getCurrentTime()
 
-    storeInServer(guess)
+    sendToServer(guess)
   }
 
   function toNextPageButton() {
