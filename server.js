@@ -11,10 +11,6 @@ const conPool = new Pool({
 conPool.query('create table if not exists actions ( userID varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
 
-// // This test query works.
-// conPool.query(`insert into actions (userID) values ('test');`, (err, result) => {
-// });
-
 const app = express();
 const port = process.env.PORT || 5000;
 
