@@ -75,7 +75,7 @@ export default function SimpleTabs(props) {
   }
 
   async function sendToServer(obj) {
-    console.log(JSON.stringify(obj))
+    // console.log(JSON.stringify(obj))
     const response = await fetch('/api/store', {
       method: 'POST',
       headers: {
@@ -99,7 +99,6 @@ export default function SimpleTabs(props) {
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
-  var whichEvent = 0
 
   function evalInput() {
     if (!funcObj.validInput(evalInputStr)) {
@@ -119,7 +118,6 @@ export default function SimpleTabs(props) {
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
     guess.reason = evalInputReason.trim();
     guess.time = getCurrentTime()
-    guess.when = whichEvent++
 
     // Send to server for storing
     sendToServer(guess)
@@ -155,7 +153,6 @@ export default function SimpleTabs(props) {
     }
     guess.reason = evalPairReason.trim();
     guess.time = getCurrentTime()
-    guess.when = whichEvent++
 
     sendToServer(guess)
 
@@ -176,7 +173,6 @@ export default function SimpleTabs(props) {
     guess.type = "final_answer"
     guess.reason = finalGuess
     guess.time = getCurrentTime()
-    guess.when = whichEvent++
 
     sendToServer(guess)
   }
