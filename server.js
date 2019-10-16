@@ -8,7 +8,7 @@ const conPool = new Pool({
   ssl: true,
   max: 20,
 });
-conPool.query('create table if not exists ActionsV2 ( userID varchar (255), sessionID integer, actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
+conPool.query('create table if not exists ActionsV3 ( userID varchar (255), sessionID integer, funcName varchar (255), actionID integer, actionType varchar (255), time timestamp, input varchar (255), output varchar (255), result varchar (255), reason varchar (255) );', (err, result) => {
 });
 
 const app = express();
@@ -52,6 +52,7 @@ app.post('/api/store', async (req, res) => {
   var action = req.body
   var id = JSON.stringify(req.connection.remoteAddress).replace(/\"/g, "")
   var sessionID = action.sessionID
+  var funcName = action.funcName
   var key = action.key
   var type = action.type
   var time = action.time
@@ -66,11 +67,11 @@ app.post('/api/store', async (req, res) => {
     out_str = toDbString(action.out)
     // console.log("in: ", in_str)
 
-    conPool.query(`insert into actions (userID, sessionID, actionID, actionType, time, input, output) values ($1, $2, $3, $4, $5, $6, $7);`, [id, sessionID, key, type, time, in_str, out_str], (err, result) => {
+    conPool.query(`insert into ActionsV3 (userID, sessionID, funcName, actionID, actionType, time, input, output) values ($1, $2, $3, $4, $5, $6, $7, $8);`, [id, sessionID, funcName, key, type, time, in_str, out_str], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed!`)
+        res.send(`Failed:`, err.name, err.message, err.stack)
       }
     });
   } else if (type === "eval_pair") {
@@ -81,21 +82,21 @@ app.post('/api/store', async (req, res) => {
     // console.log("out: ", out_str)
     // console.log("result: ", result)
 
-    conPool.query(`insert into actions (userID, sessionID, actionID, actionType, time, input, output, result) values ($1, $2, $3, $4, $5, $6, $7, $8);`, [id, sessionID, key, type, time, in_str, out_str, result], (err, result) => {
+    conPool.query(`insert into ActionsV3 (userID, sessionID, funcName, actionID, actionType, time, input, output, result) values ($1, $2, $3, $4, $5, $6, $7, $8, $9);`, [id, sessionID, funcName, key, type, time, in_str, out_str, result], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed!`)
+        res.send(`Failed:`, err.name, err.message, err.stack)
       }
     });
   } else if (type === "final_answer") {
     reason = action.reason
 
-    conPool.query(`insert into actions (userID, sessionID, actionID, actionType, time, reason) values ($1, $2, $3, $4, $5, $6);`, [id, sessionID, key, type, time, reason], (err, result) => {
+    conPool.query(`insert into ActionsV3 (userID, sessionID, funcName, actionID, actionType, time, reason) values ($1, $2, $3, $4, $5, $6, $7);`, [id, sessionID, funcName, key, type, time, reason], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed!`)
+        res.send(`Failed:`, err.name, err.message, err.stack)
       }
     });
   }

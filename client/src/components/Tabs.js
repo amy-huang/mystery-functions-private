@@ -130,6 +130,7 @@ export default function SimpleTabs(props) {
     var guess = {};
     guess.sessionID = myID
     guess.key = newKey();
+    guess.funcName = funcObj.nameOf()
     guess.type = "eval_input";
     guess.in = funcObj.parseInput(evalInputStr);
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr));
@@ -161,6 +162,7 @@ export default function SimpleTabs(props) {
     var guess = {};
     guess.sessionID = myID
     guess.key = newKey();
+    guess.funcName = funcObj.nameOf()
     guess.type = "eval_pair";
     guess.in = funcObj.parseInput(evalPairInput);
     guess.out = funcObj.parseOutput(evalPairOutput);
@@ -189,6 +191,7 @@ export default function SimpleTabs(props) {
     var guess = Object()
     guess.sessionID = myID
     guess.key = newKey()
+    guess.funcName = funcObj.nameOf()
     guess.type = "final_answer"
     guess.reason = finalGuess
     guess.time = getCurrentTime()

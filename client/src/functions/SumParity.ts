@@ -1,4 +1,8 @@
 class SumParity {
+  static nameOf(): String {
+    return "parity of sum of numerical elements"
+  }
+
   static inputType(): string {
     return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
   }
