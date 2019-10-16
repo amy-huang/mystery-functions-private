@@ -26,6 +26,10 @@ function toDbString(a_list) {
   if (a_list === undefined) {
     return ""
   }
+  already_str = JSON.stringify(a_list)
+  if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
+    return already_str
+  }
 
   as_str = ""
   for (var i = 0; i < a_list.length; i++) {
