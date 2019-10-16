@@ -17,11 +17,14 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// TODO: make this generic for any input, output types we use: no special charas
+// Turns any string representing input/output to a database-friendly string
+// without special characters
 function toDbString(a_list) {
   if (a_list === undefined) {
     return ""
   }
+
+  // Not a list
   already_str = JSON.stringify(a_list)
   if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
     return already_str

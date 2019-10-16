@@ -87,14 +87,17 @@ async function getMyID() {
     },
     body: JSON.stringify(Object()),
   });
-  console.log(response)
-  return response.body.id
+  console.log(response.json())
+  console.log(response.body)
+  return response.json().id
 }
 
 // ID for logging
-const myID = getMyID()
+var myID = -1
 
 export default function SimpleTabs(props) {
+  myID = getMyID()
+  console.log(myID)
   const classes = useStyles();
 
   // For switching tabs
