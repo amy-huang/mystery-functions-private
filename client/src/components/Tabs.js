@@ -194,8 +194,8 @@ export default function SimpleTabs(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
-          <Tab label="Input" {...a11yProps(0)} />
-          <Tab label="Input/Output pair" {...a11yProps(1)} />
+          <Tab label="Evaluate Input" {...a11yProps(0)} />
+          {/* <Tab label="Input/Output pair" {...a11yProps(1)} /> */}
           <Tab label="Final Guess" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
@@ -206,10 +206,10 @@ export default function SimpleTabs(props) {
               <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value; }}>
               </TextField>
             </Grid>
-            <Grid item >
+            {/* <Grid item >
               <TextField multiline={true} rows={1} fullWidth={true} variant="outlined" placeholder="Why this input?" onChange={(e) => { evalInputReason = e.target.value; }}>
               </TextField>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <Grid item>
@@ -222,7 +222,7 @@ export default function SimpleTabs(props) {
         </Grid>
       </TabPanel>
 
-      <TabPanel value={value} index={1}>
+      {/* <TabPanel value={value} index={1}>
         <Grid container spacing={4}>
           <Grid container item spacing={4}>
             <Grid item>
@@ -249,8 +249,9 @@ export default function SimpleTabs(props) {
             </Grid>
           </Grid>
         </Grid>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
+      </TabPanel> */}
+
+      <TabPanel value={value} index={1}>
         <Grid container spacing={4} direction="column">
           <Grid item>
             <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value; }} ref={(elem) => { guessField = elem; }}>
