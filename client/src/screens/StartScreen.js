@@ -118,7 +118,7 @@ class StartScreen extends Component {
                   <Grid container spacing={4} alignContent="center">
 
                     <Grid item className={classes.panel}>
-                      <p>Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: 1) given any input of valid type, we will tell you what the function outputs; 2) given any input and output pair of valid types, we will tell you if that is a correct pair for the function.</p>
+                      <p>Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: 1) given any input of valid type, we will tell you what the function outputs.</p>
 
                       <p>Feel free to switch between the two modes as you wish in the tabs on the left half of the screen - output will appear in the console on the right half. </p>
 
