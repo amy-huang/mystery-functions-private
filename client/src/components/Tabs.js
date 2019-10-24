@@ -64,6 +64,7 @@ var evalPairInput = "";
 var evalPairOutput = "";
 var evalPairReason = "";
 var finalGuess = "";
+var mturkId = "";
 
 export default function SimpleTabs(props) {
   const classes = useStyles();
@@ -171,7 +172,7 @@ export default function SimpleTabs(props) {
     var guess = Object()
     guess.key = newKey()
     guess.type = "final_answer"
-    guess.reason = finalGuess
+    guess.reason = finalGuess + " " + mturkId
     guess.time = getCurrentTime()
 
     sendToServer(guess)
@@ -253,6 +254,10 @@ export default function SimpleTabs(props) {
 
       <TabPanel value={value} index={1}>
         <Grid container spacing={4} direction="column">
+          <Grid item>
+            <TextField fullWidth={true} variant="outlined" placeholder="Put your MTurk ID here" onChange={(e) => { mturkId = e.target.value; }}>
+            </TextField>
+          </Grid>
           <Grid item>
             <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value; }} ref={(elem) => { guessField = elem; }}>
             </TextField>
