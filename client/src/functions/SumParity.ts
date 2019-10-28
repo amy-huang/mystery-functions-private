@@ -1,6 +1,10 @@
 class SumParity {
+  static inputPlaceHolderText(): string {
+    return "[ ]"
+  }
+
   static inputType(): string {
-    return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
+    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]";
   }
 
   static outputType(): string {
@@ -8,7 +12,7 @@ class SumParity {
   }
 
   static answerText(): string {
-    return "This function returns the parity of the sum of the elements of the input list.";
+    return "This function returns 1 if the sum of the elements of the input list is odd and 0 if even.";
   }
 
   private static asIntEvaluator(item: any) {

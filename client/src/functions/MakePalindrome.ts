@@ -1,14 +1,18 @@
 class MakePalindrome {
+  static inputPlaceHolderText(): string {
+    return "[]"
+  }
+
   static inputType(): string {
-    return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
+    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]";
   }
 
   static outputType(): string {
-    return "list of integers, represented by comma separated numbers bookended by square brackets like so: [1,2,3,4,5]";
+    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]";
   }
 
   static answerText(): string {
-    return "This function transforms any list of items into a palindromic one by changing the second half of it to mirror the first - this way, the output is the same reversed or not.";
+    return "This function transforms any list of items into a palindromic one by changing the second half of it to mirror the first. The output list is the same whether or not you reverse it.";
   }
 
   private static asIntEvaluator(item: any) {

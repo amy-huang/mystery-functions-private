@@ -190,6 +190,8 @@ export default function SimpleTabs(props) {
     )
   }
 
+  evalInputStr = funcObj.inputPlaceHolderText()
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -203,66 +205,18 @@ export default function SimpleTabs(props) {
         <Grid container spacing={4}>
           <Grid container item spacing={4} direction="column">
             <Grid item>
-              <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value; }}>
+              <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value; }} onKeyUp={(e) => { if (e.keyCode === 13) { evalInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
               </TextField>
             </Grid>
-            {/* <Grid item >
-              <TextField multiline={true} rows={1} fullWidth={true} variant="outlined" placeholder="Why this input?" onChange={(e) => { evalInputReason = e.target.value; }}>
-              </TextField>
-            </Grid> */}
-          </Grid>
-
-          <Grid item>
-            <div>
-              <Button type="submit" color='primary' variant="contained" className={classes.actionButton} onClick={evalInput}>
-                Submit
-              </Button>
-            </div>
           </Grid>
         </Grid>
       </TabPanel>
 
-      {/* <TabPanel value={value} index={1}>
-        <Grid container spacing={4}>
-          <Grid container item spacing={4}>
-            <Grid item>
-              <TextField label="Input" onChange={(e) => { evalPairInput = e.target.value; }}>
-              </TextField>
-            </Grid>
-            <Grid item>
-              <TextField label="Output" onChange={(e) => { evalPairOutput = e.target.value; }}>
-              </TextField>
-            </Grid>
-          </Grid>
-
-          <Grid container item spacing={4} direction="column">
-            <Grid item>
-              <TextField multiline={true} rows={1} fullWidth={true} variant="outlined" placeholder="Why this guess?" onChange={(e) => { evalPairReason = e.target.value; }}>
-              </TextField>
-            </Grid>
-            <Grid item>
-              <div>
-                <Button color='primary' variant="contained" className={classes.actionButton} onClick={evalInputOutputPair}>
-                  Submit
-                </Button>
-              </div>
-            </Grid>
-          </Grid>
-        </Grid>
-      </TabPanel> */}
-
       <TabPanel value={value} index={1}>
         <Grid container spacing={4} direction="column">
           <Grid item>
-            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value; }} ref={(elem) => { guessField = elem; }}>
+            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value; }} ref={(elem) => { guessField = elem; }} onKeyUp={(e) => { if (e.keyCode === 13) { showAnswer() } }} helperText="ENTER to submit">
             </TextField>
-          </Grid>
-          <Grid item>
-            <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={showAnswer}>
-                SUBMIT FINAL GUESS AND SEE ANSWER
-                </Button>
-            </div>
           </Grid>
           <Grid item>
             {toNextPageButton()}

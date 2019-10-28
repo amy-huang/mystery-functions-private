@@ -120,9 +120,9 @@ class StartScreen extends Component {
                     <Grid item className={classes.panel}>
                       <p>Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: given any input of valid type, we will tell you what the function outputs.</p>
 
-                      <p>On the next screen, you'll see a description of the function signature and a tab window for inputs on the left, and a console where the results will be displayed on the right. </p>
+                      <p>On the next screen, you'll see a description of the input and output types on the upper left. There will be an area for submitting inputs to evaluate on the lower left, and a console on the right where output will be displayed. </p>
 
-                      <p>Once you would like to end the session, go to the second tab to make a guess (as a text description) as to what the function is. You'll be shown the answer (also a text description). Then, you can click the link to the next function.</p>
+                      <p>Once you would like to end the session, go to the second tab on the lower left to submit in your own words what you think the function does. You'll be shown the answer (a text description). Then, you can click the link to the next function.</p>
 
                       <p>There are 2 mystery functions. Good luck!</p>
                     </Grid>

@@ -1,0 +1,4 @@
+include time zone info in timestamps
+figure out giving users session IDs
+multiple arguments as input hmmm how to represent that on screen generically for any function
+classes for input types, so that function objects only focus on the function and not input/output type descriptions/evaluation
