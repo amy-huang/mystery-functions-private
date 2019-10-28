@@ -1,6 +1,6 @@
 class SumParity {
   static inputPlaceHolderText(): string {
-    return "[ ]"
+    return "[]"
   }
 
   static inputType(): string {
@@ -67,7 +67,7 @@ class SumParity {
     for (var i = 0; i < items.length; i++) {
       sum += items[i]
     }
-    return sum % 2
+    return Math.abs(sum % 2)
   }
 
   static equivalentOutputs(first: number, second: number): boolean {
