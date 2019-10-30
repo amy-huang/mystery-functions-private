@@ -174,6 +174,13 @@ class GuessingScreen extends Component {
         </Grid>
       );
     }
+    if (tile.type === "final_answer") {
+      return (
+        <Grid container spacing={1}>
+          <Grid item><i>Guess: {tile.reason}</i></Grid>
+        </Grid>
+      );
+    }
   }
 
   render() {
