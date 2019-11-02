@@ -1,4 +1,8 @@
 class MakePalindrome {
+  static description(): string {
+    return "MakePalindrome"
+  }
+
   static inputPlaceHolderText(): string {
     return "[]"
   }

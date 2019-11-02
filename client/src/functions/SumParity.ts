@@ -1,4 +1,8 @@
 class SumParity {
+  static description(): string {
+    return "SumParity"
+  }
+
   static inputPlaceHolderText(): string {
     return "[]"
   }
