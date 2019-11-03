@@ -99,6 +99,7 @@ export default function SimpleTabs(props) {
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
+  var toQuiz = props.children.toQuiz
 
   function evalInput() {
     if (!funcObj.validInput(evalInputStr)) {
@@ -187,13 +188,10 @@ export default function SimpleTabs(props) {
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={showAnswer}>
-                Submit
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={toQuiz}>
+                To Quiz
                 </Button>
             </div>
-          </Grid>
-          <Grid item>
-            {toNextPageButton()}
           </Grid>
         </Grid>
       </TabPanel>

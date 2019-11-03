@@ -8,7 +8,8 @@ class TabsWrapper extends Component {
       guesses: this.props.guesses,
       updateFunc: this.props.updateFunc,
       funcObj: this.props.funcObj,
-      nextPage: this.props.nextPage
+      nextPage: this.props.nextPage,
+      toQuiz: this.props.toQuiz
     };
     return (
       <Tabs>{children}</Tabs>

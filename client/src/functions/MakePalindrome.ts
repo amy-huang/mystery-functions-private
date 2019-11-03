@@ -20,6 +20,10 @@ class MakePalindrome {
     return newItems
   }
 
+  static inputGenerators(): Function[] {
+    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }, () => { return [-3, 0, 0, -3] }, () => { return [5, 3, 1, -1, 4] }, () => { return [-8, 3] }]
+  }
+
   static answerText(): string {
     return "This function transforms any list of items into a palindromic one by changing the second half of it to mirror the first. The output list is the same whether or not you reverse it.";
   }

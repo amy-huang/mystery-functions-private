@@ -10,6 +10,8 @@ import { GridList, GridListTile } from '@material-ui/core'
 import EvalGuessLine from '../components/EvalGuessLine'
 import EvalInputLine from '../components/EvalInputLine'
 import DummyLine from '../components/DummyLine'
+import Quiz from '../components/Quiz';
+import Button from '@material-ui/core/Button'
 
 const gridListHeight = 500
 
@@ -20,7 +22,9 @@ const styles = theme => ({
     overflow: 'hidden',
     backgroundSize: 'cover',
     backgroundPosition: '0 400px',
-    paddingBottom: 200
+    paddingBottom: 200,
+    alignContent: 'center',
+    alignItems: 'center'
   },
   grid: {
     width: 1200,
@@ -127,6 +131,20 @@ function dummyTiles() {
 }
 
 class GuessingScreen extends Component {
+  constructor(props) {
+    super(props)
+    if (localStorage.getItem('quiz') === null) {
+      this.state = { quiz: false }
+      localStorage.setItem('quiz', false)
+    } else {
+      if (localStorage.getItem('quiz') === "false") {
+        this.state = { quiz: false }
+      } else {
+        this.state = { quiz: true }
+      }
+    }
+  }
+
   guesses = dummyTiles()
   scrolling = false
   scrollId
@@ -183,22 +201,46 @@ class GuessingScreen extends Component {
     }
   }
 
+  quizOff = () => {
+    localStorage.setItem('quiz', false)
+    this.setState({ quiz: false })
+  }
+
+  quizOn = () => {
+    localStorage.setItem('quiz', true)
+    this.setState({ quiz: true })
+  }
+
   render() {
     const { classes } = this.props
+
+    var quizVal = Boolean.valueOf(localStorage.getItem('quiz'))
+    if (quizVal === true) {
+      this.setState({ quiz: true })
+    }
     return (
       <React.Fragment>
         <CssBaseline />
         < div className={classes.root} >
           {/* Center all Grids */}
-          < Grid container justify="center" spacing={4}>
-
-            {/* Left half panel */}
-            < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
-              {/* Function signature */}
-              < Grid item xs={12} >
-                <Typography color='secondary' gutterBottom >
+          {this.state.quiz ?
+            < Grid container justify="center" spacing={4}>
+              < Grid container item spacing={4} className={classes.panel} direction="column" >
+                <Quiz funcObj={this.props.funcObj}></Quiz>
+                <Grid item>
+                  <Button color='primary' variant="contained" className={classes.actionButton} onClick={this.quizOff}>
+                    Cancel
+                </Button>
+                </Grid>
+              </ Grid>
+            </ Grid>
+            :
+            < Grid container justify="center" spacing={4}>
+              < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
+                {/* Function signature */}
+                < Grid item xs={12} >
                   This mystery function takes an input of type
-                  <ul>
+                    <ul>
                     <li>
                       {this.props.funcObj.inputDescription()}
                     </li>
@@ -209,33 +251,32 @@ class GuessingScreen extends Component {
                       {this.props.funcObj.outputDescription()}
                     </li>
                   </ul>
-                </Typography>
+                </Grid>
+
+                <Grid item xs={12} >
+                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} nextPage={this.props.nextPage} toQuiz={this.quizOn}></TabsWrapper>
+                </Grid>
               </Grid>
 
-              <Grid item xs={12} >
-                <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} nextPage={this.props.nextPage}></TabsWrapper>
-              </Grid>
-            </Grid>
-
-            <Grid container item spacing={4} className={classes.panel}>
-              <Paper className={classes.paper}>
-                <div className={classes.gridListWrapper}>
-                  <Grid container spacing={4} alignContent="center">
-                    <Grid item>
-                      <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem }}>
-                        {this.guesses.map(tile => (
-                          <GridListTile key={tile.key} cols={1}>
-                            {this.getLine(tile)}
-                          </GridListTile>
-                        ))}
-                      </GridList>
+              <Grid container item spacing={4} className={classes.panel}>
+                <Paper className={classes.paper}>
+                  <div className={classes.gridListWrapper}>
+                    <Grid container spacing={4} alignContent="center">
+                      <Grid item>
+                        <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem }}>
+                          {this.guesses.map(tile => (
+                            <GridListTile key={tile.key} cols={1}>
+                              {this.getLine(tile)}
+                            </GridListTile>
+                          ))}
+                        </GridList>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </div>
-              </Paper>
+                  </div>
+                </Paper>
+              </Grid>
             </Grid>
-
-          </Grid>
+          }
         </div>
       </React.Fragment >
     )

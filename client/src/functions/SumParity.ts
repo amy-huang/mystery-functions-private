@@ -14,6 +14,10 @@ class SumParity {
     return Math.abs(sum % 2)
   }
 
+  static inputGenerators(): Function[] {
+    return [() => { return [333] }, () => { return [0] }, () => { return [1, 0, 1] }, () => { return [8, 4] }, () => { return [2, 5] }, () => { return [-8, 3] }]
+  }
+
   static answerText(): string {
     return "This function returns 1 if the sum of the elements of the input list is odd and 0 if even."
   }
