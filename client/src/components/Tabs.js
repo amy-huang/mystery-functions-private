@@ -51,12 +51,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function newKey() {
-  if (typeof newKey.key == 'undefined') {
-    newKey.key = 0
+  if (localStorage.getItem('actionKey') === null) {
+    localStorage.setItem('actionKey', 0)
   } else {
-    newKey.key += 1
+    var k = parseInt(localStorage.getItem('actionKey')) + 1
+    localStorage.setItem('actionKey', k)
   }
-  return newKey.key.toString()
+  return localStorage.getItem('actionKey')
 }
 
 function getCurrentTime() {
@@ -113,7 +114,6 @@ export default function SimpleTabs(props) {
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
     guess.finalGuess = evalInputReason.trim()
     guess.time = getCurrentTime()
-    console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
     if (localStorage.getItem(funcObj.description()) === null) {
       sendToServer(guess)
     }
@@ -134,7 +134,7 @@ export default function SimpleTabs(props) {
     guess.type = "final_answer"
     guess.finalGuess = finalGuess
     guess.time = getCurrentTime()
-    console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
+
     if (localStorage.getItem(funcObj.description()) === null) {
       localStorage.setItem(funcObj.description(), 'Done')
       sendToServer(guess)
