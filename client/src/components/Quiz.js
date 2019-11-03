@@ -151,7 +151,9 @@ class Quiz extends Component {
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
       console.log(action)
-      Util.sendToServer(action)
+      if (localStorage.getItem(this.funcObj.description()) === null) {
+        Util.sendToServer(action)
+      }
     }
 
     // Show answer onscreen
@@ -159,7 +161,7 @@ class Quiz extends Component {
     if (gotCorrect) {
       answerText = "Nice, that's correct!"
     } else {
-      answerText = "Incorrect"
+      answerText = "Incorrect."
     }
     this.setState({ 'answerText': answerText })
 
