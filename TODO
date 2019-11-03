@@ -1,4 +1,4 @@
-include time zone info in timestamps
-figure out giving users session IDs
-multiple arguments as input hmmm how to represent that on screen generically for any function
-classes for input types, so that function objects only focus on the function and not input/output type descriptions/evaluation
+have tostring methods for types so that parsing for quiz is easier
+Send quiz answers and final guess to server, put correctly in DB
+
+Send out to PIs for review, opinions

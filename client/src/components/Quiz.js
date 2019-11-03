@@ -142,18 +142,16 @@ class Quiz extends Component {
       var action = {}
       action.id = localStorage.getItem('userID')
       action.fcn = this.funcObj.description()
-      action.key = Util.newKey()
       action.type = "quiz_answer"
-      action.in = this.currInput
-      action.out = this.funcObj.parseOutput(submitted)
+      action.in = this.currInput.toString() // TODO: make tostring method for each type object, and for each function have inputToString, etc
+      action.out = submitted
       action.q = this.state.question
       action.actual = actual
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
       console.log(action)
-      if (localStorage.getItem(this.funcObj.description()) === null) {
-        Util.sendToServer(action)
-      }
+      action.key = Util.newKey()
+      Util.sendToServer(action)
     }
 
     // Show answer onscreen
@@ -188,12 +186,12 @@ class Quiz extends Component {
     var guess = Object()
     guess.id = localStorage.getItem('userID')
     guess.fcn = this.funcObj.description()
-    guess.key = Util.newKey()
     guess.type = "final_answer"
     guess.finalGuess = this.props.guessText
     guess.time = Util.getCurrentTime()
 
     if (localStorage.getItem(this.funcObj.description()) === null) {
+      guess.key = Util.newKey()
       localStorage.setItem(this.funcObj.description(), 'Done')
       Util.sendToServer(guess)
     }
@@ -202,7 +200,7 @@ class Quiz extends Component {
 
   toNextPageButton = (nextPage) => {
     if (nextPage === undefined) {
-      return (<div>You're done!</div>)
+      return (<div></div>)
     }
     return (
       <div>

@@ -79,13 +79,13 @@ export default function SimpleTabs(props) {
     var guess = {}
     guess.id = userID
     guess.fcn = funcObj.description()
-    guess.key = Util.newKey()
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
     guess.finalGuess = evalInputReason.trim()
     guess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
+      guess.key = Util.newKey()
       Util.sendToServer(guess)
     }
     guesses.push(guess)

@@ -69,18 +69,18 @@ app.post('/api/store', async (req, res) => {
   var type = action.type
   var time = action.time
 
-  // console.log(typeof id, "id: ", id)
-  // console.log(typeof name, "name: ", name)
-  // console.log(typeof action.key, "key: ", key)
-  // console.log(typeof action.key, "type: ", type)
-  // console.log(typeof action.time, "time: ", time)
+  console.log(typeof id, "id: ", id)
+  console.log(typeof name, "name: ", name)
+  console.log(typeof action.key, "key: ", key)
+  console.log(typeof action.type, "type: ", type)
+  console.log(typeof action.time, "time: ", time)
 
   if (type === "eval_input") {
     // TODO: use in_out_types to use the right transformation fcn to db string
     in_str = listToDBString(action.in)
     out_str = listToDBString(action.out)
-    // console.log("in: ", in_str)
-    // console.log("in: ", out_str)
+    console.log("in: ", in_str)
+    console.log("in: ", out_str)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, input, output) values ($1, $2, $3, $4, $5, $6, $7);`, [id, name, key, type, time, in_str, out_str], (err, result) => {
       if (!err) {
@@ -91,6 +91,7 @@ app.post('/api/store', async (req, res) => {
     });
   } else if (type === "final_answer") {
     finalGuess = action.finalGuess
+    console.log("final guess: ", finalGuess)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, finalGuess) values ($1, $2, $3, $4, $5, $6);`, [id, name, key, type, time, finalGuess], (err, result) => {
       if (!err) {

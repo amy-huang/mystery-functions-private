@@ -102,6 +102,8 @@ const styles = theme => ({
   },
 })
 
+var userID = ""
+
 class StartScreen extends Component {
   render() {
     const { classes } = this.props
@@ -128,13 +130,13 @@ class StartScreen extends Component {
                     </Grid>
 
                     <Grid item>
-                      <TextField label="Enter your student ID here" onChange={(e) => { localStorage.setItem('userID', e.target.value) }} >
+                      <TextField label="Enter your student ID here" onChange={(e) => { userID = e.target.value }} >
                       </TextField>
                     </Grid>
 
                     <Grid item>
                       <Button type="submit">
-                        <Link to={this.props.nextPage}>Begin!</Link>
+                        <Link onClick={() => { localStorage.setItem('userID', userID) }} to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 
