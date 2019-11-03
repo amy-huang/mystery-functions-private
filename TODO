@@ -1,4 +1,5 @@
-have tostring methods for types so that parsing for quiz is easier
+FIX ID ENTERING DEAR GOD
+have tostring methods for types so that parsing for quiz WORKS
 Send quiz answers and final guess to server, put correctly in DB
 
 Send out to PIs for review, opinions
