@@ -1,81 +1,8 @@
+import ListOfInteger from "./ListOfInteger";
+
 class MakePalindrome {
   static description(): string {
     return "MakePalindrome"
-  }
-
-  static inputPlaceHolderText(): string {
-    return "[]"
-  }
-
-  static inputType(): string {
-    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]";
-  }
-
-  static outputType(): string {
-    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]";
-  }
-
-  static answerText(): string {
-    return "This function transforms any list of items into a palindromic one by changing the second half of it to mirror the first. The output list is the same whether or not you reverse it.";
-  }
-
-  private static asIntEvaluator(item: any) {
-    if (Number.isInteger(item)) {
-      return true;
-    }
-    return false;
-  }
-
-  static validInput(input: any): boolean {
-    var as_list;
-    try {
-      // Parse string as a list, with brackets required
-      if (input.trim()[0] !== "[") {
-        return false;
-      }
-      as_list = JSON.parse(input);
-      if (as_list.length > 0) {
-        for (var i = 0; i < as_list.length; i++) {
-          // Make sure item types are same as passed in param
-          if (!this.asIntEvaluator(as_list[i])) {
-            return false;
-          }
-        }
-      }
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static validOutput(input: any): boolean {
-    var as_list;
-    try {
-      // Parse string as a list, with brackets required
-      if (input.trim()[0] !== "[") {
-        return false;
-      }
-      as_list = JSON.parse(input);
-      if (as_list.length > 0) {
-        for (var i = 0; i < as_list.length; i++) {
-          // Make sure item types are same as passed in param
-          if (!this.asIntEvaluator(as_list[i])) {
-            return false;
-          }
-        }
-      }
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static parseInput(input: any): any[] {
-    return JSON.parse(input);
-  }
-
-  static parseOutput(output: any): any[] {
-    return JSON.parse(output);
   }
 
   static function(items: any[]): any[] {
@@ -93,18 +20,41 @@ class MakePalindrome {
     return newItems
   }
 
-  static equivalentOutputs(first: any[], second: any[]): boolean {
-    if (first === second) {
-      return true
-    }
-    if (first.length !== second.length) {
-      return false
-    }
-    for (var i = 0; i < first.length; ++i) {
-      if (first[i] !== second[i]) return false;
-    }
-    return true
+  static answerText(): string {
+    return "This function transforms any list of items into a palindromic one by changing the second half of it to mirror the first. The output list is the same whether or not you reverse it.";
+  }
+
+  static inputPlaceHolderText(): string {
+    return ListOfInteger.placeholderText()
+  }
+
+  static inputDescription(): string {
+    return ListOfInteger.longDescription()
+  }
+
+  static outputDescription(): string {
+    return ListOfInteger.longDescription()
+  }
+
+  static validInput(input: any): boolean {
+    return ListOfInteger.valid(input)
+  }
+
+  static validOutput(input: any): boolean {
+    return ListOfInteger.valid(input)
+  }
+
+  static parseInput(input: any): any[] {
+    return ListOfInteger.parse(input)
+  }
+
+  static parseOutput(output: any): any[] {
+    return ListOfInteger.parse(output);
+  }
+
+  static equivalentOutputs(first: any, second: any): boolean {
+    return ListOfInteger.areEquivalent(first, second)
   }
 }
 
-export default MakePalindrome;
+export default MakePalindrome

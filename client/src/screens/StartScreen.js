@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import withStyles from '@material-ui/styles/withStyles';
-import { withRouter, Link } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
+import React, { Component } from 'react'
+import withStyles from '@material-ui/styles/withStyles'
+import { withRouter, Link } from 'react-router-dom'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
 
 const styles = theme => ({
   root: {
@@ -100,11 +100,11 @@ const styles = theme => ({
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
-});
+})
 
 class StartScreen extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <React.Fragment>
         <CssBaseline />
@@ -145,4 +145,4 @@ class StartScreen extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(StartScreen));
+export default withRouter(withStyles(styles)(StartScreen))

@@ -1,10 +1,14 @@
 class ListOfInteger {
-  static shortDescription() {
+  static shortDescription(): string {
     return "list of integers"
   }
 
-  static LongDescription() {
+  static longDescription(): string {
     return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]"
+  }
+
+  static placeholderText(): string {
+    return "[]"
   }
 
   static valid(input: any): boolean {
@@ -40,7 +44,10 @@ class ListOfInteger {
     return JSON.parse(input);
   }
 
-  static areEquivalent(first: any[], second: any[]): boolean {
+  static areEquivalent(f: any, s: any): boolean {
+    const first = this.parse(f)
+    const second = this.parse(s)
+
     if (first === second) {
       return true
     }

@@ -3,7 +3,7 @@ class ListOfInteger {
     return "list of integers"
   }
 
-  static LongDescription() {
+  static longDescription() {
     return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]"
   }
 
@@ -28,8 +28,8 @@ class ListOfInteger {
     return JSON.parse(input);
   }
 
-  static areEquivalent(first: number, second: number): boolean {
-    return first === second
+  static areEquivalent(first: any, second: any): boolean {
+    return this.parse(first) === this.parse(second)
   }
 }
 

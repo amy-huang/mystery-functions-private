@@ -60,9 +60,6 @@ function newKey() {
 // For storing user input
 var evalInputStr = ""
 var evalInputReason = ""
-var evalPairInput = ""
-var evalPairOutput = ""
-var evalPairReason = ""
 var finalGuess = ""
 
 export default function SimpleTabs(props) {
@@ -105,10 +102,6 @@ export default function SimpleTabs(props) {
       alert("'" + evalInputStr + "' is not a valid input to this function")
       return
     }
-    // if (evalInputReason === "") {
-    //   alert("Please submit a reason that you evaluated this input: " + evalInputStr)
-    //   return
-    // }
 
     // Create guess
     var guess = {}
@@ -127,39 +120,6 @@ export default function SimpleTabs(props) {
     updateFunc()
   }
 
-  function evalInputOutputPair() {
-    if (!funcObj.validInput(evalPairInput)) {
-      alert("'" + evalPairInput + "' is not a valid input to this function")
-      return
-    }
-    if (!funcObj.validOutput(evalPairOutput)) {
-      alert("'" + evalPairOutput + "' is not a valid output of this function")
-      return
-    }
-    // if (evalPairReason === "") {
-    //   alert("Please submit a reason that you evaluated this input/output pair: " + evalPairInput + " -> " + evalPairOutput)
-    //   return
-    // }
-
-    var guess = {}
-    guess.key = newKey()
-    guess.type = "eval_pair"
-    guess.in = funcObj.parseInput(evalPairInput)
-    guess.out = funcObj.parseOutput(evalPairOutput)
-    if (funcObj.equivalentOutputs(funcObj.function(guess.in), guess.out)) {
-      guess.result = "YES"
-    } else {
-      guess.result = "NO"
-    }
-    guess.reason = evalPairReason.trim()
-    guess.time = getCurrentTime()
-
-    sendToServer(guess)
-    guesses.push(guess)
-    updateFunc()
-  }
-
-  // var guessField
   function showAnswer() {
     if (finalGuess === "") {
       var text = "Please submit a final guess."

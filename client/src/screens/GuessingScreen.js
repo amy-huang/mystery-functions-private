@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import withStyles from '@material-ui/styles/withStyles';
-import { withRouter } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import TabsWrapper from '../components/TabsWrapper';
-import Paper from '@material-ui/core/Paper';
-import { GridList, GridListTile } from '@material-ui/core';
-import EvalGuessLine from '../components/EvalGuessLine';
-import EvalInputLine from '../components/EvalInputLine';
-import DummyLine from '../components/DummyLine';
+import React, { Component } from 'react'
+import withStyles from '@material-ui/styles/withStyles'
+import { withRouter } from 'react-router-dom'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
+import TabsWrapper from '../components/TabsWrapper'
+import Paper from '@material-ui/core/Paper'
+import { GridList, GridListTile } from '@material-ui/core'
+import EvalGuessLine from '../components/EvalGuessLine'
+import EvalInputLine from '../components/EvalInputLine'
+import DummyLine from '../components/DummyLine'
 
-const gridListHeight = 500;
+const gridListHeight = 500
 
 const styles = theme => ({
   root: {
@@ -110,46 +110,46 @@ const styles = theme => ({
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
   },
-});
+})
 
 // Creates blank tiles to go in the console gridlist, so that new submissions
 // appear at the bottom and not the top 
 function dummyTiles() {
-  var guesses = [];
+  var guesses = []
   var numTiles = gridListHeight / 80
-  for (var i = -1 * numTiles; i < 0; i++) {
+  for (var i = -1 * numTiles i < 0 i++) {
     guesses.push({
       key: i,
       type: "dummy_line"
-    });
+    })
   }
-  return guesses;
+  return guesses
 }
 
 class GuessingScreen extends Component {
-  guesses = dummyTiles();
-  scrolling = false;
-  scrollId;
+  guesses = dummyTiles()
+  scrolling = false
+  scrollId
 
-  // If not at bottom of screen yet, scroll; stop repeated call if reached
+  // If not at bottom of screen yet, scroll stop repeated call if reached
   scrollDown = () => {
     if (this.gridlist === null) {
-      return;
+      return
     }
     if (this.gridlist.scrollTop < this.gridlist.scrollHeight - gridListHeight) {
-      this.gridlist.scrollTop += 5;
+      this.gridlist.scrollTop += 5
     } else {
-      clearInterval(this.scrollId);
-      this.scrolling = false;
+      clearInterval(this.scrollId)
+      this.scrolling = false
     }
   }
 
   // Update the guesses list shown in the console, and scroll down to new guess
   guessMade = () => {
-    this.setState({ guesses: this.guesses, scrollId: this.scrollId, scrolling: this.scrolling });
+    this.setState({ guesses: this.guesses, scrollId: this.scrollId, scrolling: this.scrolling })
     if (!this.scrolling) {
-      this.scrollId = setInterval(this.scrollDown, 10);
-      this.scrolling = true;
+      this.scrollId = setInterval(this.scrollDown, 10)
+      this.scrolling = true
     }
   }
 
@@ -157,12 +157,12 @@ class GuessingScreen extends Component {
     if (tile.type === "dummy_line") {
       return (
         <DummyLine></DummyLine>
-      );
+      )
     }
     if (tile.type === "eval_input") {
       return (
         <EvalInputLine in={tile.in} out={tile.out}></EvalInputLine>
-      );
+      )
     }
     if (tile.type === "eval_pair") {
       return (
@@ -172,19 +172,19 @@ class GuessingScreen extends Component {
           </Grid>
           <Grid item><i>({tile.reason})</i></Grid>
         </Grid>
-      );
+      )
     }
     if (tile.type === "final_answer") {
       return (
         <Grid container spacing={1}>
           <Grid item><i>Guess: {tile.reason}</i></Grid>
         </Grid>
-      );
+      )
     }
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <React.Fragment>
         <CssBaseline />
@@ -222,7 +222,7 @@ class GuessingScreen extends Component {
                 <div className={classes.gridListWrapper}>
                   <Grid container spacing={4} alignContent="center">
                     <Grid item>
-                      <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem; }}>
+                      <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem }}>
                         {this.guesses.map(tile => (
                           <GridListTile key={tile.key} cols={1}>
                             {this.getLine(tile)}
@@ -242,4 +242,4 @@ class GuessingScreen extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(GuessingScreen));
+export default withRouter(withStyles(styles)(GuessingScreen))
