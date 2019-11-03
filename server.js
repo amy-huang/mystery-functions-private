@@ -57,7 +57,7 @@ const conPool = new Pool({
   ssl: true,
   max: 20,
 });
-conPool.query('create table if not exists actions (userID VARCHAR (255), fcnName VARCHAR (255), actionID INTEGER, actionType VARCHAR (255), time TIMESTAMP, input VARCHAR (255), output VARCHAR (255), quizQ VARCHAR (255), actualOutput VARCHAR (255), result BOOLEAN, finalGuess VARCHAR (255) );', (err, result) => {
+conPool.query('create table if not exists actions (userID VARCHAR (255), fcnName VARCHAR (255), actionID INTEGER, actionType VARCHAR (255), time TIMESTAMP, input VARCHAR (255), output VARCHAR (255), quizQ INTEGER (255), actualOutput VARCHAR (255), result BOOLEAN, finalGuess VARCHAR (255) );', (err, result) => {
 });
 
 // Stores info in heroku postgres database

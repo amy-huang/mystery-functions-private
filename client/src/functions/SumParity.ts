@@ -15,7 +15,9 @@ class SumParity {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [0] }, () => { return [1, 0, 1] }, () => { return [8, 4] }, () => { return [2, 5] }, () => { return [-8, 3] }]
+    // return [() => { return [333] }, () => { return [0] }, () => { return [1, 0, 1] }, () => { return [8, 4] }, () => { return [2, 5] }, () => { return [-8, 3] }]
+    return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
+
   }
 
   static answerText(): string {
@@ -46,7 +48,7 @@ class SumParity {
     return ListOfInteger.parse(input)
   }
 
-  static parseOutput(output: any): any[] {
+  static parseOutput(output: any): number {
     return Integer.parse(output);
   }
 

@@ -9,7 +9,7 @@ import Box from '@material-ui/core/Box'
 import { TextField } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
-import Link from 'react-router-dom/Link'
+import Util from '../Util'
 
 const userID = localStorage.getItem('userID')
 
@@ -50,23 +50,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function newKey() {
-  if (localStorage.getItem('actionKey') === null) {
-    localStorage.setItem('actionKey', 0)
-  } else {
-    var k = parseInt(localStorage.getItem('actionKey')) + 1
-    localStorage.setItem('actionKey', k)
-  }
-  return localStorage.getItem('actionKey')
-}
-
-function getCurrentTime() {
-  var today = new Date()
-  var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds()
-  return date + ' ' + time
-}
-
 // For storing user input
 var evalInputStr = ""
 var evalInputReason = ""
@@ -79,19 +62,6 @@ export default function SimpleTabs(props) {
   const [value, setValue] = React.useState(0)
   function handleChange(event, newValue) {
     setValue(newValue)
-  }
-
-  async function sendToServer(obj) {
-    // console.log(JSON.stringify(obj))
-    const response = await fetch('/api/store', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(obj),
-    })
-    const body = await response.text()
-    console.log(body)
   }
 
   // Passed down from GuessingScreen for adding to guesses
@@ -109,53 +79,17 @@ export default function SimpleTabs(props) {
     var guess = {}
     guess.id = userID
     guess.fcn = funcObj.description()
-    guess.key = newKey()
+    guess.key = Util.newKey()
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
     guess.finalGuess = evalInputReason.trim()
-    guess.time = getCurrentTime()
+    guess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
-      sendToServer(guess)
+      Util.sendToServer(guess)
     }
     guesses.push(guess)
     updateFunc()
-  }
-
-  function showAnswer() {
-    if (finalGuess === "") {
-      var text = "Please submit a final guess."
-      alert(text)
-      return
-    }
-    var guess = Object()
-    guess.id = userID
-    guess.fcn = funcObj.description()
-    guess.key = newKey()
-    guess.type = "final_answer"
-    guess.finalGuess = finalGuess
-    guess.time = getCurrentTime()
-
-    if (localStorage.getItem(funcObj.description()) === null) {
-      localStorage.setItem(funcObj.description(), 'Done')
-      sendToServer(guess)
-    }
-    alert(funcObj.answerText())
-    guesses.push(guess)
-    updateFunc()
-  }
-
-  function toNextPageButton() {
-    if (props.children.nextPage === undefined) {
-      return (<div></div>)
-    }
-    return (
-      <div>
-        <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { window.location.reload() }}>
-          <Link style={{ color: '#FFF' }} to={props.children.nextPage}> go to next mystery function</Link>
-        </Button>
-      </div>
-    )
   }
 
   evalInputStr = funcObj.inputPlaceHolderText()
@@ -188,7 +122,7 @@ export default function SimpleTabs(props) {
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={toQuiz}>
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { toQuiz(finalGuess) }}>
                 To Quiz
                 </Button>
             </div>

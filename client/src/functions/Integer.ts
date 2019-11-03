@@ -1,4 +1,4 @@
-class ListOfInteger {
+class Integer {
   static shortDescription() {
     return "list of integers"
   }
@@ -24,8 +24,14 @@ class ListOfInteger {
     return false;
   }
 
-  static parse(input: any): any[] {
-    return JSON.parse(input);
+  static parse(input: any): number {
+    var parsed
+    try {
+      parsed = parseInt(input)
+    } catch {
+      return 0
+    }
+    return parsed
   }
 
   static areEquivalent(first: any, second: any): boolean {
@@ -33,4 +39,4 @@ class ListOfInteger {
   }
 }
 
-export default ListOfInteger
+export default Integer

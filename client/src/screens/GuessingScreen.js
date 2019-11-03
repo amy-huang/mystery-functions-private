@@ -133,15 +133,19 @@ function dummyTiles() {
 class GuessingScreen extends Component {
   constructor(props) {
     super(props)
-    if (localStorage.getItem('quiz') === null) {
-      this.state = { quiz: false }
-      localStorage.setItem('quiz', false)
-    } else {
-      if (localStorage.getItem('quiz') === "false") {
-        this.state = { quiz: false }
-      } else {
-        this.state = { quiz: true }
-      }
+    // if (localStorage.getItem('quiz') === null) {
+    //   this.state = { quiz: false }
+    //   localStorage.setItem('quiz', false)
+    // } else {
+    //   if (localStorage.getItem('quiz') === "false") {
+    //     this.state = { quiz: false }
+    //   } else {
+    //     this.state = { quiz: true }
+    //   }
+    // }
+    this.state = {
+      quiz: false,
+      guessText: ""
     }
   }
 
@@ -202,22 +206,31 @@ class GuessingScreen extends Component {
   }
 
   quizOff = () => {
-    localStorage.setItem('quiz', false)
+    // localStorage.setItem('quiz', false)
     this.setState({ quiz: false })
   }
 
-  quizOn = () => {
-    localStorage.setItem('quiz', true)
-    this.setState({ quiz: true })
+  quizOn = (guessText) => {
+    if (guessText === "") {
+      var text = "Please submit a non-blank guess."
+      alert(text)
+      return
+    }
+
+    // localStorage.setItem('quiz', true)
+    this.setState({
+      quiz: true,
+      guessText: guessText
+    })
   }
 
   render() {
     const { classes } = this.props
 
-    var quizVal = Boolean.valueOf(localStorage.getItem('quiz'))
-    if (quizVal === true) {
-      this.setState({ quiz: true })
-    }
+    // var quizVal = Boolean.valueOf(localStorage.getItem('quiz'))
+    // if (quizVal === true) {
+    //   this.setState({ quiz: true })
+    // }
     return (
       <React.Fragment>
         <CssBaseline />
@@ -226,11 +239,8 @@ class GuessingScreen extends Component {
           {this.state.quiz ?
             < Grid container justify="center" spacing={4}>
               < Grid container item spacing={4} className={classes.panel} direction="column" >
-                <Quiz funcObj={this.props.funcObj}></Quiz>
-                <Grid item>
-                  <Button color='primary' variant="contained" className={classes.actionButton} onClick={this.quizOff}>
-                    Cancel
-                </Button>
+                <Grid container className={classes.paper}>
+                  <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff}></Quiz>
                 </Grid>
               </ Grid>
             </ Grid>
@@ -254,7 +264,7 @@ class GuessingScreen extends Component {
                 </Grid>
 
                 <Grid item xs={12} >
-                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} nextPage={this.props.nextPage} toQuiz={this.quizOn}></TabsWrapper>
+                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn}></TabsWrapper>
                 </Grid>
               </Grid>
 
