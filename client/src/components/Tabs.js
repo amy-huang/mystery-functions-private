@@ -105,16 +105,16 @@ export default function SimpleTabs(props) {
       return
     }
     var guess = {}
+    guess.id = userID
+    guess.fcn = funcObj.description()
+    guess.key = newKey()
+    guess.type = "eval_input"
+    guess.in = funcObj.parseInput(evalInputStr)
+    guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
+    guess.reason = evalInputReason.trim()
+    guess.time = getCurrentTime()
+    console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
     if (localStorage.getItem(funcObj.description()) !== null) {
-      guess.id = userID
-      guess.fcn = funcObj.description()
-      guess.key = newKey()
-      guess.type = "eval_input"
-      guess.in = funcObj.parseInput(evalInputStr)
-      guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
-      guess.reason = evalInputReason.trim()
-      guess.time = getCurrentTime()
-
       sendToServer(guess)
     }
     guesses.push(guess)
@@ -128,19 +128,18 @@ export default function SimpleTabs(props) {
       return
     }
     var guess = Object()
+    guess.id = userID
+    guess.fcn = funcObj.description()
+    guess.key = newKey()
+    guess.type = "final_answer"
+    guess.reason = finalGuess
+    guess.time = getCurrentTime()
+    console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
     if (localStorage.getItem(funcObj.description()) !== null) {
       localStorage.setItem(funcObj.description(), 'Done')
-
-      guess.id = userID
-      guess.fcn = funcObj.description()
-      guess.key = newKey()
-      guess.type = "final_answer"
-      guess.reason = finalGuess
-      guess.time = getCurrentTime()
-
       sendToServer(guess)
-      alert(funcObj.answerText())
     }
+    alert(funcObj.answerText())
     guesses.push(guess)
     updateFunc()
   }
