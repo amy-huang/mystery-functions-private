@@ -57,7 +57,7 @@ const conPool = new Pool({
   ssl: true,
   max: 20,
 });
-conPool.query('create table if not exists actions (userID VARCHAR (255), fcnName VARCHAR (255), actionID INTEGER, actionType VARCHAR (255), time TIMESTAMP, input VARCHAR (255), output VARCHAR (255), result VARCHAR (255), reason VARCHAR (255) );', (err, result) => {
+conPool.query('create table if not exists actions (userID VARCHAR (255), fcnName VARCHAR (255), actionID INTEGER, actionType VARCHAR (255), time TIMESTAMP, input VARCHAR (255), output VARCHAR (255), quizQ VARCHAR (255), actualOutput VARCHAR (255), result BOOLEAN, finalGuess VARCHAR (255) );', (err, result) => {
 });
 
 // Stores info in heroku postgres database
@@ -90,9 +90,9 @@ app.post('/api/store', async (req, res) => {
       }
     });
   } else if (type === "final_answer") {
-    reason = action.reason
+    finalGuess = action.finalGuess
 
-    conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, reason) values ($1, $2, $3, $4, $5, $6);`, [id, name, key, type, time, reason], (err, result) => {
+    conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, finalGuess) values ($1, $2, $3, $4, $5, $6);`, [id, name, key, type, time, finalGuess], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {

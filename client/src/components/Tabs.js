@@ -111,10 +111,10 @@ export default function SimpleTabs(props) {
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
     guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
-    guess.reason = evalInputReason.trim()
+    guess.finalGuess = evalInputReason.trim()
     guess.time = getCurrentTime()
     console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
-    if (localStorage.getItem(funcObj.description()) !== null) {
+    if (localStorage.getItem(funcObj.description()) === null) {
       sendToServer(guess)
     }
     guesses.push(guess)
@@ -132,10 +132,10 @@ export default function SimpleTabs(props) {
     guess.fcn = funcObj.description()
     guess.key = newKey()
     guess.type = "final_answer"
-    guess.reason = finalGuess
+    guess.finalGuess = finalGuess
     guess.time = getCurrentTime()
     console.log(funcObj.description(), localStorage.getItem(funcObj.description()))
-    if (localStorage.getItem(funcObj.description()) !== null) {
+    if (localStorage.getItem(funcObj.description()) === null) {
       localStorage.setItem(funcObj.description(), 'Done')
       sendToServer(guess)
     }
