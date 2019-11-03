@@ -59,6 +59,13 @@ function newKey() {
   return newKey.key.toString()
 }
 
+function getCurrentTime() {
+  var today = new Date()
+  var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds()
+  return date + ' ' + time
+}
+
 // For storing user input
 var evalInputStr = ""
 var evalInputReason = ""
@@ -86,13 +93,6 @@ export default function SimpleTabs(props) {
     console.log(body)
   }
 
-  function getCurrentTime() {
-    var today = new Date()
-    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds()
-    return date + ' ' + time
-  }
-
   // Passed down from GuessingScreen for adding to guesses
   // and evaluating expressions with mystery function
   var guesses = props.children.guesses
@@ -104,22 +104,19 @@ export default function SimpleTabs(props) {
       alert("'" + evalInputStr + "' is not a valid input to this function")
       return
     }
-
-    // Create guess
     var guess = {}
-    guess.id = userID
-    guess.fcn = funcObj.description()
-    guess.key = newKey()
-    guess.type = "eval_input"
-    guess.in = funcObj.parseInput(evalInputStr)
-    guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
-    guess.reason = evalInputReason.trim()
-    guess.time = getCurrentTime()
+    if (localStorage.getItem(funcObj.description()) !== null) {
+      guess.id = userID
+      guess.fcn = funcObj.description()
+      guess.key = newKey()
+      guess.type = "eval_input"
+      guess.in = funcObj.parseInput(evalInputStr)
+      guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
+      guess.reason = evalInputReason.trim()
+      guess.time = getCurrentTime()
 
-    // Send to server for storing
-    sendToServer(guess)
-
-    // Update console
+      sendToServer(guess)
+    }
     guesses.push(guess)
     updateFunc()
   }
@@ -130,16 +127,20 @@ export default function SimpleTabs(props) {
       alert(text)
       return
     }
-    alert(funcObj.answerText())
     var guess = Object()
-    guess.id = userID
-    guess.fcn = funcObj.description()
-    guess.key = newKey()
-    guess.type = "final_answer"
-    guess.reason = finalGuess
-    guess.time = getCurrentTime()
+    if (localStorage.getItem(funcObj.description()) !== null) {
+      localStorage.setItem(funcObj.description(), 'Done')
 
-    sendToServer(guess)
+      guess.id = userID
+      guess.fcn = funcObj.description()
+      guess.key = newKey()
+      guess.type = "final_answer"
+      guess.reason = finalGuess
+      guess.time = getCurrentTime()
+
+      sendToServer(guess)
+      alert(funcObj.answerText())
+    }
     guesses.push(guess)
     updateFunc()
   }
