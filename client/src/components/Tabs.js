@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Link from 'react-router-dom/Link'
 
+const userID = localStorage.getItem('userID')
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props
 
@@ -105,6 +107,8 @@ export default function SimpleTabs(props) {
 
     // Create guess
     var guess = {}
+    guess.id = userID
+    guess.fcn = funcObj.description()
     guess.key = newKey()
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
@@ -128,6 +132,8 @@ export default function SimpleTabs(props) {
     }
     alert(funcObj.answerText())
     var guess = Object()
+    guess.id = userID
+    guess.fcn = funcObj.description()
     guess.key = newKey()
     guess.type = "final_answer"
     guess.reason = finalGuess

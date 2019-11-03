@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import withStyles from '@material-ui/styles/withStyles'
 import { withRouter, Link } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import Typography from '@material-ui/core/Typography'
+import { TextField } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
@@ -115,7 +115,7 @@ class StartScreen extends Component {
             <Grid container item spacing={4} className={classes.panel}>
               <Paper className={classes.paper}>
                 <div className={classes.gridListWrapper}>
-                  <Grid container spacing={4} alignContent="center">
+                  <Grid container spacing={4} direction="column">
 
                     <Grid item className={classes.panel}>
                       <p>Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: given any input of valid type, we will tell you what the function outputs.</p>
@@ -125,6 +125,11 @@ class StartScreen extends Component {
                       <p>Once you would like to end the session, go to the second tab on the lower left to submit in your own words what you think the function does. You'll be shown the answer (a text description). Then, you can click the link to the next function.</p>
 
                       <p>There are 2 mystery functions. Good luck!</p>
+                    </Grid>
+
+                    <Grid item>
+                      <TextField label="Enter your student ID here" onChange={(e) => { localStorage.setItem('userID', e.target.value) }} >
+                      </TextField>
                     </Grid>
 
                     <Grid item>

@@ -117,7 +117,7 @@ const styles = theme => ({
 function dummyTiles() {
   var guesses = []
   var numTiles = gridListHeight / 80
-  for (var i = -1 * numTiles i < 0 i++) {
+  for (var i = -1 * numTiles; i < 0; i++) {
     guesses.push({
       key: i,
       type: "dummy_line"
@@ -200,13 +200,13 @@ class GuessingScreen extends Component {
                   This mystery function takes an input of type
                   <ul>
                     <li>
-                      {this.props.funcObj.inputType()}
+                      {this.props.funcObj.inputDescription()}
                     </li>
                   </ul>
                   and an output of type
                   <ul>
                     <li>
-                      {this.props.funcObj.outputType()}
+                      {this.props.funcObj.outputDescription()}
                     </li>
                   </ul>
                 </Typography>
