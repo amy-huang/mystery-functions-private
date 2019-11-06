@@ -102,7 +102,11 @@ const styles = theme => ({
   },
 })
 
-var userID = ""
+function updateUserID(text) {
+  console.log("entered: ", text)
+  localStorage.setItem('userID', text)
+  console.log("userID is now ", localStorage.getItem('userID'))
+}
 
 class StartScreen extends Component {
   render() {
@@ -130,13 +134,13 @@ class StartScreen extends Component {
                     </Grid>
 
                     <Grid item>
-                      <TextField label="Enter your ID here" onKeyUp={(e) => { userID = e.target.value }} >
+                      <TextField label="Enter your ID here" onKeyUp={(e) => { updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
 
                     <Grid item>
                       <Button type="submit">
-                        <Link onClick={() => { localStorage.setItem('userID', userID) }} to={this.props.nextPage}>Begin!</Link>
+                        <Link to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 
