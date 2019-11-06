@@ -195,6 +195,11 @@ class GuessingScreen extends Component {
     }
   }
 
+  // When quiz taken and then move on
+  resetGuesses = () => {
+    this.guesses = dummyTiles()
+  }
+
   quizOff = () => {
     // localStorage.setItem('quiz', false)
     this.setState({ quiz: false })
@@ -230,7 +235,7 @@ class GuessingScreen extends Component {
             < Grid container justify="center" spacing={4}>
               < Grid container item spacing={4} className={classes.panel} direction="column" >
                 <Grid container className={classes.paper}>
-                  <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff}></Quiz>
+                  <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses}></Quiz>
                 </Grid>
               </ Grid>
             </ Grid>

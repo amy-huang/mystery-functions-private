@@ -115,23 +115,28 @@ class StartScreen extends Component {
     // console.log("entered: ", text)
     this.setState({ enteredID: text })
     if (localStorage.getItem('started') === null) {
-      localStorage.setItem('userID', text)
+      localStorage.setItem('userID', text.trim())
     }
-    console.log("userID is now ", localStorage.getItem('userID'))
+    console.log("userID is now '" + localStorage.getItem('userID') + "'")
+    console.log("retrieved '" + this.state.retrievedID + "'")
+    console.log("entered '" + this.state.enteredID + "'")
   }
 
   // Make sure ID isn't changed after study started
   started() {
     // TODO: make sure userID is not null
     if (localStorage.getItem('started') === null) {
+      // Nothing entered, which means id taken from URL
+      if (localStorage.getItem('userID') === null) {
+        localStorage.setItem('userID', this.state.enteredID)
+      }
+
       localStorage.setItem('started', true)
     }
   }
 
   render() {
     const { classes } = this.props
-    console.log("retrieved", this.state.retrievedID)
-    console.log("entered", this.state.enteredID)
 
     return (
       <React.Fragment>

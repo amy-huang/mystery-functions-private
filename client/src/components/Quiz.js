@@ -222,13 +222,18 @@ class Quiz extends Component {
     })
   }
 
+  clearThisFunc = () => {
+    this.props.resetFcn()
+    this.props.cancelFcn()
+  }
+
   toNextFuncButton = (nextPage) => {
     if (nextPage === undefined) {
       return (<div></div>)
     }
     return (
       <div>
-        <Button variant="contained" className={this.props.actionButton} onClick={this.props.cancelFcn}>
+        <Button variant="contained" className={this.props.actionButton} onClick={this.clearThisFunc}>
           <Link style={{ color: '#FFF' }} to={nextPage}> go to next mystery function</Link>
         </Button>
       </div>

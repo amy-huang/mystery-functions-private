@@ -88,8 +88,8 @@ export default function SimpleTabs(props) {
     displayGuess.key = actionKey
     serverGuess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
     displayGuess.in = funcObj.inputDisplayStr(funcObj.parseInput(evalInputStr))
-    serverGuess.out = funcObj.outputDisplayStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
-    displayGuess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
+    serverGuess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
+    displayGuess.out = funcObj.outputDisplayStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
     serverGuess.finalGuess = evalInputReason.trim()
     displayGuess.finalGuess = evalInputReason.trim()
     serverGuess.time = Util.getCurrentTime()
