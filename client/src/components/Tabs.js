@@ -11,8 +11,6 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Util from '../Util'
 
-const userID = localStorage.getItem('userID')
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props
 
@@ -77,7 +75,7 @@ export default function SimpleTabs(props) {
       return
     }
     var guess = {}
-    guess.id = userID
+    guess.id = localStorage.getItem('userID')
     guess.fcn = funcObj.description()
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
@@ -90,6 +88,7 @@ export default function SimpleTabs(props) {
     }
     guesses.push(guess)
     updateFunc()
+    console.log(guess)
   }
 
   evalInputStr = funcObj.inputPlaceHolderText()

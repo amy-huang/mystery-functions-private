@@ -115,6 +115,7 @@ function updateUserID(text) {
 
 // Make sure ID isn't changed after study started
 function started() {
+  // TODO: make sure userID is not null
   if (localStorage.getItem('started') === null) {
     localStorage.setItem('started', true)
   }
