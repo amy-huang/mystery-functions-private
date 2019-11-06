@@ -22,7 +22,7 @@ class MakePalindrome {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }, () => { return [-3, 0, 0, -3] }, () => { return [5, 3, 1, -1, 4] }, () => { return [-8, 3] }]
+    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }, () => { return [5, 3, 1, -1, 4] }]
   }
 
   static answerText(): string {
@@ -45,8 +45,8 @@ class MakePalindrome {
     return ListOfInteger.valid(input)
   }
 
-  static validOutput(input: any): boolean {
-    return ListOfInteger.valid(input)
+  static validOutput(out: any): boolean {
+    return ListOfInteger.valid(out)
   }
 
   static parseInput(input: any): any[] {

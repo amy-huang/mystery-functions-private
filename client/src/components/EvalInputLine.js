@@ -16,13 +16,13 @@ class EvalInputLine extends Component {
     return (
       <Grid container direction="row" spacing={1} justify="flex-start" height={20}>
         <Grid item>
-          <Typography className={classes.text}>{JSON.stringify(classes.in)}</Typography>
+          <Typography className={classes.text}>{classes.in}</Typography>
         </Grid>
         <Grid item>
           <Typography className={classes.text}>evaluates to</Typography>
         </Grid>
         <Grid item>
-          <Typography className={classes.text}>{JSON.stringify(classes.out)}</Typography>
+          <Typography className={classes.text}>{classes.out}</Typography>
         </Grid>
       </Grid>
     )

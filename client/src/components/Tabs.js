@@ -74,23 +74,32 @@ export default function SimpleTabs(props) {
       alert("'" + evalInputStr + "' is not a valid input to this function")
       return
     }
-    var guess = {}
-    guess.id = localStorage.getItem('userID')
-    guess.fcn = funcObj.description()
-    guess.type = "eval_input"
-    // guess.in = funcObj.parseInput(evalInputStr)
-    guess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
-    // guess.out = funcObj.function(funcObj.parseOutput(evalInputStr))
-    guess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
-    guess.finalGuess = evalInputReason.trim()
-    guess.time = Util.getCurrentTime()
+    var serverGuess = {}
+    var displayGuess = {}
+    serverGuess.id = localStorage.getItem('userID')
+    displayGuess.id = localStorage.getItem('userID')
+    serverGuess.fcn = funcObj.description()
+    displayGuess.fcn = funcObj.description()
+    serverGuess.type = "eval_input"
+    displayGuess.type = "eval_input"
+    serverGuess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
+    displayGuess.in = funcObj.inputDisplayStr(funcObj.parseInput(evalInputStr))
+    serverGuess.out = funcObj.outputDisplayStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
+    displayGuess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
+    serverGuess.finalGuess = evalInputReason.trim()
+    displayGuess.finalGuess = evalInputReason.trim()
+    serverGuess.time = Util.getCurrentTime()
+    displayGuess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
-      guess.key = Util.newKey()
-      Util.sendToServer(guess)
+      serverGuess.key = Util.newKey()
+      displayGuess.key = Util.newKey()
+      console.log("sent to server", serverGuess)
+      Util.sendToServer(serverGuess)
     }
-    guesses.push(guess)
+
+    // Update in, out values for display
+    guesses.push(displayGuess)
     updateFunc()
-    console.log(guess)
   }
 
   evalInputStr = funcObj.inputPlaceHolderText()
