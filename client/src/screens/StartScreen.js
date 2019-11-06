@@ -152,7 +152,7 @@ class StartScreen extends Component {
 
                     <Grid item>
                       <Button type="submit">
-                        <Link onClick={started} to={this.props.nextPage}>Begin!</Link>
+                        <Link onMouseDown={started} to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 
