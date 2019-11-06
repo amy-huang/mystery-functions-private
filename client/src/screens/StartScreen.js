@@ -102,10 +102,19 @@ const styles = theme => ({
   },
 })
 
+var userID = ""
+
 function updateUserID(text) {
-  console.log("entered: ", text)
-  localStorage.setItem('userID', text)
-  console.log("userID is now ", localStorage.getItem('userID'))
+  userID = text
+  // console.log("entered: ", text)
+  // localStorage.setItem('userID', text)
+  // console.log("userID is now ", localStorage.getItem('userID'))
+}
+
+function saveUserID() {
+  if (localStorage.getItem('userID') === null) {
+    localStorage.setItem('userID', userID)
+  }
 }
 
 class StartScreen extends Component {
@@ -140,7 +149,7 @@ class StartScreen extends Component {
 
                     <Grid item>
                       <Button type="submit">
-                        <Link to={this.props.nextPage}>Begin!</Link>
+                        <Link onClick={saveUserID} to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 

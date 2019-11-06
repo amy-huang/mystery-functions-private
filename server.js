@@ -12,16 +12,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // For parsing to DB-friendly strings that are readable and not special characters
 const in_out_types = {
   "SumParity": {
-    "in": listToDBString,
+    "in": listIntOrIntToDBString,
     "out": justStringify
   },
   "MakePalindrome": {
-    "in": listToDBString,
-    "out": listToDBString
+    "in": listIntOrIntToDBString,
+    "out": listIntOrIntToDBString
   }
 }
 
-function listToDBString(a_list) {
+function listIntOrIntToDBString(a_list) {
   if (a_list === undefined) {
     return ""
   }
@@ -76,9 +76,9 @@ app.post('/api/store', async (req, res) => {
   console.log(typeof action.time, "time: ", time)
 
   if (type === "eval_input") {
-    // TODO: use in_out_types to use the right transformation fcn to db string
-    in_str = listToDBString(action.in)
-    out_str = listToDBString(action.out)
+    // TODO: move toDBString methods to input type objects
+    in_str = listIntOrIntToDBString(action.in)
+    out_str = listIntOrIntToDBString(action.out)
     console.log("in: ", in_str)
     console.log("in: ", out_str)
 
@@ -94,6 +94,28 @@ app.post('/api/store', async (req, res) => {
     console.log("final guess: ", finalGuess)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, finalGuess) values ($1, $2, $3, $4, $5, $6);`, [id, name, key, type, time, finalGuess], (err, result) => {
+      if (!err) {
+        res.send(`Success!`)
+      } else {
+        res.send(`Failed!`)
+      }
+    });
+  } else if (type === "quiz_answer") {
+    // TODO: move toDBString methods to input type objects
+    in_str = listIntOrIntToDBString(action.in)
+    out_str = listIntOrIntToDBString(action.out)
+    actual_str = listIntOrIntToDBString(action.actual)
+    question = action.q.toString()  // TODO: just make all action fields be strings
+    result = action.result.toString()
+
+    console.log("in: ", in_str)
+    console.log("out: ", out_str)
+    console.log("actual out: ", actual_str)
+    console.log("question: ", question)
+    console.log("result: ", result)
+
+
+    conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, input, output, actualOutput, quizQ, result) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`, [id, name, key, type, time, in_str, out_str, actual_str, question, result], (err, result) => {
       if (!err) {
         res.send(`Success!`)
       } else {

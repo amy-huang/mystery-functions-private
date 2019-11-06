@@ -140,8 +140,8 @@ class Quiz extends Component {
 
     const actual = this.funcObj.function(this.currInput)
     const submittedAsVal = this.funcObj.parseInput(submitted)
-    console.log(actual)
-    console.log(submittedAsVal)
+    // console.log(actual)
+    // console.log(submittedAsVal)
     const gotCorrect = this.funcObj.equivalentOutputs(submittedAsVal, actual)
 
     //Construct action object and send to server 
@@ -156,7 +156,7 @@ class Quiz extends Component {
       action.actual = this.funcObj.outputStr(actual)
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
-      console.log(action)
+      // console.log(action)
       action.key = Util.newKey()
       Util.sendToServer(action)
     }
