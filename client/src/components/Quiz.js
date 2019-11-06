@@ -128,6 +128,28 @@ class Quiz extends Component {
     return newInput
   }
 
+  listIntOrIntToDBString(a_list) {
+    if (a_list === undefined) {
+      return ""
+    }
+    var already_str = JSON.stringify(a_list)
+    if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
+      return already_str
+    }
+
+    var as_str = ""
+    for (var i = 0; i < a_list.length; i++) {
+      if (as_str.length > 0) {
+        as_str += " "
+      }
+      as_str += JSON.stringify(a_list[i])
+    }
+    if (as_str.length === 0) {
+      return "empty"
+    }
+    return as_str
+  }
+
   submitAnswer = (submitted) => {
     if (submitted === "") {
       alert("Please submit an answer!")
@@ -139,7 +161,7 @@ class Quiz extends Component {
     }
 
     const actual = this.funcObj.function(this.currInput)
-    const submittedAsVal = this.funcObj.parseInput(submitted)
+    const submittedAsVal = this.funcObj.parseOutput(submitted)
     // console.log(actual)
     // console.log(submittedAsVal)
     const gotCorrect = this.funcObj.equivalentOutputs(submittedAsVal, actual)
@@ -150,15 +172,22 @@ class Quiz extends Component {
       action.id = localStorage.getItem('userID')
       action.fcn = this.funcObj.description()
       action.type = "quiz_answer"
-      action.in = this.funcObj.inputStr(this.currInput)
-      action.out = submitted  // Is a string already
+      action.in = this.listIntOrIntToDBString(this.currInput)
+      // action.in = this.funcObj.parseInput(this.currInput)
+      //action.out = submitted
+      action.out = this.listIntOrIntToDBString(submittedAsVal)
       action.q = this.state.question
-      action.actual = this.funcObj.outputStr(actual)
+      action.actual = this.listIntOrIntToDBString(actual)
+      // action.actual = this.funcObj.parseOutput(actual)
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
       // console.log(action)
       action.key = Util.newKey()
       Util.sendToServer(action)
+
+      console.log("'", action.in, "'")
+      console.log("'", action.out, "'")
+      console.log("'", action.actual)
     }
 
     // Show answer onscreen

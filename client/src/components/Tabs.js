@@ -81,7 +81,7 @@ export default function SimpleTabs(props) {
     guess.fcn = funcObj.description()
     guess.type = "eval_input"
     guess.in = funcObj.parseInput(evalInputStr)
-    guess.out = funcObj.function(funcObj.parseInput(evalInputStr))
+    guess.out = funcObj.function(funcObj.parseOutput(evalInputStr))
     guess.finalGuess = evalInputReason.trim()
     guess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {

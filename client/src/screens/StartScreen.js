@@ -102,18 +102,21 @@ const styles = theme => ({
   },
 })
 
-var userID = ""
-
+// Update userID with each keystroke unless already submitted
+// If only submitted when button is clicked, the ID doesn't show
+// up for the first few evaluate inputs so this is needed
 function updateUserID(text) {
-  userID = text
   // console.log("entered: ", text)
-  // localStorage.setItem('userID', text)
-  // console.log("userID is now ", localStorage.getItem('userID'))
+  if (localStorage.getItem('started') === null) {
+    localStorage.setItem('userID', text)
+  }
+  console.log("userID is now ", localStorage.getItem('userID'))
 }
 
-function saveUserID() {
-  if (localStorage.getItem('userID') === null) {
-    localStorage.setItem('userID', userID)
+// Make sure ID isn't changed after study started
+function started() {
+  if (localStorage.getItem('started') === null) {
+    localStorage.setItem('started', true)
   }
 }
 
@@ -149,7 +152,7 @@ class StartScreen extends Component {
 
                     <Grid item>
                       <Button type="submit">
-                        <Link onClick={saveUserID} to={this.props.nextPage}>Begin!</Link>
+                        <Link onClick={started} to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 

@@ -1,4 +1,3 @@
-FIX ID ENTERING DEAR GOD
-DONE have tostring methods for types so that parsing for quiz WORKS
+HAVE A TO_QUIZ DB ENTRY for choosing to go to quiz, and what their written answer was
 
 Send out to PIs for review, opinions
