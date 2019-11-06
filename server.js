@@ -43,14 +43,14 @@ const in_out_types = {
 //   return as_str
 // }
 
-function justStringify(obj) {
-  already_str = JSON.stringify(a_list)
-  if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
-    return already_str
-  }
-  console.log("Error, stringified obj contains '[]'", obj, already_str)
-  return "Error"
-}
+// function justStringify(obj) {
+//   already_str = JSON.stringify(a_list)
+//   if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
+//     return already_str
+//   }
+//   console.log("Error, stringified obj contains '[]'", obj, already_str)
+//   return "Error"
+// }
 
 const conPool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -77,10 +77,10 @@ app.post('/api/store', async (req, res) => {
 
   if (type === "eval_input") {
     // TODO: move toDBString methods to input type objects
-    in_str = listIntOrIntToDBString(action.in)
-    out_str = listIntOrIntToDBString(action.out)
+    in_str = action.in
+    out_str = action.out
     console.log("in: ", in_str)
-    console.log("in: ", out_str)
+    console.log("out: ", out_str)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, input, output) values ($1, $2, $3, $4, $5, $6, $7);`, [id, name, key, type, time, in_str, out_str], (err, result) => {
       if (!err) {

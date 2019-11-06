@@ -78,8 +78,10 @@ export default function SimpleTabs(props) {
     guess.id = localStorage.getItem('userID')
     guess.fcn = funcObj.description()
     guess.type = "eval_input"
-    guess.in = funcObj.parseInput(evalInputStr)
-    guess.out = funcObj.function(funcObj.parseOutput(evalInputStr))
+    // guess.in = funcObj.parseInput(evalInputStr)
+    guess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
+    // guess.out = funcObj.function(funcObj.parseOutput(evalInputStr))
+    guess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseOutput(evalInputStr)))
     guess.finalGuess = evalInputReason.trim()
     guess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
