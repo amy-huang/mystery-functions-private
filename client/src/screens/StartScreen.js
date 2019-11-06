@@ -130,7 +130,7 @@ class StartScreen extends Component {
                     </Grid>
 
                     <Grid item>
-                      <TextField label="Enter your student ID here" onChange={(e) => { userID = e.target.value }} >
+                      <TextField label="Enter your ID here" onKeyUp={(e) => { userID = e.target.value }} >
                       </TextField>
                     </Grid>
 
