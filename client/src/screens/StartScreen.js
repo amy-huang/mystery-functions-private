@@ -146,18 +146,20 @@ class StartScreen extends Component {
                   <Grid container spacing={4} direction="column">
 
                     <Grid item className={classes.panel}>
-                      <p>Welcome to mystery functions! Your task is to figure out what a function does, based on only the following information: given any input of valid type, we will tell you what the function outputs.</p>
+                      <p>Welcome to mystery functions! Your task is to figure out what a function does. We'll tell you the input and output types. You can tell us any valid input to the function, and we'll tell you what the function outputs.</p>
 
-                      <p>On the next screen, you'll see a description of the input and output types on the upper left. There will be an area for submitting inputs to evaluate on the lower left, and a console on the right where output will be displayed. </p>
+                      <p>When you're ready to commit to a guess about the function, you'll describe the function your own words with a text submission, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
 
-                      <p>Once you would like to end the session, go to the second tab on the lower left to submit in your own words what you think the function does. You'll be shown the answer (a text description). Then, you can click the link to the next function.</p>
+                      <p>This is to let you know if your guess is right, so that you can decide when to move on to the next function. </p>
+
+                      <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different written guess, or give up and skip to seeing the answer, and then go to the next mystery function.</p>
 
                       <p>There are 2 mystery functions. Good luck!</p>
                     </Grid>
 
                     {this.state.retrievedID !== null ?
                       <Grid item>
-                        <Typography variant="h5" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if it is incorrect.</Typography>
+                        <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if it is incorrect. Otherwise, you can click BEGIN to move on.</Typography>
                       </Grid>
                       :
                       null

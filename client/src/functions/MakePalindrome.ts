@@ -22,7 +22,7 @@ class MakePalindrome {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }, () => { return [5, 3, 1, -1, 4] }]
+    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }]
   }
 
   static answerText(): string {
