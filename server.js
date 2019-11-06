@@ -9,49 +9,6 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// For parsing to DB-friendly strings that are readable and not special characters
-const in_out_types = {
-  "SumParity": {
-    "in": listIntOrIntToDBString,
-    "out": justStringify
-  },
-  "MakePalindrome": {
-    "in": listIntOrIntToDBString,
-    "out": listIntOrIntToDBString
-  }
-}
-
-// function listIntOrIntToDBString(a_list) {
-//   if (a_list === undefined) {
-//     return ""
-//   }
-//   already_str = JSON.stringify(a_list)
-//   if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
-//     return already_str
-//   }
-
-//   as_str = ""
-//   for (var i = 0; i < a_list.length; i++) {
-//     if (as_str.length > 0) {
-//       as_str += " "
-//     }
-//     as_str += JSON.stringify(a_list[i])
-//   }
-//   if (as_str.length === 0) {
-//     return "empty"
-//   }
-//   return as_str
-// }
-
-// function justStringify(obj) {
-//   already_str = JSON.stringify(a_list)
-//   if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
-//     return already_str
-//   }
-//   console.log("Error, stringified obj contains '[]'", obj, already_str)
-//   return "Error"
-// }
-
 const conPool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true,
@@ -105,8 +62,8 @@ app.post('/api/store', async (req, res) => {
     in_str = action.in
     out_str = action.out
     actual_str = action.actual
-    question = action.q.toString()  // TODO: just make all action fields be strings
-    result = action.result.toString()
+    question = action.q  // TODO: just make all action fields be strings
+    result = action.result
 
     console.log("in: ", in_str)
     console.log("out: ", out_str)

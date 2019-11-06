@@ -1,4 +1,3 @@
-take away one of onfocus, onmousedown things
-Don't record additional quiz questions to be recorded AFTER final answer for each question
+Make sure empty ID is not allowed; also do additional ID error checking to make sure it's not wrong (and show to user to make sure they can check it too?)
 
 Send out to PIs for review, opinions

@@ -152,9 +152,9 @@ class Quiz extends Component {
       action.type = "quiz_answer"
       action.in = this.funcObj.inputDBStr(this.currInput)
       action.out = this.funcObj.outputDBStr(submittedAsVal)
-      action.q = this.state.question
+      action.q = this.state.question.toString()
       action.actual = this.funcObj.outputDBStr(actual)
-      action.result = gotCorrect
+      action.result = gotCorrect.toString()
       action.time = Util.getCurrentTime()
       // console.log(action)
       action.key = Util.newKey()
