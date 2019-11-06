@@ -108,21 +108,6 @@ const styles = theme => ({
   }
 })
 
-// function goToNextFunc(cl) {
-//   cl.setState({ done: false })
-//   cl.setState({ answered: false })
-//   cl.setState({ showAnswer: false })
-
-//   // Need to hide answer for page loading
-//   cl.setState({ notMovingOn: true })
-//   this.props.cancelFcn()
-// }
-
-// // After guessing screen reloads, reset page
-// function cleanup(cl) {
-//   // cl.setState({ notMovingOn: true })
-// }
-
 class Quiz extends Component {
   constructor(props) {
     super(props)
