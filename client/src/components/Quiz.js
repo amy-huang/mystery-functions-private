@@ -128,28 +128,6 @@ class Quiz extends Component {
     return newInput
   }
 
-  listIntOrIntToDBString(a_list) {
-    if (a_list === undefined) {
-      return ""
-    }
-    var already_str = JSON.stringify(a_list)
-    if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
-      return already_str
-    }
-
-    var as_str = ""
-    for (var i = 0; i < a_list.length; i++) {
-      if (as_str.length > 0) {
-        as_str += " "
-      }
-      as_str += JSON.stringify(a_list[i])
-    }
-    if (as_str.length === 0) {
-      return "empty"
-    }
-    return as_str
-  }
-
   submitAnswer = (submitted) => {
     if (submitted === "") {
       alert("Please submit an answer!")
@@ -172,13 +150,10 @@ class Quiz extends Component {
       action.id = localStorage.getItem('userID')
       action.fcn = this.funcObj.description()
       action.type = "quiz_answer"
-      action.in = this.listIntOrIntToDBString(this.currInput)
-      // action.in = this.funcObj.parseInput(this.currInput)
-      //action.out = submitted
-      action.out = this.listIntOrIntToDBString(submittedAsVal)
+      action.in = this.funcObj.inputDBStr(this.currInput)
+      action.out = this.funcObj.outputDBStr(submittedAsVal)
       action.q = this.state.question
-      action.actual = this.listIntOrIntToDBString(actual)
-      // action.actual = this.funcObj.parseOutput(actual)
+      action.actual = this.funcObj.outputDBStr(actual)
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
       // console.log(action)
@@ -187,7 +162,7 @@ class Quiz extends Component {
 
       console.log("'", action.in, "'")
       console.log("'", action.out, "'")
-      console.log("'", action.actual)
+      console.log("'", action.actual, "'")
     }
 
     // Show answer onscreen
@@ -279,7 +254,7 @@ class Quiz extends Component {
               </Grid>
               <Grid item>
                 <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
-                <Typography variant="h3">What would this function output for {this.funcObj.inputStr(this.questionInput())}? </Typography>
+                <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
 
                 <TextField onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit">
                 </TextField>

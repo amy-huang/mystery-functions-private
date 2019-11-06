@@ -21,27 +21,27 @@ const in_out_types = {
   }
 }
 
-function listIntOrIntToDBString(a_list) {
-  if (a_list === undefined) {
-    return ""
-  }
-  already_str = JSON.stringify(a_list)
-  if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
-    return already_str
-  }
+// function listIntOrIntToDBString(a_list) {
+//   if (a_list === undefined) {
+//     return ""
+//   }
+//   already_str = JSON.stringify(a_list)
+//   if (!already_str.includes("[") && !already_str.includes("]") && !already_str.includes(",")) {
+//     return already_str
+//   }
 
-  as_str = ""
-  for (var i = 0; i < a_list.length; i++) {
-    if (as_str.length > 0) {
-      as_str += " "
-    }
-    as_str += JSON.stringify(a_list[i])
-  }
-  if (as_str.length === 0) {
-    return "empty"
-  }
-  return as_str
-}
+//   as_str = ""
+//   for (var i = 0; i < a_list.length; i++) {
+//     if (as_str.length > 0) {
+//       as_str += " "
+//     }
+//     as_str += JSON.stringify(a_list[i])
+//   }
+//   if (as_str.length === 0) {
+//     return "empty"
+//   }
+//   return as_str
+// }
 
 function justStringify(obj) {
   already_str = JSON.stringify(a_list)

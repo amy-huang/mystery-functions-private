@@ -61,12 +61,20 @@ class MakePalindrome {
     return ListOfInteger.areEquivalent(first, second)
   }
 
-  static inputStr(input: number[]): string {
-    return ListOfInteger.asString(input)
+  static inputDisplayStr(input: number[]): string {
+    return ListOfInteger.displayString(input)
   }
 
-  static outputStr(output: number[]): string {
-    return ListOfInteger.asString(output)
+  static outputDisplayStr(output: number[]): string {
+    return ListOfInteger.displayString(output)
+  }
+
+  static inputDBStr(input: number[]): string {
+    return ListOfInteger.dbString(input)
+  }
+
+  static outputDBStr(output: number[]): string {
+    return ListOfInteger.dbString(output)
   }
 }
 

@@ -38,7 +38,11 @@ class Integer {
     return this.parse(first) === this.parse(second)
   }
 
-  static asString(member: number): string {
+  static displayString(member: number): string {
+    return member.toString()
+  }
+
+  static dbString(member: number): string {
     return member.toString()
   }
 }
