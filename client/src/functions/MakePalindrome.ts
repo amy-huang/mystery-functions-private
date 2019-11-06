@@ -1,4 +1,5 @@
 import ListOfInteger from "./ListOfInteger";
+import Integer from "./Integer";
 
 class MakePalindrome {
   static description(): string {
@@ -56,8 +57,16 @@ class MakePalindrome {
     return ListOfInteger.parse(output);
   }
 
-  static equivalentOutputs(first: any, second: any): boolean {
+  static equivalentOutputs(first: any[], second: any[]): boolean {
     return ListOfInteger.areEquivalent(first, second)
+  }
+
+  static inputStr(input: number[]): string {
+    return ListOfInteger.asString(input)
+  }
+
+  static outputStr(output: number[]): string {
+    return ListOfInteger.asString(output)
   }
 }
 

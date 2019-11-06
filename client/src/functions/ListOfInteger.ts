@@ -1,3 +1,5 @@
+import { string } from "prop-types";
+
 class ListOfInteger {
   static shortDescription(): string {
     return "list of integers"
@@ -21,7 +23,7 @@ class ListOfInteger {
       as_list = JSON.parse(input);
       if (as_list.length > 0) {
         for (var i = 0; i < as_list.length; i++) {
-          // Make sure item types are same as passed in param
+          // Make sure items are integers
           if (!this.asIntEvaluator(as_list[i])) {
             return false;
           }
@@ -40,14 +42,11 @@ class ListOfInteger {
     return false;
   }
 
-  static parse(input: any): any[] {
+  static parse(input: any): number[] {
     return JSON.parse(input);
   }
 
-  static areEquivalent(f: any, s: any): boolean {
-    const first = this.parse(f)
-    const second = this.parse(s)
-
+  static areEquivalent(first: any[], second: any[]): boolean {
     if (first === second) {
       return true
     }
@@ -58,6 +57,19 @@ class ListOfInteger {
       if (first[i] !== second[i]) return false;
     }
     return true
+  }
+
+  static asString(nums: number[]): string {
+    var as_str = "["
+    for (var i = 0; i < nums.length; i++) {
+      if (as_str.length > 1) {
+        as_str += ","
+      }
+      // Assuming that each member of the list has a toString method
+      as_str += nums[i].toString()
+    }
+    as_str += "]"
+    return as_str
   }
 }
 

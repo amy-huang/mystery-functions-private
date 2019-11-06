@@ -37,6 +37,10 @@ class Integer {
   static areEquivalent(first: any, second: any): boolean {
     return this.parse(first) === this.parse(second)
   }
+
+  static asString(member: number): string {
+    return member.toString()
+  }
 }
 
 export default Integer

@@ -133,9 +133,16 @@ class Quiz extends Component {
       alert("Please submit an answer!")
       return
     }
+    if (!this.funcObj.validOutput(submitted)) {
+      alert("'" + submitted + "' is not a valid output of this function")
+      return
+    }
 
     const actual = this.funcObj.function(this.currInput)
-    const gotCorrect = this.funcObj.equivalentOutputs(submitted, actual)
+    const submittedAsVal = this.funcObj.parseInput(submitted)
+    console.log(actual)
+    console.log(submittedAsVal)
+    const gotCorrect = this.funcObj.equivalentOutputs(submittedAsVal, actual)
 
     //Construct action object and send to server 
     if (localStorage.getItem(this.funcObj.description()) === null) {
@@ -143,10 +150,10 @@ class Quiz extends Component {
       action.id = localStorage.getItem('userID')
       action.fcn = this.funcObj.description()
       action.type = "quiz_answer"
-      action.in = this.currInput.toString() // TODO: make tostring method for each type object, and for each function have inputToString, etc
-      action.out = submitted
+      action.in = this.funcObj.inputStr(this.currInput)
+      action.out = submitted  // Is a string already
       action.q = this.state.question
-      action.actual = actual
+      action.actual = this.funcObj.outputStr(actual)
       action.result = gotCorrect
       action.time = Util.getCurrentTime()
       console.log(action)
@@ -170,7 +177,7 @@ class Quiz extends Component {
     }
   }
 
-  nextQuestion = () => {
+  goToNextQuestion = () => {
     if (this.state.question + 1 < this.inputGens.length) {
       this.setState({
         question: this.state.question + 1,
@@ -243,7 +250,7 @@ class Quiz extends Component {
               </Grid>
               <Grid item>
                 <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
-                <Typography variant="h3">What would this function output for {this.questionInput()}? </Typography>
+                <Typography variant="h3">What would this function output for {this.funcObj.inputStr(this.questionInput())}? </Typography>
 
                 <TextField onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit">
                 </TextField>
@@ -254,7 +261,7 @@ class Quiz extends Component {
               {
                 this.state.answered ?
                   <Grid item>
-                    <Button variant="contained" type="submit" onClick={this.nextQuestion}>
+                    <Button variant="contained" type="submit" onClick={this.goToNextQuestion}>
                       Next Question
                     </Button>
                   </Grid>

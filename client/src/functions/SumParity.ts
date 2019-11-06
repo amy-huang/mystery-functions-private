@@ -1,5 +1,6 @@
 import ListOfInteger from "./ListOfInteger";
 import Integer from "./Integer";
+import { List } from "@material-ui/core";
 
 class SumParity {
   static description(): string {
@@ -54,6 +55,14 @@ class SumParity {
 
   static equivalentOutputs(first: any, second: any): boolean {
     return Integer.areEquivalent(first, second)
+  }
+
+  static inputStr(input: number[]): string {
+    return ListOfInteger.asString(input)
+  }
+
+  static outputStr(output: number): string {
+    return Integer.asString(output)
   }
 }
 
