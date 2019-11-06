@@ -133,16 +133,6 @@ function dummyTiles() {
 class GuessingScreen extends Component {
   constructor(props) {
     super(props)
-    // if (localStorage.getItem('quiz') === null) {
-    //   this.state = { quiz: false }
-    //   localStorage.setItem('quiz', false)
-    // } else {
-    //   if (localStorage.getItem('quiz') === "false") {
-    //     this.state = { quiz: false }
-    //   } else {
-    //     this.state = { quiz: true }
-    //   }
-    // }
     this.state = {
       quiz: false,
       guessText: ""

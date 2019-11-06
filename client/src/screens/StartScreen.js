@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import withStyles from '@material-ui/styles/withStyles'
 import { withRouter, Link } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { TextField } from '@material-ui/core'
+import { TextField, Typography } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
@@ -102,28 +102,37 @@ const styles = theme => ({
   },
 })
 
-// Update userID with each keystroke unless already submitted
-// If only submitted when button is clicked, the ID doesn't show
-// up for the first few evaluate inputs so this is needed
-function updateUserID(text) {
-  // console.log("entered: ", text)
-  if (localStorage.getItem('started') === null) {
-    localStorage.setItem('userID', text)
-  }
-  console.log("userID is now ", localStorage.getItem('userID'))
-}
-
-// Make sure ID isn't changed after study started
-function started() {
-  // TODO: make sure userID is not null
-  if (localStorage.getItem('started') === null) {
-    localStorage.setItem('started', true)
-  }
-}
-
 class StartScreen extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      retrievedID: new URLSearchParams(window.location.search).get('id'),
+      enteredID: new URLSearchParams(window.location.search).get('id')
+    }
+  }
+
+  updateUserID(text) {
+    // console.log("entered: ", text)
+    this.setState({ enteredID: text })
+    if (localStorage.getItem('started') === null) {
+      localStorage.setItem('userID', text)
+    }
+    console.log("userID is now ", localStorage.getItem('userID'))
+  }
+
+  // Make sure ID isn't changed after study started
+  started() {
+    // TODO: make sure userID is not null
+    if (localStorage.getItem('started') === null) {
+      localStorage.setItem('started', true)
+    }
+  }
+
   render() {
     const { classes } = this.props
+    console.log("retrieved", this.state.retrievedID)
+    console.log("entered", this.state.enteredID)
+
     return (
       <React.Fragment>
         <CssBaseline />
@@ -146,14 +155,31 @@ class StartScreen extends Component {
                       <p>There are 2 mystery functions. Good luck!</p>
                     </Grid>
 
+                    {this.state.retrievedID !== null ?
+                      <Grid item>
+                        <Typography variant="h5" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if it is incorrect.</Typography>
+                      </Grid>
+                      :
+                      null
+                    }
+
                     <Grid item>
-                      <TextField label="Enter your ID here" onKeyUp={(e) => { updateUserID(e.target.value) }} >
+                      <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
 
+
+                    {this.state.enteredID === '' || this.state.enteredID === null ?
+                      <Grid item>
+                        <Typography><i>Warning! Entered ID is empty; please fill in before moving on.</i></Typography>
+                      </Grid>
+                      :
+                      null
+                    }
+
                     <Grid item>
                       <Button type="submit">
-                        <Link onFocus={started} to={this.props.nextPage}>Begin!</Link>
+                        <Link onFocus={this.started} to={this.props.nextPage}>Begin!</Link>
                       </Button>
                     </Grid>
 
