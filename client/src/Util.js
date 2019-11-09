@@ -6,14 +6,24 @@ class Util {
     return date + ' ' + time
   }
 
-  static newKey() {
-    if (localStorage.getItem('actionKey') === null) {
-      localStorage.setItem('actionKey', 0)
+  static newDisplayKey() {
+    if (localStorage.getItem('displayKey') === null) {
+      localStorage.setItem('displayKey', 0)
     } else {
-      var k = parseInt(localStorage.getItem('actionKey')) + 1
-      localStorage.setItem('actionKey', k)
+      var k = parseInt(localStorage.getItem('displayKey')) + 1
+      localStorage.setItem('displayKey', k)
     }
-    return localStorage.getItem('actionKey')
+    return localStorage.getItem('displayKey')
+  }
+
+  static newServerKey() {
+    if (localStorage.getItem('serverKey') === null) {
+      localStorage.setItem('serverKey', 0)
+    } else {
+      var k = parseInt(localStorage.getItem('serverKey')) + 1
+      localStorage.setItem('serverKey', k)
+    }
+    return localStorage.getItem('serverKey')
   }
 
   static async sendToServer(obj) {

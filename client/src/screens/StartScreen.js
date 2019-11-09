@@ -112,7 +112,6 @@ class StartScreen extends Component {
   }
 
   updateUserID = (text) => {
-    // console.log("entered: ", text)
     this.setState({ enteredID: text })
     if (localStorage.getItem('started') === null) {
       localStorage.setItem('userID', text.trim())

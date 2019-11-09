@@ -74,7 +74,6 @@ export default function SimpleTabs(props) {
       alert("'" + evalInputStr + "' is not a valid input to this function")
       return
     }
-    const actionKey = Util.newKey()
 
     var serverGuess = {}
     var displayGuess = {}
@@ -84,8 +83,8 @@ export default function SimpleTabs(props) {
     displayGuess.fcn = funcObj.description()
     serverGuess.type = "eval_input"
     displayGuess.type = "eval_input"
-    serverGuess.key = actionKey
-    displayGuess.key = actionKey
+    // serverGuess.key = actionKey
+    displayGuess.key = Util.newDisplayKey()
 
     serverGuess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
     displayGuess.in = funcObj.inputDisplayStr(funcObj.parseInput(evalInputStr))
@@ -99,6 +98,7 @@ export default function SimpleTabs(props) {
     displayGuess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
       console.log("sent to server", serverGuess)
+      serverGuess.key = Util.newServerKey()
       Util.sendToServer(serverGuess)
     }
 
