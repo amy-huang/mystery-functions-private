@@ -134,6 +134,10 @@ class Quiz extends Component {
   }
 
   submitAnswer = (submitted) => {
+    if (this.state.answered === true) {
+      return
+    }
+
     if (submitted === "") {
       alert("Please submit an answer!")
       return
@@ -165,9 +169,9 @@ class Quiz extends Component {
       action.key = Util.newKey()
       Util.sendToServer(action)
 
-      console.log("'", action.in, "'")
-      console.log("'", action.out, "'")
-      console.log("'", action.actual, "'")
+      // console.log("'", action.in, "'")
+      // console.log("'", action.out, "'")
+      // console.log("'", action.actual, "'")
     }
 
     // Show answer onscreen
@@ -178,10 +182,9 @@ class Quiz extends Component {
       answerText = "Incorrect."
     }
     this.setState({ 'answerText': answerText })
+    this.setState({ 'answered': true })
 
-    if (this.state.question + 1 < this.inputGens.length) {
-      this.setState({ 'answered': true })
-    } else {
+    if (this.state.question + 1 >= this.inputGens.length) {
       this.setState({ done: true })
     }
 
@@ -298,7 +301,7 @@ class Quiz extends Component {
           <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
           <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
 
-          <TextField InputProps={{ classes: { input: my_classes.fontResize } }} onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit">
+          <TextField InputProps={{ classes: { input: my_classes.fontResize } }} onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit" disabled={this.state.answered}>
           </TextField>
         </Grid>
         <Grid padding={8} margin={8} item>
@@ -388,8 +391,12 @@ class Quiz extends Component {
                 :
                 <div>{
                   this.state.done ?
-                    <div>{this.submitGuessButton()}</div>
-                    :
+                    <div>{
+                      this.state.gotItRight ?
+                        <div>{this.submitGuessButton()}</div>
+                        :
+                        null
+                    }</div> :
                     null
                 }</div>
             }
