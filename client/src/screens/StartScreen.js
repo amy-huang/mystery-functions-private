@@ -163,7 +163,7 @@ class StartScreen extends Component {
 
                     {this.state.retrievedID !== null ?
                       <Grid item>
-                        <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if it is incorrect. Otherwise, you can click BEGIN to move on.</Typography>
+                        <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if needed.</Typography>
                       </Grid>
                       :
                       null
