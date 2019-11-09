@@ -1,10 +1,10 @@
 class Integer {
   static shortDescription() {
-    return "list of integers"
+    return "integer"
   }
 
   static longDescription() {
-    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]"
+    return "integer, represented by a number that is not fractional like so: 6"
   }
 
   static valid(output: any): boolean {

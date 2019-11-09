@@ -376,12 +376,28 @@ class Quiz extends Component {
                           this.state.gotItRight ?
                             <div>{this.nextQuestionButton()}</div>
                             :
-                            <div>{this.giveUpButton()}</div>
+                            null
                         }</div>
                         : null
                     }
                     </div>
                 }</div>
+            }
+            {
+              this.state.showAnswer ?
+                null
+                :
+                <div>{
+                  this.state.answered ?
+                    <div>{
+                      this.state.gotItRight ?
+                        null
+                        :
+                        <div>{this.giveUpButton()}</div>
+                    }</div>
+                    : null
+                }
+                </div>
             }
           </ Grid>
           < Grid item>
