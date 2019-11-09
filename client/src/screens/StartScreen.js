@@ -154,8 +154,6 @@ class StartScreen extends Component {
 
                       <p>When you're ready to commit to a guess about the function, you'll describe the function your own words with a text submission, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
 
-                      <p>This is to let you know if your guess is right, so that you can decide when to move on to the next function. </p>
-
                       <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different written guess, or give up and skip to seeing the answer, and then go to the next mystery function.</p>
 
                       <p>There are 2 mystery functions. Good luck!</p>
