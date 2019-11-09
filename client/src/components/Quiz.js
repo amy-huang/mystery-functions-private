@@ -166,7 +166,7 @@ class Quiz extends Component {
       action.result = gotCorrect.toString()
       action.time = Util.getCurrentTime()
       // console.log(action)
-      action.key = Util.newKey()
+      action.key = Util.newServerKey()
       Util.sendToServer(action)
 
       // console.log("'", action.in, "'")
@@ -216,7 +216,7 @@ class Quiz extends Component {
     guess.time = Util.getCurrentTime()
 
     if (localStorage.getItem(this.funcObj.description()) === null) {
-      guess.key = Util.newKey()
+      guess.key = Util.newServerKey()
       localStorage.setItem(this.funcObj.description(), 'Done')
       Util.sendToServer(guess)
     }
