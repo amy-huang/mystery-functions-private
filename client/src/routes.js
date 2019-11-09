@@ -4,6 +4,7 @@ import GuessingScreen from './screens/GuessingScreen'
 import StartScreen from './screens/StartScreen'
 import MakePalindrome from './functions/MakePalindrome';
 import SumParity from './functions/SumParity';
+import ThankYouScreen from './screens/ThankYouScreen';
 
 
 // Logic to randomize screen order would go here
@@ -16,7 +17,8 @@ export default props => (
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
       <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={SumParity} nextPage={'/second'}></GuessingScreen>} />
-      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={MakePalindrome}></GuessingScreen>} />
+      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={MakePalindrome} nextPage={'/third'}></GuessingScreen>} />
+      <Route exact path='/third' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>
 )

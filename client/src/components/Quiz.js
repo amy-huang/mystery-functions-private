@@ -235,11 +235,11 @@ class Quiz extends Component {
       return (<div></div>)
     }
     return (
-      <div>
-        <Button variant="contained" className={this.props.actionButton} onClick={this.clearThisFunc}>
-          <Link style={{ color: '#FFF' }} to={nextPage}> go to next mystery function</Link>
+      <Grid item>
+        <Button color="primary" variant="contained" className={this.props.actionButton} onClick={this.clearThisFunc}>
+          <Link style={{ color: '#FFF' }} to={nextPage}> Next</Link>
         </Button>
-      </div>
+      </Grid>
     )
   }
 
