@@ -111,7 +111,7 @@ class StartScreen extends Component {
     }
   }
 
-  updateUserID(text) {
+  updateUserID = (text) => {
     // console.log("entered: ", text)
     this.setState({ enteredID: text })
     if (localStorage.getItem('started') === null) {
@@ -123,7 +123,7 @@ class StartScreen extends Component {
   }
 
   // Make sure ID isn't changed after study started
-  started() {
+  started = () => {
     // TODO: make sure userID is not null
     if (localStorage.getItem('started') === null) {
       // Nothing entered, which means id taken from URL
