@@ -150,13 +150,17 @@ class StartScreen extends Component {
                   <Grid container spacing={4} direction="column">
 
                     <Grid item className={classes.panel}>
-                      <p>Welcome to mystery functions! Your task is to figure out what a function does. We'll tell you the input and output types. You can tell us any valid input to the function, and we'll tell you what the function outputs.</p>
+                      <p>Welcome to mystery functions!</p>
 
-                      <p>When you're ready to commit to a guess about the function, you'll describe the function your own words with a text submission, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
+                      <p>Your task in this experiment is to guess what function the computer has in mind.  A function takes an input and produces an output.</p>
 
-                      <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different written guess, or give up and skip to seeing the answer, and then go to the next mystery function.</p>
+                      <p>For example, the function “double” takes any number as input and outputs twice that number.  If you gave it 5 as an input, “double” would produce 10 as output.  Functions can also take lists of numbers.  For example, the function “find largest” takes a list like [5,8,2,3] and outputs the largest number in the list - in this case, the number 8.</p>
 
-                      <p>There are 2 mystery functions. Good luck!</p>
+                      <p>When you're ready to take a guess as to what the function is, you'll submit in words what you think it is, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
+
+                      <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different guess, or give up and skip to seeing the answer. If you get all the questions right, you also go to seeing the answer (which you probably got right).</p>
+
+                      <p>There is (1) mystery function. Good luck!</p>
                     </Grid>
 
                     {this.state.retrievedID !== null ?

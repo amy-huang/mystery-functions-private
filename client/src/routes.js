@@ -17,8 +17,7 @@ export default props => (
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
       <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={SumParity} nextPage={'/second'}></GuessingScreen>} />
-      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={MakePalindrome} nextPage={'/third'}></GuessingScreen>} />
-      <Route exact path='/third' render={(props) => <ThankYouScreen></ThankYouScreen>} />
+      <Route exact path='/second' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>
 )
