@@ -97,7 +97,7 @@ export default function SimpleTabs(props) {
     serverGuess.time = Util.getCurrentTime()
     displayGuess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
-      console.log("sent to server", serverGuess)
+      // console.log("sent to server", serverGuess)
       serverGuess.key = Util.newServerKey()
       Util.sendToServer(serverGuess)
     }

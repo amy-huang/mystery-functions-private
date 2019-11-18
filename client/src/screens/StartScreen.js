@@ -116,9 +116,9 @@ class StartScreen extends Component {
     if (localStorage.getItem('started') === null) {
       localStorage.setItem('userID', text.trim())
     }
-    console.log("userID is now '" + localStorage.getItem('userID') + "'")
-    console.log("retrieved '" + this.state.retrievedID + "'")
-    console.log("entered '" + this.state.enteredID + "'")
+    // console.log("userID is now '" + localStorage.getItem('userID') + "'")
+    // console.log("retrieved '" + this.state.retrievedID + "'")
+    // console.log("entered '" + this.state.enteredID + "'")
   }
 
   // Make sure ID isn't changed after study started
