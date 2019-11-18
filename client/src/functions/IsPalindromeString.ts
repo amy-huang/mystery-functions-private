@@ -22,7 +22,7 @@ class IsPalindromeString {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }]
+    return [() => { return "\"T\"" }, () => { return "\"ggggggggg\"" }, () => { return "\"The cat walked down to the liquor store.\"" }, () => { return "\"tacocat\"" }, () => { return "\"Abcde_edcbA\"" }]
   }
 
   static answerText(): string {

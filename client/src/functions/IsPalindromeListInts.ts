@@ -22,7 +22,7 @@ class IsPalindromeListInts {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [0, 0] }, () => { return [9, 9, 8] }]
+    return [() => { return [9967] }, () => { return [-4, -4, -4, -4, -4] }, () => { return [10, -1, 3, 2] }, () => { return [9, -1, 9] }, () => { return [2, 9, -1, 9, 2] }]
   }
 
   static answerText(): string {
