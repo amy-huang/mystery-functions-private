@@ -29,6 +29,10 @@ class SumParity {
     return ListOfInteger.placeholderText()
   }
 
+  static outputPlaceHolderText(): string {
+    return Integer.placeholderText()
+  }
+
   static inputDescription(): string {
     return ListOfInteger.longDescription()
   }

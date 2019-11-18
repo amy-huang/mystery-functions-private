@@ -24,6 +24,10 @@ class Integer {
     return false;
   }
 
+  static placeholderText(): string {
+    return ""
+  }
+
   static parse(input: any): number {
     var parsed
     try {

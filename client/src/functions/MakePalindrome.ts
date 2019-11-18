@@ -33,6 +33,10 @@ class MakePalindrome {
     return ListOfInteger.placeholderText()
   }
 
+  static outputPlaceHolderText(): string {
+    return ListOfInteger.placeholderText()
+  }
+
   static inputDescription(): string {
     return ListOfInteger.longDescription()
   }
