@@ -1,5 +1,5 @@
-import ListOfInteger from "./ListOfInteger";
-import Integer from "./Integer";
+import ListOfInteger from "../types/ListOfInteger";
+import Integer from "../types/Integer";
 import { List } from "@material-ui/core";
 
 class SumParity {
