@@ -46,7 +46,7 @@ class Bool {
   }
 
   static dbString(member: boolean): string {
-    return member.toString()
+    return member.toString().toUpperCase()[0]
   }
 }
 

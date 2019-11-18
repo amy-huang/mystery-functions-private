@@ -43,7 +43,7 @@ app.post('/api/store', async (req, res) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed! `, err)
+        res.send(`Failed! `, err.name, err.message, err.stack)
       }
     });
   } else if (type === "final_answer") {
@@ -54,7 +54,7 @@ app.post('/api/store', async (req, res) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed! `, err)
+        res.send(`Failed! `, err.name, err.message, err.stack)
       }
     });
   } else if (type === "quiz_answer") {
@@ -75,7 +75,7 @@ app.post('/api/store', async (req, res) => {
       if (!err) {
         res.send(`Success!`)
       } else {
-        res.send(`Failed! `, err)
+        res.send(`Failed! `, err.name, err.message, err.stack)
       }
     });
   }
