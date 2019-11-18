@@ -26,18 +26,18 @@ app.post('/api/store', async (req, res) => {
   var type = action.type
   var time = action.time
 
-  console.log(typeof id, "id: ", id)
-  console.log(typeof name, "name: ", name)
-  console.log(typeof action.key, "key: ", key)
-  console.log(typeof action.type, "type: ", type)
-  console.log(typeof action.time, "time: ", time)
+  // console.log(typeof id, "id: ", id)
+  // console.log(typeof name, "name: ", name)
+  // console.log(typeof action.key, "key: ", key)
+  // console.log(typeof action.type, "type: ", type)
+  // console.log(typeof action.time, "time: ", time)
 
   if (type === "eval_input") {
     // TODO: move toDBString methods to input type objects
     in_str = action.in
     out_str = action.out
-    console.log("in: ", in_str)
-    console.log("out: ", out_str)
+    // console.log("in: ", in_str)
+    // console.log("out: ", out_str)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, input, output) values ($1, $2, $3, $4, $5, $6, $7);`, [id, name, key, type, time, in_str, out_str], (err, result) => {
       if (!err) {
@@ -48,7 +48,7 @@ app.post('/api/store', async (req, res) => {
     });
   } else if (type === "final_answer") {
     finalGuess = action.finalGuess
-    console.log("final guess: ", finalGuess)
+    // console.log("final guess: ", finalGuess)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, finalGuess) values ($1, $2, $3, $4, $5, $6);`, [id, name, key, type, time, finalGuess], (err, result) => {
       if (!err) {
@@ -58,18 +58,17 @@ app.post('/api/store', async (req, res) => {
       }
     });
   } else if (type === "quiz_answer") {
-    // TODO: move toDBString methods to input type objects
     in_str = action.in
     out_str = action.out
     actual_str = action.actual
     question = action.q  // TODO: just make all action fields be strings
     result = action.result
 
-    console.log("in: ", in_str)
-    console.log("out: ", out_str)
-    console.log("actual out: ", actual_str)
-    console.log("question: ", question)
-    console.log("result: ", result)
+    // console.log("in: ", in_str)
+    // console.log("out: ", out_str)
+    // console.log("actual out: ", actual_str)
+    // console.log("question: ", question)
+    // console.log("result: ", result)
 
     conPool.query(`insert into actions (userID, fcnName, actionID, actionType, time, input, output, actualOutput, quizQ, result) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);`, [id, name, key, type, time, in_str, out_str, actual_str, question, result], (err, result) => {
       if (!err) {
