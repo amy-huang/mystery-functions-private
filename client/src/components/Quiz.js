@@ -225,9 +225,10 @@ class Quiz extends Component {
     })
   }
 
-  clearThisFunc = () => {
+  toNextFunc = (nextPage) => {
     this.props.resetFcn()
     this.props.cancelFcn()
+    this.props.history.push(nextPage)
   }
 
   toNextFuncButton = (nextPage) => {
@@ -236,8 +237,9 @@ class Quiz extends Component {
     }
     return (
       <Grid item>
-        <Button color="primary" variant="contained" className={this.props.actionButton} onClick={this.clearThisFunc}>
-          <Link style={{ color: '#FFF' }} to={nextPage}> Next</Link>
+        <Button color="primary" variant="contained" className={this.props.actionButton} onClick={() => { this.toNextFunc(nextPage) }}>
+          {/* <Link style={{ color: '#FFF' }} to={nextPage}> Next</Link> */}
+          Next
         </Button>
       </Grid>
     )
@@ -298,7 +300,7 @@ class Quiz extends Component {
     return (
       <div>
         <Grid item>
-          
+
           <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
           <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
 

@@ -172,14 +172,14 @@ class StartScreen extends Component {
                     }
 
                     <Grid item>
-                      <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
+                      <TextField defaultValue={this.state.enteredID} label="Enter your Turker ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
 
 
                     {this.state.enteredID === '' || this.state.enteredID === null ?
                       <Grid item>
-                        <Typography><i>WARNING! Entered ID is empty; please fill in before moving on.</i></Typography>
+                        <Typography><i>WARNING! Entered Turker ID is empty; please fill in before moving on.</i></Typography>
                       </Grid>
                       :
                       null
