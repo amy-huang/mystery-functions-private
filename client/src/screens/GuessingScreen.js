@@ -40,6 +40,13 @@ const styles = theme => ({
       width: 'calc(100% - 20px)'
     },
   },
+  smallPanel: {
+    width: 300,
+    marginTop: 40,
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100% - 20px)'
+    },
+  },
   paper: {
     padding: theme.spacing(3),
     textAlign: 'left',
@@ -232,13 +239,23 @@ class GuessingScreen extends Component {
         < div className={classes.root} >
           {/* Center all Grids */}
           {this.state.quiz ?
-            < Grid container justify="center" spacing={4}>
-              < Grid container item spacing={4} className={classes.panel} direction="column" >
-                <Grid container className={classes.paper}>
-                  <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses}></Quiz>
+            < Grid container justify="center" spacing={4} direction="row" alignContent="center">
+              {/* Quiz zone */}
+              < Grid container item className={classes.panel}>
+                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses}></Quiz>
+              </ Grid>
+
+              {/* Current guess and function output type */}
+              < Grid container item className={classes.smallPanel} direction="column" spacing={4}>
+                {/* Output type description */}
+                < Grid item>
+                  <Typography color="secondary" variant="h6">Your current guess: </Typography>{this.state.guessText}
+                </Grid>
+                < Grid item>
+                  <Typography color="secondary" variant="h6">Output type: </Typography>{this.props.funcObj.outputDescription()}
                 </Grid>
               </ Grid>
-            </ Grid>
+            </Grid>
             :
             < Grid container justify="center" spacing={4}>
               < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
@@ -258,11 +275,13 @@ class GuessingScreen extends Component {
                   </ul>
                 </Grid>
 
+                {/* Tabs */}
                 <Grid item xs={12} >
                   <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn}></TabsWrapper>
                 </Grid>
               </Grid>
 
+              {/* Console */}
               <Grid container item spacing={4} className={classes.panel}>
                 <Paper className={classes.paper}>
                   <div className={classes.gridListWrapper}>

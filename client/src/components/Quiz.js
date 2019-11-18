@@ -298,6 +298,7 @@ class Quiz extends Component {
     return (
       <div>
         <Grid item>
+          
           <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
           <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
 
