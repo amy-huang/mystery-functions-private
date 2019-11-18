@@ -17,7 +17,7 @@ export default props => (
   <HashRouter>
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
-      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={IsPalindromeString} nextPage={'/last'}></GuessingScreen>} />
+      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={IsPalindromeListInts} nextPage={'/last'}></GuessingScreen>} />
       <Route exact path='/last' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>
