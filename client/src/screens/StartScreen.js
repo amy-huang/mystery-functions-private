@@ -112,26 +112,33 @@ class StartScreen extends Component {
   }
 
   updateUserID = (text) => {
-    this.setState({ enteredID: text })
     if (localStorage.getItem('started') === null) {
       localStorage.setItem('userID', text.trim())
     }
-    // console.log("userID is now '" + localStorage.getItem('userID') + "'")
+    this.setState({ enteredID: text.trim() })
+    console.log("userID is '" + localStorage.getItem('userID') + "'")
     // console.log("retrieved '" + this.state.retrievedID + "'")
     // console.log("entered '" + this.state.enteredID + "'")
   }
 
-  // Make sure ID isn't changed after study started
-  started = () => {
-    // TODO: make sure userID is not null
+  begin = () => {
     if (localStorage.getItem('started') === null) {
       // Nothing entered, which means id taken from URL
       if (localStorage.getItem('userID') === null) {
         localStorage.setItem('userID', this.state.enteredID)
       }
 
+      // Check for empty or null IDs
+      if (localStorage.getItem('userID') === null || localStorage.getItem('userID') === 'null' || localStorage.getItem('userID') === '') {
+        alert("Invalid user ID of '" + localStorage.getItem('userID') + "'. Please re-enter your ID.")
+        return
+      }
+
+      // Record start, and go to next page
       localStorage.setItem('started', true)
     }
+
+    this.props.history.push(this.props.nextPage)
   }
 
   render() {
@@ -176,18 +183,10 @@ class StartScreen extends Component {
                       </TextField>
                     </Grid>
 
-
-                    {this.state.enteredID === '' || this.state.enteredID === null ?
-                      <Grid item>
-                        <Typography><i>WARNING! Entered Turker ID is empty; please fill in before moving on.</i></Typography>
-                      </Grid>
-                      :
-                      null
-                    }
-
                     <Grid item>
-                      <Button type="submit">
-                        <Link onFocus={this.started} to={this.props.nextPage}>Begin!</Link>
+                      <Button type="submit" onClick={this.begin}>
+                        Begin!
+                        {/* <Link onFocus={this.started} to={this.props.nextPage}>Begin!</Link> */}
                       </Button>
                     </Grid>
 
