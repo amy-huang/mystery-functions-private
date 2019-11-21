@@ -1,27 +1,18 @@
 import ListOfInteger from "../types/ListOfInteger";
 import Integer from "../types/Integer";
-import { List } from "@material-ui/core";
 
-class Median {
+class Average {
+  static inputType = ListOfInteger
+  static outputType = Integer
+
   static description(): string {
-    return "Median"
+    return "Average"
   }
 
   static function(items: number[]): number {
-    var sorted = JSON.parse(JSON.stringify(items))
-    sorted.sort(function (a: number, b: number) { return a - b })
-    console.log(sorted)
-    var elem = 0
-    var middle = Math.floor(items.length / 2)
-
-    if (sorted.length % 2 == 0) {
-      elem = (sorted[middle - 1] + sorted[middle]) / 2
-    } else {
-      elem = sorted[middle]
-    }
-
-    console.log(typeof sorted[middle], sorted[middle])
-    return elem
+    var sum = 0
+    items.forEach((elem) => { sum += elem })
+    return sum / items.length
   }
 
   static inputGenerators(): Function[] {
@@ -30,23 +21,23 @@ class Median {
   }
 
   static answerText(): string {
-    return "This function returns the median of the input list of numbers."
+    return "This function returns the average of the input list of numbers."
   }
 
   static inputPlaceHolderText(): string {
-    return ListOfInteger.placeholderText()
+    return this.inputType.placeholderText()
   }
 
   static outputPlaceHolderText(): string {
-    return Integer.placeholderText()
+    return this.outputType.placeholderText()
   }
 
   static inputDescription(): string {
-    return ListOfInteger.longDescription()
+    return this.inputType.longDescription()
   }
 
   static outputDescription(): string {
-    return Integer.longDescription()
+    return this.outputType.longDescription()
   }
 
   static validInput(input: any): boolean {
@@ -69,37 +60,39 @@ class Median {
     }
   }
 
+  /* Should not have to touch functions below here! */
+
   static validOutput(input: any): boolean {
-    return Integer.valid(input)
+    return this.outputType.valid(input)
   }
 
   static parseInput(input: any): any[] {
-    return ListOfInteger.parse(input)
+    return this.inputType.parse(input)
   }
 
   static parseOutput(output: any): number {
-    return Integer.parse(output);
+    return this.outputType.parse(output);
   }
 
   static equivalentOutputs(first: any, second: any): boolean {
-    return Integer.areEquivalent(first, second)
+    return this.outputType.areEquivalent(first, second)
   }
 
   static inputDisplayStr(input: number[]): string {
-    return ListOfInteger.displayString(input)
+    return this.inputType.displayString(input)
   }
 
   static outputDisplayStr(output: number): string {
-    return Integer.displayString(output)
+    return this.outputType.displayString(output)
   }
 
   static inputDBStr(input: number[]): string {
-    return ListOfInteger.dbString(input)
+    return this.inputType.dbString(input)
   }
 
   static outputDBStr(output: number): string {
-    return Integer.dbString(output)
+    return this.outputType.dbString(output)
   }
 }
 
-export default Median
+export default Average
