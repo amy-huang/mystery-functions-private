@@ -1,18 +1,22 @@
 import ListOfInteger from "../types/ListOfInteger";
-import Integer from "../types/Integer";
-import { List } from "@material-ui/core";
+import Bool from "../types/Bool";
 
-class SumParity {
+class SumParityBool {
   static description(): string {
-    return "SumParity"
+    return "SumParityBool"
   }
 
-  static function(items: number[]): number {
+  static function(items: number[]): boolean {
     var sum = 0
     for (var i = 0; i < items.length; i++) {
       sum += items[i]
     }
-    return Math.abs(sum % 2)
+
+    if (Math.abs(sum % 2) == 1) {
+      return true
+    }
+
+    return false
   }
 
   static inputGenerators(): Function[] {
@@ -30,7 +34,7 @@ class SumParity {
   }
 
   static outputPlaceHolderText(): string {
-    return Integer.placeholderText()
+    return Bool.placeholderText()
   }
 
   static inputDescription(): string {
@@ -38,7 +42,7 @@ class SumParity {
   }
 
   static outputDescription(): string {
-    return Integer.longDescription()
+    return Bool.longDescription()
   }
 
   static validInput(input: any): boolean {
@@ -46,36 +50,36 @@ class SumParity {
   }
 
   static validOutput(input: any): boolean {
-    return Integer.valid(input)
+    return Bool.valid(input)
   }
 
   static parseInput(input: any): any[] {
     return ListOfInteger.parse(input)
   }
 
-  static parseOutput(output: any): number {
-    return Integer.parse(output);
+  static parseOutput(output: any): boolean {
+    return Bool.parse(output);
   }
 
   static equivalentOutputs(first: any, second: any): boolean {
-    return Integer.areEquivalent(first, second)
+    return Bool.areEquivalent(first, second)
   }
 
   static inputDisplayStr(input: number[]): string {
     return ListOfInteger.displayString(input)
   }
 
-  static outputDisplayStr(output: number): string {
-    return Integer.displayString(output)
+  static outputDisplayStr(output: boolean): string {
+    return Bool.displayString(output)
   }
 
   static inputDBStr(input: number[]): string {
     return ListOfInteger.dbString(input)
   }
 
-  static outputDBStr(output: number): string {
-    return Integer.dbString(output)
+  static outputDBStr(output: boolean): string {
+    return Bool.dbString(output)
   }
 }
 
-export default SumParity
+export default SumParityBool
