@@ -2,6 +2,8 @@ import ListOfInteger from "../types/ListOfInteger"
 import Integer from "../types/Integer"
 
 class MakePalindrome {
+  static numArgs = 1
+
   static description(): string {
     return "MakePalindrome"
   }

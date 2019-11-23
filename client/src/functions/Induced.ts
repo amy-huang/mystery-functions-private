@@ -1,6 +1,8 @@
 import Integer from "../types/Integer";
 
 class Induced {
+  static numArgs = 1
+
   static inputType = Integer
   static outputType = Integer
 

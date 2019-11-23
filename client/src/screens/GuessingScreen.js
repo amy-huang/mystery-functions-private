@@ -228,6 +228,7 @@ class GuessingScreen extends Component {
 
   render() {
     const { classes } = this.props
+    var funcObj = this.props.funcObj
 
     // var quizVal = Boolean.valueOf(localStorage.getItem('quiz'))
     // if (quizVal === true) {
@@ -262,11 +263,11 @@ class GuessingScreen extends Component {
                 {/* Function signature */}
                 < Grid item xs={12} >
                   This mystery function takes an input of type
-                    <ul>
-                    <li>
+                    <ol>
+                    {Array(funcObj.numArgs).fill(<li>
                       {this.props.funcObj.inputDescription()}
-                    </li>
-                  </ul>
+                    </li>)}
+                  </ol>
                   and an output of type
                   <ul>
                     <li>

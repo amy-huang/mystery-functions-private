@@ -2,6 +2,8 @@ import Str from "../types/Str"
 import Bool from "../types/Bool"
 
 class IsPalindromeString {
+  static numArgs = 1
+
   static description(): string {
     return "IsPalindromeString"
   }

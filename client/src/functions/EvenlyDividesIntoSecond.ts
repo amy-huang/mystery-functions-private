@@ -1,28 +1,35 @@
 import ListOfInteger from "../types/ListOfInteger";
+import Bool from "../types/Bool";
 import Integer from "../types/Integer";
 
-class Average {
-  static inputType = ListOfInteger
-  static numArgs = 1
-  static outputType = Integer
+// Need to show 2 input text fields and do checking on each
+// # args property for each fcn needs to exist, and actual
+// input put into fcn could be an array or json to support
+// multiple inputs of differing types.
+// process inputs fcn somehow...
+
+class EvenlyDividesIntoFirst {
+  static inputType = Integer
+  static numArgs = 2
+  static outputType = Bool
 
   static description(): string {
-    return "Average"
+    return "EvenlyDividesIntoFirst"
   }
 
-  static function(items: number[]): number {
-    var sum = 0
-    items.forEach((elem) => { sum += elem })
-    return sum / items.length
+  static function(divider: number, num: number): boolean {
+    if (num % divider !== 0) {
+      return false
+    }
+    return true
   }
 
   static inputGenerators(): Function[] {
     return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
-
   }
 
   static answerText(): string {
-    return "This function returns the average of the input list of numbers."
+    return "This function returns whether or not the second integer argument divides evenly into the first one. So divides_evenly(4, 2) = true, and divides_evenly(4, 5) = false."
   }
 
   static inputPlaceHolderText(): string {
@@ -42,23 +49,10 @@ class Average {
   }
 
   static validInput(input: any): boolean {
-    var as_list;
-    try {
-      // Parse string as a list, with brackets required
-      if (input.trim()[0] !== "[") {
-        console.log("no starting bracket")
-        return false;
-      }
-      as_list = JSON.parse(input);
-      if (as_list.length > 0) {
-        return ListOfInteger.valid(input)
-      } else {
-        return false
-      }
-    } catch (e) {
-      console.log("error: ", e)
-      return false;
+    if (!this.inputType.valid(input)) {
+      return false
     }
+    return true
   }
 
   /* Should not have to touch functions below here! */
@@ -67,11 +61,11 @@ class Average {
     return this.outputType.valid(input)
   }
 
-  static parseInput(input: any): any[] {
+  static parseInput(input: any): number {
     return this.inputType.parse(input)
   }
 
-  static parseOutput(output: any): number {
+  static parseOutput(output: any): boolean {
     return this.outputType.parse(output);
   }
 
@@ -79,21 +73,21 @@ class Average {
     return this.outputType.areEquivalent(first, second)
   }
 
-  static inputDisplayStr(input: number[]): string {
+  static inputDisplayStr(input: number): string {
     return this.inputType.displayString(input)
   }
 
-  static outputDisplayStr(output: number): string {
+  static outputDisplayStr(output: boolean): string {
     return this.outputType.displayString(output)
   }
 
-  static inputDBStr(input: number[]): string {
+  static inputDBStr(input: number): string {
     return this.inputType.dbString(input)
   }
 
-  static outputDBStr(output: number): string {
+  static outputDBStr(output: boolean): string {
     return this.outputType.dbString(output)
   }
 }
 
-export default Average
+export default EvenlyDividesIntoFirst

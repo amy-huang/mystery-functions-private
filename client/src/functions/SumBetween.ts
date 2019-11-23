@@ -8,18 +8,21 @@ import Integer from "../types/Integer";
 // process inputs fcn somehow...
 
 class SumBetween {
-  static inputType = ListOfInteger
+  static inputType = Integer
+  static numArgs = 2
   static outputType = Integer
 
   static description(): string {
     return "SumBetween"
   }
 
-  static function(range: number[]): number {
+  static function(first: number, second: number): number {
     var sum = 0
-    var lower = Math.min(range[0], range[1])
-    var higher = Math.max(range[0], range[1])
-    for (var num = lower; num <= higher; num++) {
+    var lower = Math.min(first, second)
+    var higher = Math.max(first, second)
+    sum += lower
+    sum += higher
+    for (var num = lower + 1; num < higher; num++) {
       sum += num
     }
     return sum
@@ -53,13 +56,6 @@ class SumBetween {
     if (!this.inputType.valid(input)) {
       return false
     }
-
-    // Only lists of length 2 allowed
-    var as_list = this.inputType.parse(input)
-    if (as_list.length !== 2) {
-      return false
-    }
-
     return true
   }
 
@@ -69,7 +65,7 @@ class SumBetween {
     return this.outputType.valid(input)
   }
 
-  static parseInput(input: any): any[] {
+  static parseInput(input: any): number {
     return this.inputType.parse(input)
   }
 
@@ -81,7 +77,7 @@ class SumBetween {
     return this.outputType.areEquivalent(first, second)
   }
 
-  static inputDisplayStr(input: number[]): string {
+  static inputDisplayStr(input: number): string {
     return this.inputType.displayString(input)
   }
 
@@ -89,7 +85,7 @@ class SumBetween {
     return this.outputType.displayString(output)
   }
 
-  static inputDBStr(input: number[]): string {
+  static inputDBStr(input: number): string {
     return this.inputType.dbString(input)
   }
 

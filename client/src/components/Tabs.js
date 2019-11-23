@@ -53,6 +53,12 @@ var evalInputStr = ""
 var evalInputReason = ""
 var finalGuess = ""
 
+// To make 2 arguments possible, let's just build a different
+// text box component with its associated fcns.
+var evalInputFirstStr = ""
+var evalInputSecondStr = ""
+
+
 export default function SimpleTabs(props) {
   const classes = useStyles()
 
@@ -68,6 +74,57 @@ export default function SimpleTabs(props) {
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
   var toQuiz = props.children.toQuiz
+
+  function evalDoubleInput() {
+    if (!funcObj.validInput(evalInputFirstStr)) {
+      alert("First input '" + evalInputFirstStr + "' is not valid for this function")
+      return
+    }
+    if (!funcObj.validInput(evalInputSecondStr)) {
+      alert("Second input '" + evalInputSecondStr + "' is not valid for this function")
+      return
+    }
+
+    var serverGuess = {}
+    var displayGuess = {}
+    serverGuess.id = localStorage.getItem('userID')
+    displayGuess.id = localStorage.getItem('userID')
+    serverGuess.fcn = funcObj.description()
+    displayGuess.fcn = funcObj.description()
+    serverGuess.type = "eval_input"
+    displayGuess.type = "eval_input"
+    displayGuess.key = Util.newDisplayKey()
+    serverGuess.time = Util.getCurrentTime()
+    displayGuess.time = Util.getCurrentTime()
+
+    var firstParsed = funcObj.parseInput(evalInputFirstStr)
+    var secondParsed = funcObj.parseInput(evalInputSecondStr)
+
+    var firstDBstr = funcObj.inputDBStr(firstParsed)
+    var secondDBstr = funcObj.inputDBStr(secondParsed)
+    serverGuess.in = firstDBstr + " and " + secondDBstr
+
+    var firstDisplayStr = funcObj.inputDisplayStr(firstParsed)
+    var secondDisplayStr = funcObj.inputDisplayStr(secondParsed)
+    displayGuess.in = firstDisplayStr + " and " + secondDisplayStr
+
+    var evaluated = funcObj.function(firstParsed, secondParsed)
+    serverGuess.out = funcObj.outputDBStr(evaluated)
+    displayGuess.out = funcObj.outputDisplayStr(evaluated)
+
+    serverGuess.finalGuess = evalInputReason.trim()
+    displayGuess.finalGuess = evalInputReason.trim()
+
+    if (localStorage.getItem(funcObj.description()) === null) {
+      // console.log("sent to server", serverGuess)
+      serverGuess.key = Util.newServerKey()
+      Util.sendToServer(serverGuess)
+    }
+
+    // Update in, out values for display
+    guesses.push(displayGuess)
+    updateFunc()
+  }
 
   function evalInput() {
     if (!funcObj.validInput(evalInputStr)) {
@@ -121,10 +178,24 @@ export default function SimpleTabs(props) {
       <TabPanel value={value} index={0}>
         <Grid container spacing={4}>
           <Grid container item spacing={4} direction="column">
-            <Grid item>
-              <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
-              </TextField>
-            </Grid>
+            {funcObj.numArgs === 2 ?
+              <Grid container item spacing={4}>
+                <Grid item>
+                  <TextField label="First input" onChange={(e) => { evalInputFirstStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalDoubleInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
+                  </TextField>
+                </Grid>
+                <Grid item>
+                  <TextField label="Second input" onChange={(e) => { evalInputSecondStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalDoubleInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              :
+              <Grid item>
+                <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
+                </TextField>
+              </Grid>
+            }
           </Grid>
         </Grid>
       </TabPanel>

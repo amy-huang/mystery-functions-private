@@ -2,6 +2,8 @@ import ListOfInteger from "../types/ListOfInteger"
 import Bool from "../types/Bool"
 
 class IsPalindromeListInts {
+  static numArgs = 1
+
   static description(): string {
     return "IsPalindromeListInts"
   }

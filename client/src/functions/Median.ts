@@ -3,6 +3,8 @@ import Integer from "../types/Integer";
 import { List } from "@material-ui/core";
 
 class Median {
+  static numArgs = 1
+
   static description(): string {
     return "Median"
   }

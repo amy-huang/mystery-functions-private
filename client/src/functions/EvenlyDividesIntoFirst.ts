@@ -1,5 +1,6 @@
 import ListOfInteger from "../types/ListOfInteger";
 import Bool from "../types/Bool";
+import Integer from "../types/Integer";
 
 // Need to show 2 input text fields and do checking on each
 // # args property for each fcn needs to exist, and actual
@@ -8,17 +9,15 @@ import Bool from "../types/Bool";
 // process inputs fcn somehow...
 
 class EvenlyDividesIntoFirst {
-  static inputType = ListOfInteger
+  static inputType = Integer
+  static numArgs = 2
   static outputType = Bool
 
   static description(): string {
     return "EvenlyDividesIntoFirst"
   }
 
-  static function(nums: number[]): boolean {
-    var num = nums[0]
-    var divider = nums[1]
-
+  static function(num: number, divider: number): boolean {
     if (num % divider !== 0) {
       return false
     }
@@ -53,17 +52,6 @@ class EvenlyDividesIntoFirst {
     if (!this.inputType.valid(input)) {
       return false
     }
-
-    // Only lists of length 2 allowed
-    var as_list = this.inputType.parse(input)
-    if (as_list.length !== 2) {
-      return false
-    }
-
-    if (as_list[0] === 0 || as_list[1] === 0) {
-      return false
-    }
-
     return true
   }
 
@@ -73,7 +61,7 @@ class EvenlyDividesIntoFirst {
     return this.outputType.valid(input)
   }
 
-  static parseInput(input: any): any[] {
+  static parseInput(input: any): number {
     return this.inputType.parse(input)
   }
 
@@ -85,7 +73,7 @@ class EvenlyDividesIntoFirst {
     return this.outputType.areEquivalent(first, second)
   }
 
-  static inputDisplayStr(input: number[]): string {
+  static inputDisplayStr(input: number): string {
     return this.inputType.displayString(input)
   }
 
@@ -93,7 +81,7 @@ class EvenlyDividesIntoFirst {
     return this.outputType.displayString(output)
   }
 
-  static inputDBStr(input: number[]): string {
+  static inputDBStr(input: number): string {
     return this.inputType.dbString(input)
   }
 
