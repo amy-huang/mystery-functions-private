@@ -114,7 +114,7 @@ class Quiz extends Component {
     this.state = {
       question: 0,  // which question
       answered: false, // whether question answered or not
-      text: "", // submitted user text
+      text: this.props.funcObj.outputPlaceHolderText(), // submitted user text
       done: false,  // finished all questions for this func, so don't show next Q button
       showAnswer: false, // show answer for function or not
       notMovingOn: true, // stop showing answer in case next page loads before we navigate to guessing screen
@@ -147,10 +147,13 @@ class Quiz extends Component {
       return
     }
 
-    const actual = this.funcObj.function(this.currInput)
+    var actual
+    if (this.funcObj.numArgs === 2) {
+      actual = this.funcObj.function(this.currInput[0], this.currInput[1])
+    } else {
+      actual = this.funcObj.function(this.currInput)
+    }
     const submittedAsVal = this.funcObj.parseOutput(submitted)
-    // console.log(actual)
-    // console.log(submittedAsVal)
     const gotCorrect = this.funcObj.equivalentOutputs(submittedAsVal, actual)
 
     //Construct action object and send to server 
@@ -302,9 +305,14 @@ class Quiz extends Component {
         <Grid item>
 
           <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
-          <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
+          {this.funcObj.numArgs === 2
+            ?
+            <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput()[0])} and {this.funcObj.inputDisplayStr(this.questionInput()[1])}? </Typography>
+            :
+            <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
+          }
 
-          <TextField InputProps={{ classes: { input: my_classes.fontResize } }} onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit" disabled={this.state.answered}>
+          <TextField onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit" disabled={this.state.answered}>
           </TextField>
         </Grid>
         <Grid padding={8} margin={8} item>

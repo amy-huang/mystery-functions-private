@@ -29,7 +29,7 @@ class SumBetween {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
+    return [() => { return [2, 5] }, () => { return [8, 3] }, () => { return [10, 10] }]
   }
 
   static answerText(): string {
