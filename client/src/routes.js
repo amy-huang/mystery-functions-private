@@ -3,14 +3,11 @@ import { Route, HashRouter, Switch } from 'react-router-dom'
 import GuessingScreen from './screens/GuessingScreen'
 import StartScreen from './screens/StartScreen'
 import SumBetween from './functions/SumBetween'
-import MakePalindrome from './functions/SumBetween'
 import ThankYouScreen from './screens/ThankYouScreen'
 import Average from './functions/Average'
 import Median from './functions/Median'
 import EvenlyDividesIntoFirst from './functions/EvenlyDividesIntoFirst'
 import EvenlyDividesIntoSecond from './functions/EvenlyDividesIntoSecond'
-import IsPalindromeListInts from './functions/IsPalindromeListInts';
-import IsPalindromeString from './functions/IsPalindromeString';
 import SumParityBool from './functions/SumParityBool';
 import SumParityInt from './functions/SumParityInt';
 import Induced from './functions/Induced';
@@ -44,9 +41,9 @@ function shuffle(a) {
 var funcs = []
 funcs.push(coinFlip(Average, Median))
 funcs.push(coinFlip(EvenlyDividesIntoFirst, EvenlyDividesIntoSecond))
-funcs.push(coinFlip(IsPalindromeListInts, IsPalindromeString))
 funcs.push(coinFlip(SumParityBool, SumParityInt))
 funcs.push(Induced)
+funcs.push(SumBetween)
 shuffle(funcs)
 
 export default props => (
