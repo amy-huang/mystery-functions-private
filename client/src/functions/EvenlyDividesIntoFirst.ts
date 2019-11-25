@@ -53,10 +53,6 @@ class EvenlyDividesIntoFirst {
       return false
     }
 
-    if (this.parseInput(input) === 0) {
-      return false
-    }
-
     return true
   }
 

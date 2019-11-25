@@ -20,9 +20,7 @@ class SumBetween {
     var sum = 0
     var lower = Math.min(first, second)
     var higher = Math.max(first, second)
-    sum += lower
-    sum += higher
-    for (var num = lower + 1; num < higher; num++) {
+    for (var num = lower; num <= higher; num++) {
       sum += num
     }
     return sum

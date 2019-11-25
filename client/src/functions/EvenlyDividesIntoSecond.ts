@@ -25,7 +25,7 @@ class EvenlyDividesIntoFirst {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
+    return [() => { return [2, 8] }, () => { return [8, 2] }, () => { return [2, 0] }]
   }
 
   static answerText(): string {
