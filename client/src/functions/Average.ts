@@ -17,8 +17,7 @@ class Average {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
-
+    return [() => { return [1, 8, 24] }, () => { return [8, 1, 24] }, () => { return [1, 2, 3, 14] }]
   }
 
   static answerText(): string {

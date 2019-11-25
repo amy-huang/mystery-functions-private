@@ -15,8 +15,7 @@ class Induced {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [333] }, () => { return [-8, 3] }, () => { return [1, 0, 1] }]
-
+    return [() => { return 11 }, () => { return 9 }, () => { return 6 }]
   }
 
   static answerText(): string {
