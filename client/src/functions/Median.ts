@@ -12,7 +12,6 @@ class Median {
   static function(items: number[]): number {
     var sorted = JSON.parse(JSON.stringify(items))
     sorted.sort(function (a: number, b: number) { return a - b })
-    console.log(sorted)
     var elem = 0
     var middle = Math.floor(items.length / 2)
 
@@ -22,7 +21,6 @@ class Median {
       elem = sorted[middle]
     }
 
-    console.log(typeof sorted[middle], sorted[middle])
     return elem
   }
 

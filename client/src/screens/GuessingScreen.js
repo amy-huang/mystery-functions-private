@@ -262,7 +262,7 @@ class GuessingScreen extends Component {
               < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
                 {/* Function signature */}
                 < Grid item xs={12} >
-                  Mystery function <b>{this.props.current}</b> out of <b>{this.props.total}</b> takes an input of type
+                  Mystery function <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
                     <ol>
                     {Array(funcObj.numArgs).fill(<li>
                       <Typography variant="h6">{this.props.funcObj.inputDescription()}</Typography>

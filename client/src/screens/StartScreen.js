@@ -136,9 +136,8 @@ class StartScreen extends Component {
 
       // Record start, and go to next page
       localStorage.setItem('started', true)
+      this.props.history.push(this.props.nextPage)
     }
-
-    this.props.history.push(this.props.nextPage)
   }
 
   render() {
