@@ -1,5 +1,5 @@
 import ListOfInteger from "../types/ListOfInteger";
-import Integer from "../types/Integer";
+import Float from "../types/Float";
 import { List } from "@material-ui/core";
 
 class Median {
@@ -39,7 +39,7 @@ class Median {
   }
 
   static outputPlaceHolderText(): string {
-    return Integer.placeholderText()
+    return Float.placeholderText()
   }
 
   static inputDescription(): string {
@@ -47,7 +47,7 @@ class Median {
   }
 
   static outputDescription(): string {
-    return Integer.longDescription()
+    return Float.longDescription()
   }
 
   static validInput(input: any): boolean {
@@ -71,7 +71,7 @@ class Median {
   }
 
   static validOutput(input: any): boolean {
-    return Integer.valid(input)
+    return Float.valid(input)
   }
 
   static parseInput(input: any): any[] {
@@ -79,11 +79,11 @@ class Median {
   }
 
   static parseOutput(output: any): number {
-    return Integer.parse(output);
+    return Float.parse(output);
   }
 
   static equivalentOutputs(first: any, second: any): boolean {
-    return Integer.areEquivalent(first, second)
+    return Float.areEquivalent(first, second)
   }
 
   static inputDisplayStr(input: number[]): string {
@@ -91,7 +91,7 @@ class Median {
   }
 
   static outputDisplayStr(output: number): string {
-    return Integer.displayString(output)
+    return Float.displayString(output)
   }
 
   static inputDBStr(input: number[]): string {
@@ -99,7 +99,7 @@ class Median {
   }
 
   static outputDBStr(output: number): string {
-    return Integer.dbString(output)
+    return Float.dbString(output)
   }
 }
 

@@ -1,10 +1,10 @@
 import ListOfInteger from "../types/ListOfInteger";
-import Integer from "../types/Integer";
+import Float from "../types/Float";
 
 class Average {
   static inputType = ListOfInteger
   static numArgs = 1
-  static outputType = Integer
+  static outputType = Float
 
   static description(): string {
     return "Average"
