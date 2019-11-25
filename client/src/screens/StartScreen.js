@@ -165,8 +165,6 @@ class StartScreen extends Component {
                       <p>When you're ready to take a guess as to what the function is, you can submit some text, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
 
                       <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different guess, or give up and skip to seeing the answer. If you get all the questions right, your guess is most likely correct; you will also then go to seeing the answer.</p>
-
-                      <p>There is (1) mystery function. Good luck!</p>
                     </Grid>
 
                     {this.state.retrievedID !== null ?
