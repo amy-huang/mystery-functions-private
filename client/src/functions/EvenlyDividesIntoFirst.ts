@@ -18,6 +18,10 @@ class EvenlyDividesIntoFirst {
   }
 
   static function(num: number, divider: number): boolean {
+    if (num === 0 && divider === 0) {
+      return true
+    }
+
     if (num % divider !== 0) {
       return false
     }

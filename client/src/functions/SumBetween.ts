@@ -18,9 +18,7 @@ class SumBetween {
 
   static function(first: number, second: number): number {
     var sum = 0
-    var lower = Math.min(first, second)
-    var higher = Math.max(first, second)
-    for (var num = lower; num <= higher; num++) {
+    for (var num = first; num <= second; num++) {
       sum += num
     }
     return sum
