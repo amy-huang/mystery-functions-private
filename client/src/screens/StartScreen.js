@@ -176,7 +176,7 @@ class StartScreen extends Component {
                     }
 
                     <Grid item>
-                      <TextField defaultValue={this.state.enteredID} label="Enter your Turker ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
+                      <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
 
