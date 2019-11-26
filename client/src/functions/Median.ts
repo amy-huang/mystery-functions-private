@@ -29,7 +29,7 @@ class Median {
   }
 
   static answerText(): string {
-    return "This function returns the median of the input list of numbers."
+    return "This function returns the median of the input list of numbers. If the size of the list is odd, it is the middle element of the list when sorted; if the size is even, it is the average of the middle two elements of the list when sorted."
   }
 
   static inputPlaceHolderText(): string {

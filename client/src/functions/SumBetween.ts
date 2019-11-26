@@ -29,7 +29,7 @@ class SumBetween {
   }
 
   static answerText(): string {
-    return "This function returns the sum of the range of integers from the lower of the input integers to the higher one, inclusive. Given x and y, with x <= y, it would return x + x+1 + ... + y"
+    return "This function returns the sum of the range of integers from the first of the input integers to the second one, inclusive. Given x and y, with x <= y, it would return x + x+1 + ... + y. If x > y, then the sum is 0."
   }
 
   static inputPlaceHolderText(): string {

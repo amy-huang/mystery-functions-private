@@ -33,7 +33,7 @@ class EvenlyDividesIntoFirst {
   }
 
   static answerText(): string {
-    return "This function returns whether or not the second integer argument divides evenly into the first one. So divides_evenly(4, 2) = true, and divides_evenly(4, 5) = false."
+    return "This function returns whether or not the first integer argument divides evenly into the second one. So divides_evenly(2, 4) = true, and divides_evenly(4, 5) = false."
   }
 
   static inputPlaceHolderText(): string {
