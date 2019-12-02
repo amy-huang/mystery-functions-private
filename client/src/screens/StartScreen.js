@@ -176,6 +176,7 @@ class StartScreen extends Component {
                     }
 
                     <Grid item>
+                      <b><p>The ID you enter should be your IU username. For example, Professor Robert Goldstone's ID is <i>rgoldsto</i>.</p></b>
                       <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
