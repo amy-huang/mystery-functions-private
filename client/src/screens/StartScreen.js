@@ -121,6 +121,14 @@ class StartScreen extends Component {
     // console.log("entered '" + this.state.enteredID + "'")
   }
 
+  validID = (id) => {
+    if (typeof id !== "string") {
+      return false
+    }
+
+    return /^[a-zA-Z]+$/.test(id)
+  }
+
   begin = () => {
     if (localStorage.getItem('started') === null) {
       // Nothing entered, which means id taken from URL
@@ -134,9 +142,17 @@ class StartScreen extends Component {
         return
       }
 
+      // Check for IDs with numbers in them
+      if (this.validID(localStorage.getItem('userID')) === false) {
+        alert("Your ID should only contain letters. For example, Professor Robert Goldstone's ID is 'rgoldsto'.")
+        return
+      }
+
       // Record start, and go to next page
       localStorage.setItem('started', true)
       this.props.history.push(this.props.nextPage)
+    } else {
+      alert("You've already done this experiment!")
     }
   }
 
@@ -176,7 +192,7 @@ class StartScreen extends Component {
                     }
 
                     <Grid item>
-                      <b><p>The ID you enter should be your IU username. For example, Professor Robert Goldstone's ID is <i>rgoldsto</i>.</p></b>
+                      <b><p>Your ID is your IU username. For example, Professor Robert Goldstone's ID is <i>rgoldsto</i>. We need this to identify your submission and give you credit for this experiment.</p></b>
                       <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
                       </TextField>
                     </Grid>
