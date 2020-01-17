@@ -6,12 +6,42 @@ if len(sys.argv) != 2:
 	exit(1)
 CSV = sys.argv[1]
 
+TEST_ID = "eadelacr"
+UNICODE_START = 257
+NUM_CHARS_MAX = 300 # exact num is 239
+
 """
 Map ids to each row list
 configure weighted DL using each input
 each fcn type
 """
 idsToRows = {}
+seenNums = {}
+inputs = {}
+charaMappings = {}
+
+# empty list is empty string,
+# which DL can use
+def numsToCharas(nums):
+	result = ""
+	for num in nums.split():
+		result += charaMappings[num]
+	return result
+
+def recordSeenVals(inp, out, realOut):
+	for num in inp.split():
+			seenNums[num] = True
+
+	for num in out.split():
+		seenNums[num] = True
+
+	for num in realOut.split():
+		seenNums[num] = True
+
+def makeCharaMappings():
+	sortedKeys = sorted(seenNums.keys())
+	for i in range(len(sortedKeys)):
+		charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
 
 with open(CSV, newline='') as csvfile:
 	rows = csv.reader(csvfile, delimiter=',')
@@ -29,11 +59,20 @@ with open(CSV, newline='') as csvfile:
 		result = row[9]
 		guess = row[10]
 
-		if len(row) < len(header):
-			print("row length mismatch")
-		idsToRows[ID] = row
-		# print(row)
+		if actType == "eval_input":
+			idsToRows[ID] = row
+		recordSeenVals(inp, out, realOut)
 
-		print(ID, fcn, actNum, actType, time, inp, out, quizQ, realOut, result, guess)
-		print(inp.split())
-#print(idsToRows)
+makeCharaMappings()
+
+for p in idsToRows:
+	inp = idsToRows[p][5]
+	# print(idsToRows)
+	print("======")
+	# print(inp)
+	asChara = numsToCharas(inp)
+	print(asChara)
+	# for c in asChara:
+	# 	print("'" + str(ord(c)) + "'")
+
+# print("nums seen: ", len(seenNums.keys()))
