@@ -102,7 +102,7 @@ export default function SimpleTabs(props) {
 
     var firstDBstr = funcObj.inputDBStr(firstParsed)
     var secondDBstr = funcObj.inputDBStr(secondParsed)
-    serverGuess.in = firstDBstr + " and " + secondDBstr
+    serverGuess.in = firstDBstr + " " + secondDBstr
 
     var firstDisplayStr = funcObj.inputDisplayStr(firstParsed)
     var secondDisplayStr = funcObj.inputDisplayStr(secondParsed)
