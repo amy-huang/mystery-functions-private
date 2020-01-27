@@ -8,16 +8,16 @@ import Integer from "../types/Integer";
 // multiple inputs of differing types.
 // process inputs fcn somehow...
 
-class EvenlyDividesIntoFirst {
+class FirstIntoSecondDivisible {
   static inputType = Integer
   static numArgs = 2
   static outputType = Bool
 
   static description(): string {
-    return "EvenlyDividesIntoFirst"
+    return "FirstIntoSecondDivisible"
   }
 
-  static function(num: number, divider: number): boolean {
+  static function(divider: number, num: number): boolean {
     if (num === 0 && divider === 0) {
       return true
     }
@@ -29,11 +29,11 @@ class EvenlyDividesIntoFirst {
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return [8, 2] }, () => { return [2, 8] }, () => { return [0, 2] }]
+    return [() => { return [2, 8] }, () => { return [8, 2] }, () => { return [2, 0] }]
   }
 
   static answerText(): string {
-    return "This function returns whether or not the second integer argument divides evenly into the first one. So divides_evenly(4, 2) = true, and divides_evenly(4, 5) = false."
+    return "This function returns whether or not the first integer argument divides evenly into the second one. So divides_evenly(2, 4) = true, and divides_evenly(4, 5) = false."
   }
 
   static inputPlaceHolderText(): string {
@@ -56,7 +56,6 @@ class EvenlyDividesIntoFirst {
     if (!this.inputType.valid(input)) {
       return false
     }
-
     return true
   }
 
@@ -95,4 +94,4 @@ class EvenlyDividesIntoFirst {
   }
 }
 
-export default EvenlyDividesIntoFirst
+export default FirstIntoSecondDivisible
