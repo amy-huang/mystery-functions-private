@@ -150,6 +150,9 @@ class GuessingScreen extends Component {
   scrolling = false
   scrollId
 
+  // To keep track of inputs allowed to be evaluated
+  nextQ = 0
+
   // If not at bottom of screen yet, scroll stop repeated call if reached
   scrollDown = () => {
     if (this.gridlist === null) {
@@ -208,7 +211,6 @@ class GuessingScreen extends Component {
   }
 
   quizOff = () => {
-    // localStorage.setItem('quiz', false)
     this.setState({ quiz: false })
   }
 
@@ -218,22 +220,36 @@ class GuessingScreen extends Component {
       alert(text)
       return
     }
-
-    // localStorage.setItem('quiz', true)
+    this.setNextQ(1)
     this.setState({
       quiz: true,
       guessText: guessText
     })
   }
 
+  // functions for getting and setting next Q to answer
+  getNextQ = () => {
+    return this.nextQ
+  }
+
+  setNextQ = (next) => {
+    // Reset
+    if (next == -1) {
+      this.nextQ = 0
+    }
+
+    // Set max q seen so far
+    if (next > this.nextQ) {
+      this.nextQ = next
+    }
+
+    console.log("next Q set to", this.nextQ)
+  }
+
   render() {
     const { classes } = this.props
     var funcObj = this.props.funcObj
 
-    // var quizVal = Boolean.valueOf(localStorage.getItem('quiz'))
-    // if (quizVal === true) {
-    //   this.setState({ quiz: true })
-    // }
     return (
       <React.Fragment>
         <CssBaseline />
@@ -243,7 +259,7 @@ class GuessingScreen extends Component {
             < Grid container justify="center" spacing={4} direction="row" alignContent="center">
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
-                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses}></Quiz>
+                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
               </ Grid>
 
               {/* Current guess and function output type */}
@@ -278,7 +294,7 @@ class GuessingScreen extends Component {
 
                 {/* Tabs */}
                 <Grid item xs={12} >
-                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn}></TabsWrapper>
+                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn} getNextQ={this.getNextQ}></TabsWrapper>
                 </Grid>
               </Grid>
 

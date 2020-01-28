@@ -130,7 +130,7 @@ class StartScreen extends Component {
   }
 
   begin = () => {
-    if (localStorage.getItem('started') === null) {
+    //if (localStorage.getItem('started') === null) {
       // Nothing entered, which means id taken from URL
       if (localStorage.getItem('userID') === null) {
         localStorage.setItem('userID', this.state.enteredID)
@@ -151,9 +151,9 @@ class StartScreen extends Component {
       // Record start, and go to next page
       localStorage.setItem('started', true)
       this.props.history.push(this.props.nextPage)
-    } else {
-      alert("You've already done this experiment!")
-    }
+   // } else {
+     // alert("You've already done this experiment!")
+   // }
   }
 
   render() {

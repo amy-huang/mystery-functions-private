@@ -74,6 +74,10 @@ class SecondIntoFirstDivisible {
     return this.outputType.parse(output);
   }
 
+  static equivalentInputs(first: any, second: any): boolean {
+    return this.inputType.areEquivalent(first, second)
+  }
+
   static equivalentOutputs(first: any, second: any): boolean {
     return this.outputType.areEquivalent(first, second)
   }

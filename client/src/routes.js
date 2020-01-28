@@ -6,8 +6,8 @@ import SumBetween from './functions/SumBetween'
 import ThankYouScreen from './screens/ThankYouScreen'
 import Average from './functions/Average'
 import Median from './functions/Median'
-import EvenlyDividesIntoFirst from './functions/EvenlyDividesIntoFirst'
-import EvenlyDividesIntoSecond from './functions/EvenlyDividesIntoSecond'
+import SecondIntoFirstDivisible from './functions/SecondIntoFirstDivisible'
+import FirstIntoSecondDivisible from './functions/FirstIntoSecondDivisible'
 import SumParityBool from './functions/SumParityBool';
 import SumParityInt from './functions/SumParityInt';
 import Induced from './functions/Induced';
@@ -40,7 +40,7 @@ function shuffle(a) {
 // with the indices
 var funcs = []
 funcs.push(coinFlip(Average, Median))
-funcs.push(coinFlip(EvenlyDividesIntoFirst, EvenlyDividesIntoSecond))
+funcs.push(coinFlip(SecondIntoFirstDivisible, FirstIntoSecondDivisible))
 funcs.push(coinFlip(SumParityBool, SumParityInt))
 funcs.push(Induced)
 funcs.push(SumBetween)

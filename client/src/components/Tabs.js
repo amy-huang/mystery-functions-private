@@ -58,6 +58,8 @@ var finalGuess = ""
 var evalInputFirstStr = ""
 var evalInputSecondStr = ""
 
+// To prevent evaluation of quiz inputs
+var forbiddenInputs = []
 
 export default function SimpleTabs(props) {
   const classes = useStyles()
@@ -74,6 +76,11 @@ export default function SimpleTabs(props) {
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
   var toQuiz = props.children.toQuiz
+  var getNextQ = props.children.getNextQ
+
+  // Get inputs used in quiz
+  var gens = funcObj.inputGenerators()
+  gens.forEach((g) => {forbiddenInputs.push(funcObj.g())})
 
   function evalDoubleInput() {
     if (!funcObj.validInput(evalInputFirstStr)) {
@@ -132,6 +139,22 @@ export default function SimpleTabs(props) {
       return
     }
 
+    var asVal = funcObj.parseInput(evalInputStr)
+    var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
+    console.log("next Q is", getNextQ())
+    if (currentlyForbidden.includes(asVal)) {
+        alert("Quiz question inputs cannot be evaluated")
+        return
+    }
+
+    // Need all funcObjs to support seeing if two input vals are equal
+    // currentlyForbidden.forEach((input) => { 
+    //   funcObj.
+    //  })
+
+    // nextQ is 0 upon starting fcn
+    // is question + 1 upon seeing each question
+
     var serverGuess = {}
     var displayGuess = {}
     serverGuess.id = localStorage.getItem('userID')
@@ -143,11 +166,11 @@ export default function SimpleTabs(props) {
     // serverGuess.key = actionKey
     displayGuess.key = Util.newDisplayKey()
 
-    serverGuess.in = funcObj.inputDBStr(funcObj.parseInput(evalInputStr))
-    displayGuess.in = funcObj.inputDisplayStr(funcObj.parseInput(evalInputStr))
+    serverGuess.in = funcObj.inputDBStr(asVal)
+    displayGuess.in = funcObj.inputDisplayStr(asVal)
 
-    serverGuess.out = funcObj.outputDBStr(funcObj.function(funcObj.parseInput(evalInputStr)))
-    displayGuess.out = funcObj.outputDisplayStr(funcObj.function(funcObj.parseInput(evalInputStr)))
+    serverGuess.out = funcObj.outputDBStr(funcObj.function(asVal))
+    displayGuess.out = funcObj.outputDisplayStr(funcObj.function(asVal))
 
     serverGuess.finalGuess = evalInputReason.trim()
     displayGuess.finalGuess = evalInputReason.trim()

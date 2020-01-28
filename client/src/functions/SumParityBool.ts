@@ -3,6 +3,8 @@ import Bool from "../types/Bool";
 
 class SumParityBool {
   static numArgs = 1
+  static inputType = ListOfInteger
+  static outputType = Bool
 
   static description(): string {
     return "SumParityBool"
@@ -31,55 +33,59 @@ class SumParityBool {
   }
 
   static inputPlaceHolderText(): string {
-    return ListOfInteger.placeholderText()
+    return this.inputType.placeholderText()
   }
 
   static outputPlaceHolderText(): string {
-    return Bool.placeholderText()
+    return this.outputType.placeholderText()
   }
 
   static inputDescription(): string {
-    return ListOfInteger.longDescription()
+    return this.inputType.longDescription()
   }
 
   static outputDescription(): string {
-    return Bool.longDescription()
+    return this.outputType.longDescription()
   }
 
   static validInput(input: any): boolean {
-    return ListOfInteger.valid(input)
+    return this.inputType.valid(input)
   }
 
   static validOutput(input: any): boolean {
-    return Bool.valid(input)
+    return this.outputType.valid(input)
   }
 
   static parseInput(input: any): any[] {
-    return ListOfInteger.parse(input)
+    return this.inputType.parse(input)
   }
 
   static parseOutput(output: any): boolean {
-    return Bool.parse(output);
+    return this.outputType.parse(output);
+  }
+
+  static equivalentInputs(first: any, second: any): boolean {
+    return this.inputType.areEquivalent(first, second)
   }
 
   static equivalentOutputs(first: any, second: any): boolean {
-    return Bool.areEquivalent(first, second)
+    return this.outputType.areEquivalent(first, second)
   }
 
   static inputDisplayStr(input: number[]): string {
-    return ListOfInteger.displayString(input)
+    return this.inputType.displayString(input)
   }
 
   static outputDisplayStr(output: boolean): string {
-    return Bool.displayString(output)
+    return this.outputType.displayString(output)
   }
 
   static inputDBStr(input: number[]): string {
-    return ListOfInteger.dbString(input)
+    return this.inputType.dbString(input)
   }
 
   static outputDBStr(output: boolean): string {
-    return Bool.dbString(output)
+    return this.outputType.dbString(output)
   }
 }
 

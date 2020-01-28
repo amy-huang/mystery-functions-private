@@ -67,7 +67,7 @@ class ListOfInteger {
     var as_str = "["
     for (var i = 0; i < nums.length; i++) {
       if (as_str.length > 1) {
-        as_str += " "
+        as_str += ", "
       }
       // Assuming that each member of the list has a toString method
       as_str += nums[i].toString()

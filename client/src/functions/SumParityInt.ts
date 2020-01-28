@@ -4,6 +4,8 @@ import { List } from "@material-ui/core";
 
 class SumParityInt {
   static numArgs = 1
+  static inputType = ListOfInteger
+  static outputType = Integer
 
   static description(): string {
     return "SumParityInt"
@@ -26,55 +28,59 @@ class SumParityInt {
   }
 
   static inputPlaceHolderText(): string {
-    return ListOfInteger.placeholderText()
+    return this.inputType.placeholderText()
   }
 
   static outputPlaceHolderText(): string {
-    return Integer.placeholderText()
+    return this.outputType.placeholderText()
   }
 
   static inputDescription(): string {
-    return ListOfInteger.longDescription()
+    return this.inputType.longDescription()
   }
 
   static outputDescription(): string {
-    return Integer.longDescription()
+    return this.outputType.longDescription()
   }
 
   static validInput(input: any): boolean {
-    return ListOfInteger.valid(input)
+    return this.inputType.valid(input)
   }
 
   static validOutput(input: any): boolean {
-    return Integer.valid(input)
+    return this.outputType.valid(input)
   }
 
   static parseInput(input: any): any[] {
-    return ListOfInteger.parse(input)
+    return this.inputType.parse(input)
   }
 
   static parseOutput(output: any): number {
-    return Integer.parse(output);
+    return this.outputType.parse(output);
+  }
+
+  static equivalentInputs(first: any, second: any): boolean {
+    return this.inputType.areEquivalent(first, second)
   }
 
   static equivalentOutputs(first: any, second: any): boolean {
-    return Integer.areEquivalent(first, second)
+    return this.outputType.areEquivalent(first, second)
   }
 
   static inputDisplayStr(input: number[]): string {
-    return ListOfInteger.displayString(input)
+    return this.inputType.displayString(input)
   }
 
   static outputDisplayStr(output: number): string {
-    return Integer.displayString(output)
+    return this.outputType.displayString(output)
   }
 
   static inputDBStr(input: number[]): string {
-    return ListOfInteger.dbString(input)
+    return this.inputType.dbString(input)
   }
 
   static outputDBStr(output: number): string {
-    return Integer.dbString(output)
+    return this.outputType.dbString(output)
   }
 }
 

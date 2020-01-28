@@ -126,6 +126,7 @@ class Quiz extends Component {
   inputGens = this.props.funcObj.inputGenerators()
   currInput = ""
   answerText = ""
+  setNextQ = this.props.setNextQ
 
   questionInput = () => {
     var newInput = this.inputGens[this.state.question]()
@@ -207,6 +208,7 @@ class Quiz extends Component {
         answerText: ""
       })
     }
+    this.setNextQ(this.state.question + 2)
   }
 
   submitFinalGuess = () => {
