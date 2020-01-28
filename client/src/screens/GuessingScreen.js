@@ -246,8 +246,6 @@ class GuessingScreen extends Component {
     if (next > this.nextQ) {
       this.nextQ = next
     }
-
-    console.log("next Q set to", this.nextQ)
   }
 
   render() {

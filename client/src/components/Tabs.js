@@ -78,6 +78,9 @@ export default function SimpleTabs(props) {
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
 
+  // Set default input
+  evalInputStr = funcObj.inputPlaceHolderText()
+
   // Get inputs used in quiz
   var gens = funcObj.inputGenerators()
   gens.forEach((g) => {forbiddenInputs.push(g())})
@@ -201,7 +204,10 @@ export default function SimpleTabs(props) {
     updateFunc()
   }
 
-  evalInputStr = funcObj.inputPlaceHolderText()
+  function goToQuiz() {
+    toQuiz(finalGuess)
+    finalGuess = ""
+  }
 
   return (
     <div className={classes.root}>
@@ -245,7 +251,7 @@ export default function SimpleTabs(props) {
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={() => { toQuiz(finalGuess) }}>
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={goToQuiz}>
                 To Quiz
                 </Button>
             </div>
