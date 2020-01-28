@@ -302,6 +302,8 @@ class Quiz extends Component {
   }
 
   questionDisplay = (my_classes) => {
+    this.setNextQ(this.state.question + 1)
+
     return (
       <div>
         <Grid item>

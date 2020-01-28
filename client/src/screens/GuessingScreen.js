@@ -144,6 +144,7 @@ class GuessingScreen extends Component {
       quiz: false,
       guessText: ""
     }
+    this.setNextQ(0)
   }
 
   guesses = dummyTiles()

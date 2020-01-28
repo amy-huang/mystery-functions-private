@@ -80,7 +80,7 @@ export default function SimpleTabs(props) {
 
   // Get inputs used in quiz
   var gens = funcObj.inputGenerators()
-  gens.forEach((g) => {forbiddenInputs.push(funcObj.g())})
+  gens.forEach((g) => {forbiddenInputs.push(g())})
 
   function evalDoubleInput() {
     if (!funcObj.validInput(evalInputFirstStr)) {
@@ -142,15 +142,16 @@ export default function SimpleTabs(props) {
     var asVal = funcObj.parseInput(evalInputStr)
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
     console.log("next Q is", getNextQ())
-    if (currentlyForbidden.includes(asVal)) {
-        alert("Quiz question inputs cannot be evaluated")
-        return
-    }
-
-    // Need all funcObjs to support seeing if two input vals are equal
-    // currentlyForbidden.forEach((input) => { 
-    //   funcObj.
-    //  })
+    var forbiddenFound = false
+    currentlyForbidden.forEach((input) => { 
+      if (funcObj.equivalentInputs(input, asVal) == true) {
+        alert("Cannot evaluate inputs seen during a quiz attempt")
+        forbiddenFound = true
+      }
+     })
+     if (forbiddenFound == true) {
+       return
+     }
 
     // nextQ is 0 upon starting fcn
     // is question + 1 upon seeing each question
