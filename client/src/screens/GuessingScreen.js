@@ -212,7 +212,10 @@ class GuessingScreen extends Component {
   }
 
   quizOff = () => {
-    this.setState({ quiz: false })
+    this.setState({ 
+      quiz: false, 
+      guessText: ""
+    })
   }
 
   quizOn = (guessText) => {

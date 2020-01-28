@@ -92,6 +92,22 @@ export default function SimpleTabs(props) {
       return
     }
 
+    var firstParsed = funcObj.parseInput(evalInputFirstStr)
+    var secondParsed = funcObj.parseInput(evalInputSecondStr)
+
+    var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
+    console.log("next Q is", getNextQ())
+    var forbiddenFound = false
+    currentlyForbidden.forEach((inputs) => { 
+      if (funcObj.equivalentInputs(inputs[0], firstParsed) == true && funcObj.equivalentInputs(inputs[1], secondParsed) == true) {
+        alert("Cannot evaluate inputs seen during a quiz attempt")
+        forbiddenFound = true
+      }
+     })
+     if (forbiddenFound == true) {
+       return
+     }
+
     var serverGuess = {}
     var displayGuess = {}
     serverGuess.id = localStorage.getItem('userID')
@@ -103,9 +119,6 @@ export default function SimpleTabs(props) {
     displayGuess.key = Util.newDisplayKey()
     serverGuess.time = Util.getCurrentTime()
     displayGuess.time = Util.getCurrentTime()
-
-    var firstParsed = funcObj.parseInput(evalInputFirstStr)
-    var secondParsed = funcObj.parseInput(evalInputSecondStr)
 
     var firstDBstr = funcObj.inputDBStr(firstParsed)
     var secondDBstr = funcObj.inputDBStr(secondParsed)
