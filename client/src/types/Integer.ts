@@ -4,7 +4,7 @@ class Integer {
   }
 
   static longDescription() {
-    return "integer, represented by a number that is not fractional like so: 6"
+    return "INTEGER, a non-fractional number like 1, 2, 3, 4"
   }
 
   static valid(output: any): boolean {

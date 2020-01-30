@@ -11,7 +11,6 @@ import FirstIntoSecondDivisible from './functions/FirstIntoSecondDivisible'
 import SumParityBool from './functions/SumParityBool';
 import SumParityInt from './functions/SumParityInt';
 import Induced from './functions/Induced';
-import IntroScreen from './screens/IntroScreen'
 
 function coinFlip(first, second) {
   const flip = Math.random()
@@ -50,8 +49,7 @@ shuffle(funcs)
 export default props => (
   <HashRouter>
     <Switch>
-      <Route exact path='/' render={(props) => <IntroScreen {...props} nextPage='/start'></IntroScreen>} />
-      <Route exact path='/start' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
+      <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
       <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={funcs[0]} nextPage={'/second'} current={0} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={funcs[1]} nextPage={'/third'} current={1} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={funcs[2]} nextPage={'/fourth'} current={2} total={funcs.length}></GuessingScreen>} />

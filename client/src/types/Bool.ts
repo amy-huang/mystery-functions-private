@@ -6,7 +6,7 @@ class Bool {
   }
 
   static longDescription() {
-    return "boolean, represented by the words true or false exactly, with no capitalization"
+    return "BOOLEAN, represented by the words true or false exactly, with no capitalization"
   }
 
   static placeholderText(): string {

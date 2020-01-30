@@ -9,7 +9,7 @@ class Str {
   }
 
   static longDescription() {
-    return "string, represented by text surrounded by double quotes, like so: \"Hello world.\""
+    return "STRING, represented by text surrounded by double quotes, like so: \"Hello world.\""
   }
 
   static placeholderText(): string {

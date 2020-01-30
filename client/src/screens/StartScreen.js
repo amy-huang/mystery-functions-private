@@ -6,6 +6,10 @@ import { TextField, Typography } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
+import first from '../pics/time.png'
+import second from '../pics/functions.png'
+import third from '../pics/quiz.png'
+import fourth from '../pics/goodluck.png'
 
 const styles = theme => ({
   root: {
@@ -161,57 +165,60 @@ class StartScreen extends Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        < div className={classes.root} >
-          {/* Center all Grids */}
-          < Grid container justify="center" spacing={4}>
+      <CssBaseline />
+      < div className={classes.root} >
+        {/* Center all Grids */}
+        < Grid container spacing={1} alignItems="center" direction="column">
 
-            <Grid container item spacing={4} className={classes.panel}>
-              <Paper className={classes.paper}>
-                <div className={classes.gridListWrapper}>
-                  <Grid container spacing={4} direction="column">
+          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+            <Paper className={classes.paper}>
+              <img src={first} alt="time expectation" />
+            </Paper>
+          </Grid>
 
-                    <Grid item className={classes.panel}>
-                      <p>Welcome to mystery functions!</p>
+          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+            <Paper className={classes.paper}>
+              <img src={second} alt="functions" />
+            </Paper>
+          </Grid>
 
-                      <p>Your task in this experiment is to guess what function the computer has in mind.</p>
+          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+            <Paper className={classes.paper}>
+              <img src={third} alt="quiz" />
+            </Paper>
+          </Grid>
 
-                      <p>A function takes an input and produces an output. For example, the function “double” takes any number as input and outputs twice that number.  If you gave it 5 as an input, “double” would produce 10 as output.  Functions can also take lists of numbers.  For example, the function “find largest” takes a list like [5,8,2,3] and outputs the largest number in the list - in this case, the number 8.</p>
+          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+            <Paper className={classes.paper}>
+              <img src={fourth} alt="good luck" />
+            </Paper>
+          </Grid>
 
-                      <p>When you're ready to take a guess as to what the function is, you can submit some text, and then take a "quiz": we generate inputs to the function, and you tell us what the outputs should be. </p>
+          <Grid container item spacing={4} className={classes.panel}>
+            {this.state.retrievedID !== null ?
+              <Grid item>
+                <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if needed.</Typography>
+              </Grid>
+              :
+              null
+            }
 
-                      <p>If you get a question wrong, you can either go back to evaluating inputs and come up with a different guess, or give up and skip to seeing the answer. If you get all the questions right, your guess is most likely correct; you will also then go to seeing the answer.</p>
-                    </Grid>
-
-                    {this.state.retrievedID !== null ?
-                      <Grid item>
-                        <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if needed.</Typography>
-                      </Grid>
-                      :
-                      null
-                    }
-
-                    <Grid item>
-                      <b><p>Your ID is your IU username. For example, Professor Robert Goldstone's ID is <i>rgoldsto</i>. We need this to identify your submission and give you credit for this experiment.</p></b>
-                      <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
-                      </TextField>
-                    </Grid>
-
-                    <Grid item>
-                      <Button type="submit" onClick={this.begin}>
-                        Begin!
-                        {/* <Link onFocus={this.started} to={this.props.nextPage}>Begin!</Link> */}
-                      </Button>
-                    </Grid>
-
-                  </Grid>
-                </div>
-              </Paper>
+            <Grid item>
+              <b><p>Enter your IU username. Example: Professor Goldstone's ID is <i>rgoldsto</i></p></b>
+              <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
+              </TextField>
             </Grid>
 
+            <Grid item alignContent="center" alignItems="center">
+              <Button color='primary' variant="contained" type="submit" onClick={this.begin}>
+                Begin!
+              </Button>
+            </Grid>
           </Grid>
-        </div>
-      </React.Fragment >
+
+        </Grid>
+      </div>
+    </React.Fragment >
     )
   }
 }

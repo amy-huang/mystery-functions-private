@@ -6,7 +6,7 @@ class ListOfInteger {
   }
 
   static longDescription(): string {
-    return "list of integers, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]"
+    return "LIST OF INTEGERS, represented by square brackets, and any numbers contained as comma separated digits: [1,2,3,4,5]"
   }
 
   static placeholderText(): string {

@@ -4,7 +4,7 @@ class Float {
   }
 
   static longDescription() {
-    return "floating point number, represented by a number that can have a decimal point or not, like: 1, 3.5"
+    return "FLOATING POINT NUMBER, represented by a number that can have a decimal point or not, like: 1, 3.5"
   }
 
   static valid(output: any): boolean {
