@@ -194,7 +194,7 @@ class StartScreen extends Component {
             </Paper>
           </Grid>
 
-          <Grid container item spacing={4} className={classes.panel}>
+          <Grid container item spacing={4} className={classes.panel} direction="column">
             {this.state.retrievedID !== null ?
               <Grid item>
                 <Typography variant="h6" >We retrieved the ID <b>'{this.state.retrievedID}'</b> from your URL. Correct this in the text box below if needed.</Typography>
@@ -204,7 +204,7 @@ class StartScreen extends Component {
             }
 
             <Grid item>
-              <b><p>Enter your IU username. Example: Professor Goldstone's ID is <i>rgoldsto</i></p></b>
+              <Typography variant="h5">Enter your IU username. Example: Professor Goldstone's ID is <i>rgoldsto</i></Typography>
               <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
               </TextField>
             </Grid>

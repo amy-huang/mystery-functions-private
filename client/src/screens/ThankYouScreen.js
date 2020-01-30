@@ -125,10 +125,7 @@ class ThankYouScreen extends Component {
                       <Typography variant="h3">You're done! Thank you for your time.</Typography>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6">We have recorded your session with the ID of <b>{localStorage.getItem('userID')}</b></Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography>If your ID was recorded incorrectly or you have comments or suggestions on how to make this experience better, please email amy_huang1@brown.edu</Typography>
+                      <Typography variant="h5">We have recorded your session with the ID of <b>{localStorage.getItem('userID')}</b></Typography>
                     </Grid>
                   </Grid>
                 </div>
