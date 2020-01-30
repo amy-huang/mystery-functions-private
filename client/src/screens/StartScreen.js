@@ -134,7 +134,7 @@ class StartScreen extends Component {
   }
 
   begin = () => {
-    //if (localStorage.getItem('started') === null) {
+    if (localStorage.getItem('started') === null) {
       // Nothing entered, which means id taken from URL
       if (localStorage.getItem('userID') === null) {
         localStorage.setItem('userID', this.state.enteredID)
@@ -155,9 +155,9 @@ class StartScreen extends Component {
       // Record start, and go to next page
       localStorage.setItem('started', true)
       this.props.history.push(this.props.nextPage)
-   // } else {
-     // alert("You've already done this experiment!")
-   // }
+   } else {
+     alert("You've already done this experiment!")
+   }
   }
 
   render() {
@@ -204,7 +204,7 @@ class StartScreen extends Component {
             }
 
             <Grid item>
-              <Typography variant="h5">Enter your IU username. Example: Professor Goldstone's ID is <i>rgoldsto</i></Typography>
+              <Typography variant="h5">Enter your IU username. Example: Professor Goldstone's ID is <b>rgoldsto</b></Typography>
               <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
               </TextField>
             </Grid>
