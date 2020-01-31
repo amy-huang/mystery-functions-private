@@ -28,7 +28,7 @@ const styles = theme => ({
     },
   },
   panel: {
-    width: 750,
+    width: 775,
     marginTop: 40,
     [theme.breakpoints.down('sm')]: {
       width: 'calc(100% - 20px)'
