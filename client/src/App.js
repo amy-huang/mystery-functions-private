@@ -3,7 +3,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles'
 import './App.css';
 import Routes from './routes'
-import { blue, indigo } from '@material-ui/core/colors'
+import { blue, indigo, green, red } from '@material-ui/core/colors'
 
 const theme = createMuiTheme({
   palette: {
@@ -12,7 +12,7 @@ const theme = createMuiTheme({
     },
     primary: {
       main: indigo[700]
-    }
+    },
   },
   typography: {
     // Use the system font instead of the default Roboto font.

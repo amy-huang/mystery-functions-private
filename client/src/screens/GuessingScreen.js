@@ -127,7 +127,7 @@ const styles = theme => ({
 // appear at the bottom and not the top 
 function dummyTiles() {
   var guesses = []
-  var numTiles = gridListHeight / 80
+  var numTiles = gridListHeight / 160
   for (var i = -1 * numTiles; i < 0; i++) {
     guesses.push({
       key: i,
@@ -238,7 +238,7 @@ class GuessingScreen extends Component {
 
   setNextQ = (next) => {
     // Reset
-    if (next == -1) {
+    if (next === -1) {
       this.nextQ = 0
     }
 
@@ -280,16 +280,16 @@ class GuessingScreen extends Component {
               < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
                 {/* Function signature */}
                 < Grid item xs={12} >
-                  Mystery function <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
+                <Typography variant="h6">Mystery function <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type </Typography>
                     <ol>
                     {Array(funcObj.numArgs).fill(<li>
-                      <Typography variant="h6">{this.props.funcObj.inputDescription()}</Typography>
+                      <Typography>{this.props.funcObj.inputDescription()}</Typography>
                     </li>)}
                   </ol>
-                  and an output of type
+                  <Typography variant="h6">and creates an output of type </Typography>
                   <ol>
                     <li>
-                      <Typography variant="h6">{this.props.funcObj.outputDescription()}</Typography>
+                      <Typography>{this.props.funcObj.outputDescription()}</Typography>
                     </li>
                   </ol>
                 </Grid>
@@ -306,10 +306,12 @@ class GuessingScreen extends Component {
                   <div className={classes.gridListWrapper}>
                     <Grid container spacing={4} alignContent="center">
                       <Grid item>
-                        <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem }}>
+                        <GridList spacing={4} cellHeight="auto" className={classes.gridList} cols={1} ref={(elem) => { this.gridlist = elem }}>
                           {this.guesses.map(tile => (
                             <GridListTile key={tile.key} cols={1}>
+                              <br></br>
                               {this.getLine(tile)}
+                              <br></br>
                             </GridListTile>
                           ))}
                         </GridList>

@@ -99,15 +99,15 @@ export default function SimpleTabs(props) {
     var secondParsed = funcObj.parseInput(evalInputSecondStr)
 
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
-    console.log("next Q is", getNextQ())
+    // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((inputs) => { 
-      if (funcObj.equivalentInputs(inputs[0], firstParsed) == true && funcObj.equivalentInputs(inputs[1], secondParsed) == true) {
+      if (funcObj.equivalentInputs(inputs[0], firstParsed) === true && funcObj.equivalentInputs(inputs[1], secondParsed) === true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
         forbiddenFound = true
       }
      })
-     if (forbiddenFound == true) {
+     if (forbiddenFound === true) {
        return
      }
 
@@ -157,15 +157,15 @@ export default function SimpleTabs(props) {
 
     var asVal = funcObj.parseInput(evalInputStr)
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
-    console.log("next Q is", getNextQ())
+    // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((input) => { 
-      if (funcObj.equivalentInputs(input, asVal) == true) {
+      if (funcObj.equivalentInputs(input, asVal) === true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
         forbiddenFound = true
       }
      })
-     if (forbiddenFound == true) {
+     if (forbiddenFound === true) {
        return
      }
 
