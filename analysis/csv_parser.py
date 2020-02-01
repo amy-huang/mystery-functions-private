@@ -1,5 +1,8 @@
 import csv
 import sys
+from Levenshtein import *
+from datetime import *
+from mf_classes import *
 
 if len(sys.argv) != 2:
 	print("Usage: python3 csv_parser.py <csv name>")
@@ -43,36 +46,71 @@ def makeCharaMappings():
 	for i in range(len(sortedKeys)):
 		charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
 
+
+#########################################################################
+
+# Sequential input similarity analysis
+subjects = {} # ID to Subject
+inputs_per_fcn = {}
+# fcn -> ID -> list of inputs eval'd before 1st quiz attempt
+
 with open(CSV, newline='') as csvfile:
 	rows = csv.reader(csvfile, delimiter=',')
 	header = next(rows) # header
+
+	subject = None
+
 	for row in rows:
 		ID = row[0]
+		if subject == None:
+			subject = Subject(ID)
+		elif ID != subject.ID:
+			subjects[subject.ID] = subject
+			subject = Subject(ID)
+
 		fcn = row[1]
-		actNum = row[2]
-		actType = row[3]
+		if fcn not in subject.actions:
+			subject.actions[fcn] = []
+
+		key = row[2]
 		time = row[4]
-		inp = row[5]
-		out = row[6]
-		quizQ = row[7]
-		realOut = row[8]
-		result = row[9]
-		guess = row[10]
+		actType = row[3]
+		action = None
 
-		if actType == "eval_input":
-			idsToRows[ID] = row
-		recordSeenVals(inp, out, realOut)
+		if (actType == "eval_input"):
+			action = EvalInput(key, time)
+			inp = row[5]
+			out = row[6]
+			action.setInputOutput(inp, out)
 
-makeCharaMappings()
+		elif (actType == "quizQ"):
+			action = QuizQ(key, time)
+			quizQ = row[7]
+			inp = row[5]
+			out = row[6]
+			realOut = row[8]
+			result = row[9]
+			action.setQ(quizQ, realOut, guess, result)
 
-for p in idsToRows:
-	inp = idsToRows[p][5]
-	# print(idsToRows)
-	print("======")
-	# print(inp)
-	asChara = numsToCharas(inp)
-	print(asChara)
+		elif (actType == "final_answer"):
+			action = FinalAnswer(key, time)
+			guess = row[10]
+			action.setGuess(guess)
+
+		subject.addAction(fcn, action)
+
+for s in subjects:
+	print(subjects[s])
+
+# makeCharaMappings()
+
+# for p in idsToRows:
+# 	inp = idsToRows[p][5]
+# 	# print(idsToRows)
+# 	print("======")
+# 	# print(inp)
+# 	asChara = numsToCharas(inp)
+# 	print(asChara)
 	# for c in asChara:
 	# 	print("'" + str(ord(c)) + "'")
 
-# print("nums seen: ", len(seenNums.keys()))

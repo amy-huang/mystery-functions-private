@@ -97,6 +97,7 @@ export default function SimpleTabs(props) {
 
     var firstParsed = funcObj.parseInput(evalInputFirstStr)
     var secondParsed = funcObj.parseInput(evalInputSecondStr)
+    var evaluated = funcObj.function(firstParsed, secondParsed)
 
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
     // console.log("next Q is", getNextQ())
@@ -104,6 +105,17 @@ export default function SimpleTabs(props) {
     currentlyForbidden.forEach((inputs) => { 
       if (funcObj.equivalentInputs(inputs[0], firstParsed) === true && funcObj.equivalentInputs(inputs[1], secondParsed) === true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
+        var action = {}
+        action.id = localStorage.getItem('userID')
+        action.fcn = funcObj.description()
+        action.type = "cheat_attempt"
+        action.time = Util.getCurrentTime()
+        serverGuess.in = firstDBstr + " " + secondDBstr
+        if (localStorage.getItem(funcObj.description()) === null) {
+          // console.log("sent to server", serverGuess)
+          action.key = Util.newServerKey()
+          Util.sendToServer(action)
+        }
         forbiddenFound = true
       }
      })
@@ -131,7 +143,6 @@ export default function SimpleTabs(props) {
     var secondDisplayStr = funcObj.inputDisplayStr(secondParsed)
     displayGuess.in = firstDisplayStr + " and " + secondDisplayStr
 
-    var evaluated = funcObj.function(firstParsed, secondParsed)
     serverGuess.out = funcObj.outputDBStr(evaluated)
     displayGuess.out = funcObj.outputDisplayStr(evaluated)
 
@@ -156,12 +167,25 @@ export default function SimpleTabs(props) {
     }
 
     var asVal = funcObj.parseInput(evalInputStr)
+    var evaluated = funcObj.function(asVal)
+
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((input) => { 
       if (funcObj.equivalentInputs(input, asVal) === true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
+        var action = {}
+        action.id = localStorage.getItem('userID')
+        action.fcn = funcObj.description()
+        action.type = "cheat_attempt"
+        action.time = Util.getCurrentTime()
+        serverGuess.in = funcObj.inputDBStr(asVal)
+        if (localStorage.getItem(funcObj.description()) === null) {
+          // console.log("sent to server", serverGuess)
+          action.key = Util.newServerKey()
+          Util.sendToServer(action)
+        }
         forbiddenFound = true
       }
      })
@@ -186,8 +210,8 @@ export default function SimpleTabs(props) {
     serverGuess.in = funcObj.inputDBStr(asVal)
     displayGuess.in = funcObj.inputDisplayStr(asVal)
 
-    serverGuess.out = funcObj.outputDBStr(funcObj.function(asVal))
-    displayGuess.out = funcObj.outputDisplayStr(funcObj.function(asVal))
+    serverGuess.out = funcObj.outputDBStr(evaluated)
+    displayGuess.out = funcObj.outputDisplayStr(evaluated)
 
     serverGuess.finalGuess = evalInputReason.trim()
     displayGuess.finalGuess = evalInputReason.trim()
