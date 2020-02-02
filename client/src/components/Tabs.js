@@ -100,10 +100,10 @@ export default function SimpleTabs(props) {
     var evaluated = funcObj.function(firstParsed, secondParsed)
 
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
-    // console.log("next Q is", getNextQ())
+    console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((inputs) => { 
-      if (funcObj.equivalentInputs(inputs[0], firstParsed) === true && funcObj.equivalentInputs(inputs[1], secondParsed) === true) {
+      if (funcObj.equivalentInputs(inputs[0], firstParsed) == true && funcObj.equivalentInputs(inputs[1], secondParsed) == true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
         var action = {}
         action.id = localStorage.getItem('userID')
@@ -119,7 +119,7 @@ export default function SimpleTabs(props) {
         forbiddenFound = true
       }
      })
-     if (forbiddenFound === true) {
+     if (forbiddenFound == true) {
        return
      }
 
@@ -170,10 +170,10 @@ export default function SimpleTabs(props) {
     var evaluated = funcObj.function(asVal)
 
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
-    // console.log("next Q is", getNextQ())
+    console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((input) => { 
-      if (funcObj.equivalentInputs(input, asVal) === true) {
+      if (funcObj.equivalentInputs(input, asVal) == true) {
         alert("Cannot evaluate inputs seen during a quiz attempt")
         var action = {}
         action.id = localStorage.getItem('userID')
@@ -189,7 +189,7 @@ export default function SimpleTabs(props) {
         forbiddenFound = true
       }
      })
-     if (forbiddenFound === true) {
+     if (forbiddenFound == true) {
        return
      }
 

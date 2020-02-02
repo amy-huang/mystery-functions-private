@@ -45,7 +45,7 @@ class Average {
     try {
       // Parse string as a list, with brackets required
       if (input.trim()[0] !== "[") {
-        // console.log("no starting bracket")
+        console.log("no starting bracket")
         return false;
       }
       as_list = JSON.parse(input);

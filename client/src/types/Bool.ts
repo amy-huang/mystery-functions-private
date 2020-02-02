@@ -1,6 +1,4 @@
 import { string, bool } from "prop-types";
-import { Button } from '@material-ui/core';
-import { Component } from "react";
 
 class Bool {
   static shortDescription() {
