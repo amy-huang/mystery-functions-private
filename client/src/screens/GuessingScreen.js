@@ -127,7 +127,7 @@ const styles = theme => ({
 // appear at the bottom and not the top 
 function dummyTiles() {
   var guesses = []
-  var numTiles = 10
+  var numTiles = gridListHeight / 160
   for (var i = -1 * numTiles; i < 0; i++) {
     guesses.push({
       key: i,
@@ -147,7 +147,7 @@ class GuessingScreen extends Component {
     this.setNextQ(0)
   }
 
-  guesses = []
+  guesses = dummyTiles()
   scrolling = false
   scrollId
 
