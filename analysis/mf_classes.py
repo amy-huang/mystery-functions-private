@@ -4,8 +4,7 @@ class Subject:
 		self.actions = {} # fcns to lists of actions
 
 	def __str__(self):
-		res = ""
-		res += "Subject {}\n".format(self.ID)
+		res = "Subject {}\n".format(self.ID)
 		for fcn in self.actions:
 			res += "	{}\n".format(fcn)
 			for a in self.actions[fcn]:
@@ -33,10 +32,7 @@ class EvalInput(Action):
 		self.output = outp
 
 	def __str__(self):
-		res = ""
-		res += self.input
-		res += self.output
-		return res
+		return "{} -> {}".format(self.input, self.output)
 
 class QuizQ(Action):
 	def setQ(self, quizNo, question, given, actual, result):
@@ -47,19 +43,37 @@ class QuizQ(Action):
 		self.result = result
 
 	def __str__(self):
-		res = ""
-		res += self.quizNo
-		res += self.result
-		return res
+		return "QuizAnswer: [{}]	{} -> {}, actual {} {}".format(self.quizNo, self.question, self.given, self.actual, self.result)
 
 class FinalAnswer(Action):
 	def setGuess(self, guess):
 		self.guess = guess
 
 	def __str__(self):
-		res = ""
-		res += self.guess
-		return res
+		return "FinalGuess: {}".format(self.guess)
+
+class Bool:
+	def toCharas(val):
+		if val == "true":
+			return "1"
+		return "0"
+
+class Int:
+	def toCharas(val):
+		return str(val)
+
+class ListInt:
+	def toCharas(val):
+		charas = ""
+		nums = val.split(" ")
+		for n in nums:
+			charas += chr(n)
+		return nums
+
+# uuhhhh.... how we gonna encode these tho
+class Float:
+	def toCharas(val):
+		return str(val)
 
 # def readInt(read: str):
 # 	###

@@ -83,24 +83,53 @@ with open(CSV, newline='') as csvfile:
 			out = row[6]
 			action.setInputOutput(inp, out)
 
-		elif (actType == "quizQ"):
+		elif (actType == "quiz_answer"):
 			action = QuizQ(key, time)
 			quizQ = row[7]
 			inp = row[5]
 			out = row[6]
 			realOut = row[8]
 			result = row[9]
-			action.setQ(quizQ, realOut, guess, result)
+
+			display = "✗"
+			if (result == "true"):
+				display = "✓"
+
+			action.setQ(quizQ, inp, out, realOut, display)
+			#print(action)
 
 		elif (actType == "final_answer"):
 			action = FinalAnswer(key, time)
 			guess = row[10]
 			action.setGuess(guess)
+		else:
+			print("unknown action type")
 
 		subject.addAction(fcn, action)
 
-for s in subjects:
-	print(subjects[s])
+# For each person's function session, look at 
+# differences between eval input until next subject
+
+for ID in subjects:
+	#print(subjects[s])
+	for fcn in subjects[ID].actions:
+		lastIn = None
+		for act in subjects[ID].actions[fcn]:
+			if type(act) == EvalInput:
+				inCharas = numsToCharas(act.input)
+				# compare with the last input eval'd, if existent
+				if lastIn == None:
+					lastIn = inCharas
+					continue
+				# convert this input to string, and take distance
+				d = distance(lastIn, inCharas)
+				print(d)
+				print()
+			elif type(act) == QuizQ or type(act) == FinalAnswer:
+				# go to next fcn session
+				break
+			else:
+				print("unknown action type")
 
 # makeCharaMappings()
 
