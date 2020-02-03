@@ -52,34 +52,46 @@ class FinalAnswer(Action):
 	def __str__(self):
 		return "FinalGuess: {}".format(self.guess)
 
+#################################################################
+"""
+getNums(val) returns list of vals considered seen upon encountering this value
+toCharas(val) turns val to character based on mapping given
+"""
+
 class Bool:
-	def toCharas(val):
+	def getNums(val):
 		if val == "true":
 			return "1"
-		return "0"
+		return ["0"]
+
+	def toCharas(val):
+		return mappings[val]
 
 class Int:
-	def toCharas(val):
-		return str(val)
+	def getNums(val):
+		return [val]
+
+	def toCharas(val, mappings):
+		# return str(val)
+		return mappings[val]
 
 class ListInt:
-	def toCharas(val):
-		charas = ""
-		nums = val.split(" ")
-		for n in nums:
-			charas += chr(n)
+	def getNums(val):
+		nums = val.split()
 		return nums
 
-# uuhhhh.... how we gonna encode these tho
-class Float:
-	def toCharas(val):
-		return str(val)
+	def toCharas(val, mappings):
+		charas = ""
+		nums = val.split()
+		for n in nums:
+			# charas += chr(int(n))
+			charas += mappings[n]
+		return charas
 
-# def readInt(read: str):
-# 	###
-# def Float(read: str):
-# 	##
-# def readListInt(read: str):
-# 	##
-# def readBool(read: str):
-# 	##
+class Float:
+	def getNums(val):
+		return [val]
+
+	def toCharas(val, mappings):
+		# return str(val)
+		return mappings[val]

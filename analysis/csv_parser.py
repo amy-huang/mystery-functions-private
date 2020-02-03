@@ -10,57 +10,91 @@ if len(sys.argv) != 2:
 CSV = sys.argv[1]
 
 TEST_ID = "eadelacr"
-UNICODE_START = 257
-NUM_CHARS_MAX = 300 # exact num is 239
+UNICODE_START = 0
 
-"""
-Map ids to each row list
-configure weighted DL using each input
-each fcn type
-"""
-idsToRows = {}
-seenNums = {}
-inputs = {}
+# Values seen in inputs, outputs, actual outputs
+seenNums = []
+# Mapping seen value to unicode chara
 charaMappings = {}
 
-# empty list is empty string,
-# which DL can use
-def numsToCharas(nums):
-	result = ""
-	for num in nums.split():
-		result += charaMappings[num]
-	return result
+# Mapping functions to their input and output types
+# fcn name -> [in type, outtype]
+in_out_types = {
+	"Average": [ListInt, Float],
+	"Median": [ListInt, Float],
+	"SumParityInt": [ListInt, Int],
+	"SumParityBool": [ListInt, Bool],
+	"Induced": [Int, Int],
+	"EvenlyDividesIntoFirst": [ListInt, Bool],
+	"SecondIntoFirstDivisible": [ListInt, Bool],
+	"FirstIntoSecondDivisible": [ListInt, Bool],
+	"SumBetween": [ListInt, Int],
+}
 
-def recordSeenVals(inp, out, realOut):
-	for num in inp.split():
-			seenNums[num] = True
+num_inputs = {
+	"Average": 1,
+	"Median": 1,
+	"SumParityInt": 1,
+	"SumParityBool": 1,
+	"Induced": 1,
+	"EvenlyDividesIntoFirst": 2,
+	"FirstIntoSecondDivisible": 2,
+	"SecondIntoFirstDivisible": 2,
+	"SumBetween": 2,
+}
 
-	for num in out.split():
-		seenNums[num] = True
+# Sequential input similarity analysis
+subjects = {} # ID to Subject
+inputs_per_fcn = {}	# fcn -> ID -> list of inputs eval'd before 1st quiz attempt
 
-	for num in realOut.split():
-		seenNums[num] = True
+def getVals(fcn, isIn, inOrOut):
+	valType = None
+	if isIn == True:
+		valType = in_out_types[fcn][0]
+	else: 
+		valType = in_out_types[fcn][1]
 
+	# Get vals based on arg count
+	if num_inputs[fcn] > 1:
+		args = inOrOut.split()
+		if isIn == True and len(args) != num_inputs[fcn]:
+			print("error, num args does not match args found")
+			print(fcn)
+			print(args)
+
+		vals = []
+		for a in args:
+			vals += valType.getNums(a)
+		return vals
+
+	elif num_inputs[fcn] == 1:
+		return valType.getNums(inOrOut)
+
+	else:
+		print("error, > 1 args for fcn")
+
+def recordSeenVals(someVals):
+	for val in someVals:
+		seenNums.append(val)
+
+# Sort seen nums and assign them to characters
 def makeCharaMappings():
-	sortedKeys = sorted(seenNums.keys())
+	sortedKeys = sorted(seenNums)
 	for i in range(len(sortedKeys)):
 		charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
 
 
 #########################################################################
 
-# Sequential input similarity analysis
-subjects = {} # ID to Subject
-inputs_per_fcn = {}
-# fcn -> ID -> list of inputs eval'd before 1st quiz attempt
-
 with open(CSV, newline='') as csvfile:
 	rows = csv.reader(csvfile, delimiter=',')
 	header = next(rows) # header
 
+	# Current subject we're recording actions for
 	subject = None
 
 	for row in rows:
+		# See if we need to start a new Subject
 		ID = row[0]
 		if subject == None:
 			subject = Subject(ID)
@@ -77,11 +111,18 @@ with open(CSV, newline='') as csvfile:
 		actType = row[3]
 		action = None
 
+		inType = in_out_types[fcn]
+		outType = in_out_types[fcn]
+
+		# Record specific action taken
 		if (actType == "eval_input"):
 			action = EvalInput(key, time)
 			inp = row[5]
 			out = row[6]
 			action.setInputOutput(inp, out)
+
+			recordSeenVals(getVals(fcn, True, inp))
+			recordSeenVals(getVals(fcn, False, out))
 
 		elif (actType == "quiz_answer"):
 			action = QuizQ(key, time)
@@ -96,7 +137,10 @@ with open(CSV, newline='') as csvfile:
 				display = "✓"
 
 			action.setQ(quizQ, inp, out, realOut, display)
-			#print(action)
+
+			recordSeenVals(getVals(fcn, True, inp))
+			recordSeenVals(getVals(fcn, False, out))
+			recordSeenVals(getVals(fcn, False, realOut))
 
 		elif (actType == "final_answer"):
 			action = FinalAnswer(key, time)
@@ -107,39 +151,39 @@ with open(CSV, newline='') as csvfile:
 
 		subject.addAction(fcn, action)
 
+		# Record the numerical values seen so we can map them
+		# to characters in unicode range
+
+makeCharaMappings()
+# print(charaMappings)
+# print(len(charaMappings.keys()))
+
 # For each person's function session, look at 
 # differences between eval input until next subject
 
 for ID in subjects:
-	#print(subjects[s])
-	for fcn in subjects[ID].actions:
+	fcn_names = ["Average", "Median"]
+	for fcn in fcn_names:
+		if fcn not in subjects[ID].actions:
+			continue
+
 		lastIn = None
 		for act in subjects[ID].actions[fcn]:
 			if type(act) == EvalInput:
-				inCharas = numsToCharas(act.input)
+				inType = in_out_types[fcn][0]
+
+				inCharas = inType.toCharas(act.input, charaMappings)
 				# compare with the last input eval'd, if existent
 				if lastIn == None:
 					lastIn = inCharas
 					continue
 				# convert this input to string, and take distance
+				print("---------------------------")
+				print(lastIn, inCharas)
 				d = distance(lastIn, inCharas)
 				print(d)
-				print()
 			elif type(act) == QuizQ or type(act) == FinalAnswer:
 				# go to next fcn session
 				break
 			else:
 				print("unknown action type")
-
-# makeCharaMappings()
-
-# for p in idsToRows:
-# 	inp = idsToRows[p][5]
-# 	# print(idsToRows)
-# 	print("======")
-# 	# print(inp)
-# 	asChara = numsToCharas(inp)
-# 	print(asChara)
-	# for c in asChara:
-	# 	print("'" + str(ord(c)) + "'")
-
