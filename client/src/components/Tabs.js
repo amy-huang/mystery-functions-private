@@ -110,7 +110,7 @@ export default function SimpleTabs(props) {
         action.fcn = funcObj.description()
         action.type = "cheat_attempt"
         action.time = Util.getCurrentTime()
-        serverGuess.in = firstDBstr + " " + secondDBstr
+        action.in = firstDBstr + " " + secondDBstr
         if (localStorage.getItem(funcObj.description()) === null) {
           // console.log("sent to server", serverGuess)
           action.key = Util.newServerKey()
@@ -180,7 +180,7 @@ export default function SimpleTabs(props) {
         action.fcn = funcObj.description()
         action.type = "cheat_attempt"
         action.time = Util.getCurrentTime()
-        serverGuess.in = funcObj.inputDBStr(asVal)
+        action.in = funcObj.inputDBStr(asVal)
         if (localStorage.getItem(funcObj.description()) === null) {
           // console.log("sent to server", serverGuess)
           action.key = Util.newServerKey()
