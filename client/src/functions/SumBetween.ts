@@ -1,4 +1,3 @@
-import ListOfInteger from "../types/ListOfInteger";
 import Integer from "../types/Integer";
 
 // Need to show 2 input text fields and do checking on each

@@ -1,5 +1,3 @@
-import { string, bool } from "prop-types";
-
 class Bool {
   static shortDescription() {
     return "boolean"

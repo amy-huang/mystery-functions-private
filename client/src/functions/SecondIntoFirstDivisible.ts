@@ -1,4 +1,3 @@
-import ListOfInteger from "../types/ListOfInteger";
 import Bool from "../types/Bool";
 import Integer from "../types/Integer";
 

@@ -11,7 +11,6 @@ import EvalGuessLine from '../components/EvalGuessLine'
 import EvalInputLine from '../components/EvalInputLine'
 import DummyLine from '../components/DummyLine'
 import Quiz from '../components/Quiz';
-import Button from '@material-ui/core/Button'
 
 const gridListHeight = 500
 
@@ -238,7 +237,7 @@ class GuessingScreen extends Component {
 
   setNextQ = (next) => {
     // Reset
-    if (next == -1) {
+    if (next === -1) {
       this.nextQ = 0
     }
 
@@ -306,7 +305,7 @@ class GuessingScreen extends Component {
                   <div className={classes.gridListWrapper}>
                     <Grid container spacing={4} alignContent="center">
                       <Grid item>
-                        <GridList className={classes.gridList} cellHeight={60} cols={1} ref={(elem) => { this.gridlist = elem }}>
+                        <GridList className={classes.gridList} cellHeight="auto" spacing={2} cols={1} ref={(elem) => { this.gridlist = elem }}>
                           {this.guesses.map(tile => (
                             <GridListTile key={tile.key} cols={1}>
                               {this.getLine(tile)}

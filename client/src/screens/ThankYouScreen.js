@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
 import withStyles from '@material-ui/styles/withStyles'
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { TextField, Typography } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
-import { borders } from '@material-ui/system';
-import Box from '@material-ui/core/Box';
 
 const styles = theme => ({
   root: {

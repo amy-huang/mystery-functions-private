@@ -1,6 +1,5 @@
 import ListOfInteger from "../types/ListOfInteger";
 import Float from "../types/Float";
-import { List } from "@material-ui/core";
 
 class Median {
   static numArgs = 1
@@ -17,7 +16,7 @@ class Median {
     var elem = 0
     var middle = Math.floor(items.length / 2)
 
-    if (sorted.length % 2 == 0) {
+    if (sorted.length % 2 === 0) {
       elem = (sorted[middle - 1] + sorted[middle]) / 2
     } else {
       elem = sorted[middle]
@@ -55,7 +54,7 @@ class Median {
     try {
       // Parse string as a list, with brackets required
       if (input.trim()[0] !== "[") {
-        console.log("no starting bracket")
+        // console.log("no starting bracket")
         return false;
       }
       as_list = JSON.parse(input);

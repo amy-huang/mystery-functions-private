@@ -16,7 +16,7 @@ class SumParityBool {
       sum += items[i]
     }
 
-    if (Math.abs(sum % 2) == 1) {
+    if (Math.abs(sum % 2) === 1) {
       return true
     }
 

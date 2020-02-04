@@ -1,5 +1,3 @@
-import { string } from "prop-types";
-
 class ListOfInteger {
   static shortDescription(): string {
     return "list of integers"

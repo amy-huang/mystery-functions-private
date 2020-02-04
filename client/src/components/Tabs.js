@@ -103,14 +103,15 @@ export default function SimpleTabs(props) {
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((inputs) => { 
-      if (funcObj.equivalentInputs(inputs[0], firstParsed) == true && funcObj.equivalentInputs(inputs[1], secondParsed) == true) {
-        alert("Cannot evaluate inputs seen during a quiz attempt")
+      if (funcObj.equivalentInputs(inputs[0], firstParsed) === true && funcObj.equivalentInputs(inputs[1], secondParsed) === true) {
+        alert("Cannot evaluate inputs seen during a quiz attempt!")
         var action = {}
         action.id = localStorage.getItem('userID')
         action.fcn = funcObj.description()
         action.type = "cheat_attempt"
         action.time = Util.getCurrentTime()
         action.in = firstDBstr + " " + secondDBstr
+        action.out = funcObj.outputDBStr(evaluated)
         if (localStorage.getItem(funcObj.description()) === null) {
           // console.log("sent to server", serverGuess)
           action.key = Util.newServerKey()
@@ -119,7 +120,7 @@ export default function SimpleTabs(props) {
         forbiddenFound = true
       }
      })
-     if (forbiddenFound == true) {
+     if (forbiddenFound === true) {
        return
      }
 
@@ -173,14 +174,15 @@ export default function SimpleTabs(props) {
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((input) => { 
-      if (funcObj.equivalentInputs(input, asVal) == true) {
-        alert("Cannot evaluate inputs seen during a quiz attempt")
+      if (funcObj.equivalentInputs(input, asVal) === true) {
+        alert("Cannot evaluate inputs seen during a quiz attempt!")
         var action = {}
         action.id = localStorage.getItem('userID')
         action.fcn = funcObj.description()
         action.type = "cheat_attempt"
         action.time = Util.getCurrentTime()
         action.in = funcObj.inputDBStr(asVal)
+        action.out = funcObj.outputDBStr(evaluated)
         if (localStorage.getItem(funcObj.description()) === null) {
           // console.log("sent to server", serverGuess)
           action.key = Util.newServerKey()
@@ -189,7 +191,7 @@ export default function SimpleTabs(props) {
         forbiddenFound = true
       }
      })
-     if (forbiddenFound == true) {
+     if (forbiddenFound === true) {
        return
      }
 

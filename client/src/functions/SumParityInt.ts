@@ -1,6 +1,5 @@
 import ListOfInteger from "../types/ListOfInteger";
 import Integer from "../types/Integer";
-import { List } from "@material-ui/core";
 
 class SumParityInt {
   static numArgs = 1
