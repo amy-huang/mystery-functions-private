@@ -14,7 +14,7 @@ class EvalInputLine extends Component {
   render() {
     var classes = this.props;
     return (
-      <Grid container direction="row" spacing={1} justify="flex-start" height={20} alignItems="center">
+      <Grid container direction="row" spacing={1} justify="flex-start" alignItems="center">
         <Grid item>
           <Button variant="contained"><Typography className={classes.text}>{classes.in}</Typography></Button>
         </Grid>

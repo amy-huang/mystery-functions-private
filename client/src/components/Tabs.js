@@ -142,7 +142,7 @@ export default function SimpleTabs(props) {
 
     var firstDisplayStr = funcObj.inputDisplayStr(firstParsed)
     var secondDisplayStr = funcObj.inputDisplayStr(secondParsed)
-    displayGuess.in = firstDisplayStr + " and " + secondDisplayStr
+    displayGuess.in = firstDisplayStr + ", " + secondDisplayStr
 
     serverGuess.out = funcObj.outputDBStr(evaluated)
     displayGuess.out = funcObj.outputDisplayStr(evaluated)

@@ -127,9 +127,9 @@ const styles = theme => ({
 function dummyTiles() {
   var guesses = []
   var numTiles = gridListHeight / 80
-  for (var i = -1 * numTiles; i < 0; i++) {
+  for (var i = 1; i <= numTiles; i++) {
     guesses.push({
-      key: i,
+      key: i * -1,
       type: "dummy_line"
     })
   }
@@ -146,7 +146,7 @@ class GuessingScreen extends Component {
     this.setNextQ(0)
   }
 
-  guesses = dummyTiles()
+  guesses = []
   scrolling = false
   scrollId
 
@@ -305,10 +305,11 @@ class GuessingScreen extends Component {
                   <div className={classes.gridListWrapper}>
                     <Grid container spacing={4} alignContent="center">
                       <Grid item>
-                        <GridList className={classes.gridList} cellHeight="auto" spacing={2} cols={1} ref={(elem) => { this.gridlist = elem }}>
+                        <GridList className={classes.gridList} cellHeight="auto" spacing={4} cols={1} ref={(elem) => { this.gridlist = elem }}>
                           {this.guesses.map(tile => (
-                            <GridListTile key={tile.key} cols={1}>
+                            <GridListTile key={tile.key} cols={1} rows={1}>
                               {this.getLine(tile)}
+                              <br></br>
                             </GridListTile>
                           ))}
                         </GridList>
