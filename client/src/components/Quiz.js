@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid'
 import withStyles from '@material-ui/styles/withStyles'
 import { withRouter } from 'react-router-dom'
 import Util from '../Util'
-import Link from 'react-router-dom/Link'
 
 const styles = theme => ({
   root: {
@@ -243,7 +242,6 @@ class Quiz extends Component {
     return (
       <Grid item>
         <Button color="primary" variant="contained" className={this.props.actionButton} onClick={() => { this.toNextFunc(nextPage) }}>
-          {/* <Link style={{ color: '#FFF' }} to={nextPage}> Next</Link> */}
           Next
         </Button>
       </Grid>

@@ -120,7 +120,7 @@ class StartScreen extends Component {
       localStorage.setItem('userID', text.trim())
     }
     this.setState({ enteredID: text.trim() })
-    console.log("userID is '" + localStorage.getItem('userID') + "'")
+    // console.log("userID is '" + localStorage.getItem('userID') + "'")
     // console.log("retrieved '" + this.state.retrievedID + "'")
     // console.log("entered '" + this.state.enteredID + "'")
   }
@@ -170,25 +170,25 @@ class StartScreen extends Component {
         {/* Center all Grids */}
         < Grid container spacing={1} alignItems="center" direction="column">
 
-          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+          <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
               <img src={first} alt="time expectation" />
             </Paper>
           </Grid>
 
-          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+          <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
               <img src={second} alt="functions" />
             </Paper>
           </Grid>
 
-          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+          <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
               <img src={third} alt="quiz" />
             </Paper>
           </Grid>
 
-          <Grid item spacing={4} className={classes.panel} alignContent="center" alignItems="center">
+          <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
               <img src={fourth} alt="good luck" />
             </Paper>
@@ -209,7 +209,7 @@ class StartScreen extends Component {
               </TextField>
             </Grid>
 
-            <Grid item alignContent="center" alignItems="center">
+            <Grid item>
               <Button color='primary' variant="contained" type="submit" onClick={this.begin}>
                 Begin!
               </Button>
