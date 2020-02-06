@@ -204,7 +204,7 @@ class StartScreen extends Component {
             }
 
             <Grid item>
-              <Typography variant="h5">Enter your IU username. Example: Professor Goldstone's ID is <b>rgoldsto</b></Typography>
+              <Typography variant="h5">Enter your IU username. Example: Amy Huang's ID would be <b>ahuang</b></Typography>
               <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
               </TextField>
             </Grid>
