@@ -3,6 +3,7 @@ import sys
 from Levenshtein import *
 from datetime import *
 from mf_classes import *
+from statistics import *
 
 if len(sys.argv) != 2:
 	print("Usage: python3 csv_parser.py <csv name>")
@@ -161,29 +162,80 @@ makeCharaMappings()
 # For each person's function session, look at 
 # differences between eval input until next subject
 
+diffs = {
+	"Average": {},
+	"Median": {},
+	"SumParityInt": {},
+	"SumParityBool": {},
+	"Induced": {},
+	"EvenlyDividesIntoFirst": {},
+	"SecondIntoFirstDivisible": {},
+	"FirstIntoSecondDivisible": {},
+	"SumBetween": {},
+}
+
+count = 0
+
 for ID in subjects:
 	fcn_names = ["Average", "Median"]
 	for fcn in fcn_names:
 		if fcn not in subjects[ID].actions:
 			continue
 
+		lastAsNums = None
 		lastIn = None
-		for act in subjects[ID].actions[fcn]:
+
+		# print(fcn)
+		local_diffs = {}
+
+		for i in range(len(subjects[ID].actions[fcn])):
+			act = subjects[ID].actions[fcn][i]
+
 			if type(act) == EvalInput:
 				inType = in_out_types[fcn][0]
 
 				inCharas = inType.toCharas(act.input, charaMappings)
 				# compare with the last input eval'd, if existent
 				if lastIn == None:
+					lastAsNums = act.input
 					lastIn = inCharas
 					continue
-				# convert this input to string, and take distance
-				print("---------------------------")
-				print(lastIn, inCharas)
 				d = distance(lastIn, inCharas)
-				print(d)
+				# convert this input to string, and take distance
+				# print("---------------------------")
+				# print(lastAsNums)
+				# print(act.input)
+				# print(i, d)
+
+				local_diffs[i] = d
+
+				lastIn = inCharas
+				lastAsNums = act.input
 			elif type(act) == QuizQ or type(act) == FinalAnswer:
+				traceLen = len(local_diffs.keys())
+				if traceLen not in diffs[fcn]:
+					diffs[fcn][traceLen] = {}
+					for i in range(1, traceLen+1):
+						diffs[fcn][traceLen][i] = []
+
+				for i in local_diffs:
+					diffs[fcn][traceLen][i].append(local_diffs[i])
+
 				# go to next fcn session
+				# if count == 4:
+				# 	print(diffs)
+				# 	exit(0)
+				# print("-----------------------")
+				# count += 1
 				break
 			else:
 				print("unknown action type")
+
+for fcn in diffs:
+	print(fcn)
+	for tLen in sorted(diffs[fcn].keys()):
+		howMany = 0
+		for i in range(1, tLen+1):
+			howMany = len(diffs[fcn][tLen][i])
+			print("		", median(diffs[fcn][tLen][i]))
+		print("	", howMany)
