@@ -130,7 +130,8 @@ class StartScreen extends Component {
       return false
     }
 
-    return /^[a-zA-Z]+$/.test(id)
+    // cs login regex - need alphanumeric characters, possibly followed by number
+    return /^[a-zA-Z]+[0-9]*$/.test(id)
   }
 
   begin = () => {
