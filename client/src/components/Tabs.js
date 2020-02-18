@@ -99,6 +99,9 @@ export default function SimpleTabs(props) {
     var secondParsed = funcObj.parseInput(evalInputSecondStr)
     var evaluated = funcObj.function(firstParsed, secondParsed)
 
+    var firstDBstr = funcObj.inputDBStr(firstParsed)
+    var secondDBstr = funcObj.inputDBStr(secondParsed)
+
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
@@ -136,8 +139,6 @@ export default function SimpleTabs(props) {
     serverGuess.time = Util.getCurrentTime()
     displayGuess.time = Util.getCurrentTime()
 
-    var firstDBstr = funcObj.inputDBStr(firstParsed)
-    var secondDBstr = funcObj.inputDBStr(secondParsed)
     serverGuess.in = firstDBstr + " " + secondDBstr
 
     var firstDisplayStr = funcObj.inputDisplayStr(firstParsed)
