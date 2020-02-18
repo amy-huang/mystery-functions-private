@@ -207,7 +207,8 @@ class GuessingScreen extends Component {
 
   // When quiz taken and then move on
   resetGuesses = () => {
-    this.guesses = dummyTiles()
+    //this.guesses = dummyTiles()
+    this.guesses = []
   }
 
   quizOff = () => {
