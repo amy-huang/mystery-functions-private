@@ -58,9 +58,6 @@ var finalGuess = ""
 var evalInputFirstStr = ""
 var evalInputSecondStr = ""
 
-// To prevent evaluation of quiz inputs
-var forbiddenInputs = []
-
 export default function SimpleTabs(props) {
   const classes = useStyles()
 
@@ -81,10 +78,6 @@ export default function SimpleTabs(props) {
   // Set default input
   evalInputStr = funcObj.inputPlaceHolderText()
 
-  // Get inputs used in quiz
-  var gens = funcObj.inputGenerators()
-  gens.forEach((g) => {forbiddenInputs.push(g())})
-
   function evalDoubleInput() {
     if (!funcObj.validInput(evalInputFirstStr)) {
       alert("First input '" + evalInputFirstStr + "' is not valid for this function")
@@ -102,6 +95,9 @@ export default function SimpleTabs(props) {
     var firstDBstr = funcObj.inputDBStr(firstParsed)
     var secondDBstr = funcObj.inputDBStr(secondParsed)
 
+    var gens = funcObj.inputGenerators()
+    var forbiddenInputs = []
+    gens.forEach((g) => {forbiddenInputs.push(g())})
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
@@ -171,10 +167,14 @@ export default function SimpleTabs(props) {
     var asVal = funcObj.parseInput(evalInputStr)
     var evaluated = funcObj.function(asVal)
 
-    var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
+    var gens = funcObj.inputGenerators()
+    var forbiddenInputs = []
+    gens.forEach((g) => {forbiddenInputs.push(g())})
+    var currentlyForbidden = forbiddenInputs.slice(0, getNextQ())
     // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((input) => { 
+      // console.log("checking forbidden input", input, "against", asVal)
       if (funcObj.equivalentInputs(input, asVal) === true) {
         alert("Cannot evaluate inputs seen during a quiz attempt!")
         var action = {}
