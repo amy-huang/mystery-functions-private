@@ -11,6 +11,14 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Util from '../Util'
 
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+
+function onChange(newValue) {
+  console.log("change", newValue);
+}
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props
 
@@ -246,26 +254,40 @@ export default function SimpleTabs(props) {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <Grid container spacing={4}>
-          <Grid container item spacing={4} direction="column">
-            {funcObj.numArgs === 2 ?
-              <Grid container item spacing={4}>
-                <Grid item>
-                  <TextField label="First input" onChange={(e) => { evalInputFirstStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalDoubleInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
-                  </TextField>
-                </Grid>
-                <Grid item>
-                  <TextField label="Second input" onChange={(e) => { evalInputSecondStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalDoubleInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
-                  </TextField>
-                </Grid>
-              </Grid>
-
-              :
-              <Grid item>
-                <TextField label="Input" onChange={(e) => { evalInputStr = e.target.value }} onKeyUp={(e) => { if (e.keyCode === 13) { evalInput() } }} helperText="ENTER to submit" defaultValue={funcObj.inputPlaceHolderText()}>
-                </TextField>
-              </Grid>
-            }
+        <Grid container spacing={8}>
+          <Grid item direction="column" height={100}>
+            {/* TODO: tabs need to indent, not move to next html element 
+                want monospace font!!
+            */}
+            {/* <TextField multiline={true} rows={6} fullWidth={true} variant="outlined" placeholder="concrete instance goes here" onChange={(e) => { console.log(e.target.value) }}>
+            </TextField> */}
+            <AceEditor
+              placeholder="Placeholder Text"
+              mode="javascript"
+              theme="tomorrow"
+              onChange={onChange}
+              fontSize={18}
+              showPrintMargin={false}
+              showGutter={false}
+              highlightActiveLine={true}
+              value={`inst myInst {
+                Node = Node1 + Node2
+                edges = Node1 -> Node2
+              }`}
+              setOptions={{
+              enableBasicAutocompletion: false,
+              enableLiveAutocompletion: false,
+              enableSnippets: false,
+              showLineNumbers: false,
+              tabSize: 2,
+              }}/>
+          </Grid>
+          <Grid item>
+            <div>
+              <Button color='primary' variant="contained" className={classes.actionButton} >
+                SUBMIT
+                </Button>
+            </div>
           </Grid>
         </Grid>
       </TabPanel>
