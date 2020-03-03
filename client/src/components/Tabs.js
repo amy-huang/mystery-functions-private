@@ -15,10 +15,7 @@ import ConcreteInstParsing from '../predicates/ConcreteInstParsing'
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
-
-function onChange(newValue) {
-  instanceText = newValue
-}
+import isDag from '../predicates/isDag'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -81,7 +78,7 @@ export default function SimpleTabs(props) {
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
-  var funcObj = props.children.predObj
+  var predObj = props.children.predObj
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
 
@@ -249,8 +246,17 @@ export default function SimpleTabs(props) {
     finalGuess = ""
   }
 
-  function seeIfValid() {
-    console.log(ConcreteInstParsing.valid(instanceText))
+  function updateInstText(newValue) {
+    instanceText = newValue
+  }
+
+  function evaluateInst() {
+    var result = isDag.evaluate(instanceText)
+    var displayGuess = {}
+    displayGuess.in = instanceText
+    displayGuess.out = result.toString()
+    guesses.push(displayGuess)
+    updateFunc()
   }
 
   return (
@@ -274,7 +280,7 @@ export default function SimpleTabs(props) {
               placeholder="Placeholder Text"
               mode="javascript"
               theme="tomorrow"
-              onChange={onChange}
+              onChange={updateInstText}
               fontSize={18}
               showPrintMargin={false}
               showGutter={false}
@@ -293,7 +299,7 @@ export default function SimpleTabs(props) {
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} onClick={seeIfValid}>
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={evaluateInst}>
                 SUBMIT
                 </Button>
             </div>

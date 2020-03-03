@@ -263,7 +263,7 @@ class GuessingScreen extends Component {
             < Grid container justify="center" spacing={4} direction="row" alignContent="center">
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
-                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} predObj={this.props.predObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
+                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={funcObj} predObj={predObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
               </ Grid>
 
               {/* Current guess and function output type */}
@@ -273,7 +273,7 @@ class GuessingScreen extends Component {
                   <Typography color="secondary" variant="h6">Your current guess: </Typography>{this.state.guessText}
                 </Grid>
                 < Grid item>
-                  <Typography color="secondary" variant="h6">Output type: </Typography>{this.props.funcObj.outputDescription()}
+                  <Typography color="secondary" variant="h6">Output type: </Typography>{funcObj.outputDescription()}
                 </Grid>
               </ Grid>
             </Grid>
@@ -285,20 +285,20 @@ class GuessingScreen extends Component {
                   Mystery function <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
                     <ol>
                     {Array(funcObj.numArgs).fill(<li>
-                      <Typography variant="h6">{this.props.funcObj.inputDescription()}</Typography>
+                      <Typography variant="h6">{funcObj.inputDescription()}</Typography>
                     </li>)}
                   </ol>
                   and an output of type
                   <ol>
                     <li>
-                      <Typography variant="h6">{this.props.funcObj.outputDescription()}</Typography>
+                      <Typography variant="h6">{funcObj.outputDescription()}</Typography>
                     </li>
                   </ol>
                 </Grid>
 
                 {/* Tabs */}
                 <Grid item xs={12} >
-                  <TabsWrapper guesses={this.guesses} funcObj={this.props.funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn} getNextQ={this.getNextQ}></TabsWrapper>
+                  <TabsWrapper guesses={this.guesses} predObj={predObj} funcObj={funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn} getNextQ={this.getNextQ}></TabsWrapper>
                 </Grid>
               </Grid>
 

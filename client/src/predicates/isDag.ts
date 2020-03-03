@@ -39,18 +39,30 @@ class isDag {
     // Get nodes and map them 
     var nodeNames = sets.get("Node")
     if (nodeNames !== undefined) {
+      // Check for empty set of nodes
+      if (nodeNames.length === 1 && nodeNames[0] === "none") {
+        return nodes
+      }
+      // Add node names to map
       nodeNames.forEach((name) => {
           var newNode = new Node(name)
           nodes.set(name, newNode)
       })
     }
+    console.log(nodes)
 
     // Build node edge relationships
     var edgesTexts = sets.get("edges")
-    var edges = []
+    console.log(edgesTexts)
     if (edgesTexts !== undefined) {
+      // Check for empty relation for edges
+      if (edgesTexts.length === 1 && edgesTexts[0] === "none") {
+        return nodes
+      }
+      // Add edge relationships to mapped nodes
       for (var j = 0; j < edgesTexts.length; j++) {
         var elems = edgesTexts[j].split("->")
+        console.log(elems)
         var fromName = elems[0].trim()
         var toName = elems[1].trim()
         
