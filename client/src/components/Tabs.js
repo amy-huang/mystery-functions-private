@@ -10,13 +10,11 @@ import { TextField } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Util from '../Util'
-import isDag from '../predicates/isDag'
+import ConcreteInstParsing from '../predicates/ConcreteInstParsing'
 
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
-
-var instanceText = isDag.defaultInstance()
 
 function onChange(newValue) {
   instanceText = newValue
@@ -83,8 +81,12 @@ export default function SimpleTabs(props) {
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
+  var funcObj = props.children.predObj
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
+
+  // Concrete instance input
+  var instanceText = predObj.defaultInstance()
 
   // Set default input
   evalInputStr = funcObj.inputPlaceHolderText()
@@ -248,7 +250,7 @@ export default function SimpleTabs(props) {
   }
 
   function seeIfValid() {
-    console.log(isDag.validParse(instanceText))
+    console.log(ConcreteInstParsing.valid(instanceText))
   }
 
   return (

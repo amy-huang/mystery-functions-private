@@ -252,6 +252,7 @@ class GuessingScreen extends Component {
   render() {
     const { classes } = this.props
     var funcObj = this.props.funcObj
+    var predObj = this.props.predObj
 
     return (
       <React.Fragment>
@@ -262,7 +263,7 @@ class GuessingScreen extends Component {
             < Grid container justify="center" spacing={4} direction="row" alignContent="center">
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
-                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
+                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={this.props.funcObj} predObj={this.props.predObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
               </ Grid>
 
               {/* Current guess and function output type */}

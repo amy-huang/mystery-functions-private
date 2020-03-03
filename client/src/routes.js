@@ -11,6 +11,7 @@ import FirstIntoSecondDivisible from './functions/FirstIntoSecondDivisible'
 import SumParityBool from './functions/SumParityBool';
 import SumParityInt from './functions/SumParityInt';
 import Induced from './functions/Induced';
+import isDag from './predicates/isDag'
 
 function coinFlip(first, second) {
   const flip = Math.random()
@@ -40,21 +41,21 @@ function shuffle(a) {
 // with the indices
 var funcs = []
 funcs.push(coinFlip(Average, Median))
-funcs.push(coinFlip(SecondIntoFirstDivisible, FirstIntoSecondDivisible))
-funcs.push(coinFlip(SumParityBool, SumParityInt))
-funcs.push(Induced)
-funcs.push(SumBetween)
-shuffle(funcs)
+// funcs.push(coinFlip(SecondIntoFirstDivisible, FirstIntoSecondDivisible))
+// funcs.push(coinFlip(SumParityBool, SumParityInt))
+// funcs.push(Induced)
+// funcs.push(SumBetween)
+// shuffle(funcs)
 
 export default props => (
   <HashRouter>
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
-      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={funcs[0]} nextPage={'/second'} current={0} total={funcs.length}></GuessingScreen>} />
-      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={funcs[1]} nextPage={'/third'} current={1} total={funcs.length}></GuessingScreen>} />
+      <Route exact path='/first' render={(props) => <GuessingScreen {...props} predObj={isDag} funcObj={funcs[0]} nextPage={'/second'} current={0} total={funcs.length}></GuessingScreen>} />
+      {/* <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={funcs[1]} nextPage={'/third'} current={1} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={funcs[2]} nextPage={'/fourth'} current={2} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/fourth' render={(props) => <GuessingScreen {...props} funcObj={funcs[3]} nextPage={'/fifth'} current={3} total={funcs.length}></GuessingScreen>} />
-      <Route exact path='/fifth' render={(props) => <GuessingScreen {...props} funcObj={funcs[4]} nextPage={'/thanks'} current={4} total={funcs.length}></GuessingScreen>} />
+      <Route exact path='/fifth' render={(props) => <GuessingScreen {...props} funcObj={funcs[4]} nextPage={'/thanks'} current={4} total={funcs.length}></GuessingScreen>} /> */}
       <Route exact path='/thanks' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>
