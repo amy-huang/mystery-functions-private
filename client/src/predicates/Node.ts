@@ -26,21 +26,18 @@ class Node {
     // Returns the empty set if cycle detected, otherwise
     // returns all nodes reachable from this one by DFS
     // including itself
-    dfs(): Set<Node> {
-        var visited = new Set<Node>()
-        visited.add(this)
+    cycle(origin: Node): boolean {
+        if (origin.name === this.name) {
+            return true
+        }
 
-        this.to.forEach((n) => {
-            var newlyVisited = n.dfs()
-            if (newlyVisited.has(this)) {
-                // If cycle detected, empty set returned
-                return new Set<Node>()
+        for (var i = 0; i < this.to.length; i++) {
+            var toNode = this.to[i]
+            if (toNode.cycle(origin) === true) {
+                return true
             }
-
-            // Get destination and all reachable from it
-            newlyVisited.forEach(visited.add, visited)
-        })
-        return visited
+        }
+        return false
     }
 }
 export default Node

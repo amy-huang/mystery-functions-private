@@ -21,9 +21,7 @@ class isDag {
     while (!nextNode.done) {
       var node = nodes.get(nextNode.value)
       if (node !== undefined) {
-        var visited = node.dfs()
-        if (visited.has(node)) {
-          // Cycle found
+        if (node.cycle(node) === true) {
           return false
         }
       }
