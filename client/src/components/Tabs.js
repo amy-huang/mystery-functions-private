@@ -10,13 +10,16 @@ import { TextField } from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Util from '../Util'
+import isDag from '../predicates/isDag'
 
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 
+var instanceText = isDag.defaultInstance()
+
 function onChange(newValue) {
-  console.log("change", newValue);
+  instanceText = newValue
 }
 
 function TabPanel(props) {
@@ -244,6 +247,10 @@ export default function SimpleTabs(props) {
     finalGuess = ""
   }
 
+  function seeIfValid() {
+    console.log(isDag.validParse(instanceText))
+  }
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -284,7 +291,7 @@ export default function SimpleTabs(props) {
           </Grid>
           <Grid item>
             <div>
-              <Button color='primary' variant="contained" className={classes.actionButton} >
+              <Button color='primary' variant="contained" className={classes.actionButton} onClick={seeIfValid}>
                 SUBMIT
                 </Button>
             </div>
