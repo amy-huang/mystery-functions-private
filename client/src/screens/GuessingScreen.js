@@ -11,6 +11,7 @@ import EvalGuessLine from '../components/EvalGuessLine'
 import EvalInputLine from '../components/EvalInputLine'
 import DummyLine from '../components/DummyLine'
 import Quiz from '../components/Quiz';
+import EvalPredInputLine from '../components/EvalPredInputLine'
 
 const gridListHeight = 500
 
@@ -201,6 +202,11 @@ class GuessingScreen extends Component {
         <Grid container spacing={1}>
           <Grid item><i>Guess: {tile.reason}</i></Grid>
         </Grid>
+      )
+    }
+    if (tile.type === "eval_pred_input") {
+      return (
+        <EvalPredInputLine in={tile.in} out={tile.out}></EvalPredInputLine>
       )
     }
   }

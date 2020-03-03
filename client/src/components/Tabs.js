@@ -253,6 +253,8 @@ export default function SimpleTabs(props) {
   function evaluateInst() {
     var result = isDag.evaluate(instanceText)
     var displayGuess = {}
+    displayGuess.type = "eval_pred_input"
+    displayGuess.key = Util.newDisplayKey()
     displayGuess.in = instanceText
     displayGuess.out = result.toString()
     guesses.push(displayGuess)
