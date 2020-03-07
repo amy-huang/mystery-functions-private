@@ -1,7 +1,14 @@
 import ConcreteInstParsing from "./ConcreteInstParsing"
 import Node from "./Node"
+import Bool from "../types/Bool"
 
 class isDag {
+  static outputType = Bool
+
+  static description(): string {
+    return "isDag"
+  }
+
   static defaultInstance(): string {
     return `inst myInst {
         Node = none
@@ -22,6 +29,7 @@ class isDag {
       var node = nodes.get(nextNode.value)
       if (node !== undefined) {
         if (node.cycle(node) === true) {
+          alert("found cycle on node: " + node.name)
           return false
         }
       }
@@ -47,7 +55,7 @@ class isDag {
           nodes.set(name, newNode)
       })
     }
-    console.log(nodes)
+    // console.log(nodes)
 
     // Build node edge relationships
     var edgesTexts = sets.get("edges")
@@ -60,7 +68,7 @@ class isDag {
       // Add edge relationships to mapped nodes
       for (var j = 0; j < edgesTexts.length; j++) {
         var elems = edgesTexts[j].split("->")
-        console.log(elems)
+        // console.log(elems)
         var fromName = elems[0].trim()
         var toName = elems[1].trim()
         
@@ -95,46 +103,65 @@ class isDag {
       return false
     }
 
-    var nodes = sets.get("Node")
-    if (nodes !== undefined) {
-      for (var i = 0; i < nodes.length; i++) {
-        if (!nodes[i].match(/^[A-Za-z0-9]+$/)) {
-          console.log("invalid node name")
+    var nodeNames = sets.get("Node")
+    if (nodeNames !== undefined) {
+      for (var i = 0; i < nodeNames.length; i++) {
+        if (!nodeNames[i].match(/^[A-Za-z0-9]+$/)) {
+          alert("invalid node name:" + nodeNames[i])
+          // console.log("invalid node name")
           return false
         }
       }
     }
 
     var edges = sets.get("edges")
-    if (edges !== undefined && nodes !== undefined) {
+    var seenEdges = new Array<Array<string>>()
+    if (edges !== undefined && nodeNames !== undefined) {
       for (var j = 0; j < edges.length; j++) {
+        if (edges[j] === "none") {
+          break
+        }
+
         var elems = edges[j].split("->")
         // Check is a tuple
         if (elems.length != 2) {
-          console.log("not a tuple")
+          alert("edge is not a tuple:" + edges[j])
+          // console.log("not a tuple")
           return false
         }
         // Check if each element is a node
-        if (!nodes.includes(elems[0].trim())) {
-          console.log("1st node not included in nodes")
+        var firstName = elems[0].trim()
+        var secondName = elems[1].trim()
+        if (!nodeNames.includes(firstName)) {
+          alert("First element in tuple not in Node:" + firstName)
+          // console.log("1st node not included in nodes")
           return false
         }
-        if (!nodes.includes(elems[1].trim())) {
-          console.log("2nd node not included in nodes")
+        if (!nodeNames.includes(secondName)) {
+          alert("Second element in tuple not in Node:" + secondName)
+          // console.log("2nd node not included in nodes")
           return false
         }
+
+        // Check if edge seen before
+        if (seenEdges.includes([firstName, secondName])) {
+            alert("Edge repeated:" + edges[j])
+            // console.log("edge repeated")
+            return false
+        }
+        seenEdges.push([firstName, secondName])
       }
     }
 
     return true
   }
-   
-    // A custom parser for concrete instances
-    // The predicate for seeing if instance is a Dag
-  static pred(): boolean {
-    // adds nodes 1 by 1 to graph representation, and
-    // sees if any cause a cycle
-    return false
+
+  static inputDescription(): string {
+    return "Node, edges description here"
+  }
+
+  static outputDescription(): string {
+    return this.outputType.longDescription()
   }
 
 }

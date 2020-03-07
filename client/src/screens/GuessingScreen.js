@@ -259,6 +259,7 @@ class GuessingScreen extends Component {
     const { classes } = this.props
     var funcObj = this.props.funcObj
     var predObj = this.props.predObj
+    window.scrollTo(0,0)
 
     return (
       <React.Fragment>
@@ -266,7 +267,7 @@ class GuessingScreen extends Component {
         < div className={classes.root} >
           {/* Center all Grids */}
           {this.state.quiz ?
-            < Grid container justify="center" spacing={4} direction="row" alignContent="center">
+            < Grid container justify="center" spacing={2} direction="row" alignContent="center">
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
                 <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={funcObj} predObj={predObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
@@ -288,16 +289,16 @@ class GuessingScreen extends Component {
               < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
                 {/* Function signature */}
                 < Grid item xs={12} >
-                  Mystery function <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
+                  Mystery predicate <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
                     <ol>
                     {Array(funcObj.numArgs).fill(<li>
-                      <Typography variant="h6">{funcObj.inputDescription()}</Typography>
+                      <Typography>{predObj.inputDescription()}</Typography>
                     </li>)}
                   </ol>
                   and an output of type
                   <ol>
                     <li>
-                      <Typography variant="h6">{funcObj.outputDescription()}</Typography>
+                      <Typography>{predObj.outputDescription()}</Typography>
                     </li>
                   </ol>
                 </Grid>

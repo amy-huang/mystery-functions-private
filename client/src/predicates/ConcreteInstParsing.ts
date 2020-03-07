@@ -6,16 +6,14 @@ class ConcreteInstParsing {
     static setDefs(instance: string): Map<string, Array<string>> {
         var defs = new Map<string, Array<string>>()
         var spaceTokens = instance.trim().split(/\s+/)
-        console.log(instance)
-        console.log(spaceTokens)
         if (spaceTokens.length < 4) {
           alert("Malformed concrete instance")
-          console.log("less than 4 space tokens")
+          // console.log("less than 4 space tokens")
           return defs
         }
         if (spaceTokens[0] !== "inst") {
           alert("Malformed concrete instance")
-          console.log("inst keyword missing")
+          // console.log("inst keyword missing")
           return defs
         }
         if (spaceTokens[2] !== "{") {
@@ -25,7 +23,7 @@ class ConcreteInstParsing {
         }
         if (spaceTokens[spaceTokens.length - 1] !== "}") {
           alert("Malformed concrete instance")
-          console.log("no end bracket")
+          // console.log("no end bracket")
           return defs
         }
   
@@ -42,35 +40,36 @@ class ConcreteInstParsing {
           var onEqual = lines[i].split("=")
           if (onEqual.length !== 2) {
             alert("Malformed concrete instance")
-            console.log("equal not between 2 strings", onEqual)
-            return defs
+            // console.log("equal not between 2 strings", onEqual)
+            return new Map<string, Array<string>>()
           }
   
           // Get set name
           var setName = onEqual[0].trim()
-          // if (setName.split(/\s+/).length > 1) {
-          //   alert("Malformed concrete instance")
-          //   console.log("set name has spaces")
-          //   return defs
-          // }
           if (!setName.match(/^[A-Za-z0-9]+$/)) {
             alert("Malformed concrete instance - set name should be alphanumeric")
-            console.log(setName)
-            return defs
+            // console.log(setName)
+            return new Map<string, Array<string>>()
+          }
+          // Setname already exists
+          if (defs.has(setName)) {
+            alert("Malformed concrete instance - repeated set name")
+            // console.log(setName)
+            return new Map<string, Array<string>>()
           }
           
           // For now only support union operater
           var items = onEqual[1].split("\+")
-          console.log("items", items)
+          // console.log("items", items)
           for (var j = 0; j < items.length; j++) {
             var item = items[j].trim()
             if (item === "") {
               alert("Malformed concrete instance")
-              console.log("empty item", item)
+              // console.log("empty item", item)
               return new Map<string, Array<string>>()
             }
   
-            console.log("item", item)
+            // console.log("item", item)
             if (!defs.has(setName)) {
               defs.set(setName, [])
             } 
@@ -81,7 +80,7 @@ class ConcreteInstParsing {
             }
           }
         }
-        console.log("final defs", defs)
+        // console.log("final defs", defs)
   
         return defs
     }

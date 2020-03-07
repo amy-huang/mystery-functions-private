@@ -14,15 +14,18 @@ class EvalPredInputLine extends Component {
   render() {
     var classes = this.props;
     return (
-      <Grid container direction="row" spacing={1} justify="flex-start" alignItems="center">
+      <Grid container direction="column" spacing={1} justify="flex-start">
         <Grid item>
-          <Typography className={classes.text}>{classes.in}</Typography>
+          <Typography style={{whiteSpace: 'pre-line'}} className={classes.text}>{classes.in}</Typography>
         </Grid>
-        <Grid item>
-          <Typography className={classes.text}>evaluates to</Typography>
-        </Grid>
-        <Grid item>
-        <Button variant="contained"><Typography className={classes.text}>{classes.out}</Typography></Button>
+
+        <Grid container spacing={1} item direction="row">
+          <Grid item>
+            <Typography className={classes.text}>evaluates to</Typography>
+          </Grid>
+          <Grid item>
+          <Button variant="contained"><Typography className={classes.text}>{classes.out}</Typography></Button>
+          </Grid>
         </Grid>
       </Grid>
     )

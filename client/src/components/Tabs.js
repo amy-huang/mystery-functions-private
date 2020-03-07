@@ -52,6 +52,9 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
+  panel: {
+    height: 350, 
+  },
 }))
 
 // For storing user input
@@ -63,6 +66,9 @@ var finalGuess = ""
 // text box component with its associated fcns.
 var evalInputFirstStr = ""
 var evalInputSecondStr = ""
+var instanceText = ""
+// TODO: have the instance text be a state variable, reset with each change to the text box
+// and unchanged after inst eval'd
 
 export default function SimpleTabs(props) {
   const classes = useStyles()
@@ -82,8 +88,12 @@ export default function SimpleTabs(props) {
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
 
-  // Concrete instance input
-  var instanceText = predObj.defaultInstance()
+  // Set default instance if first time seeing evaluation
+  if (localStorage.getItem('instanceText') === null) {
+    instanceText = predObj.defaultInstance()
+  } else {
+    instanceText = localStorage.getItem('instanceText') 
+  }
 
   // Set default input
   evalInputStr = funcObj.inputPlaceHolderText()
@@ -251,12 +261,19 @@ export default function SimpleTabs(props) {
   }
 
   function evaluateInst() {
+    if (!predObj.validInst(instanceText)) {
+      return
+    }
     var result = isDag.evaluate(instanceText)
     var displayGuess = {}
     displayGuess.type = "eval_pred_input"
     displayGuess.key = Util.newDisplayKey()
-    displayGuess.in = instanceText
+    displayGuess.in = instanceText.trim()
     displayGuess.out = result.toString()
+
+    // Preserve submitted instance text; don't change back to default
+    localStorage.setItem("instanceText", instanceText)
+
     guesses.push(displayGuess)
     updateFunc()
   }
@@ -270,16 +287,11 @@ export default function SimpleTabs(props) {
           <Tab label="Make Guess" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        <Grid container spacing={8}>
+      <TabPanel className={classes.panel} value={value} index={0}>
+        <Grid container spacing={2}>
           <Grid item direction="column" height={100}>
-            {/* TODO: tabs need to indent, not move to next html element 
-                want monospace font!!
-            */}
-            {/* <TextField multiline={true} rows={6} fullWidth={true} variant="outlined" placeholder="concrete instance goes here" onChange={(e) => { console.log(e.target.value) }}>
-            </TextField> */}
             <AceEditor
-              placeholder="Placeholder Text"
+              height={250}
               mode="javascript"
               theme="tomorrow"
               onChange={updateInstText}
@@ -287,10 +299,7 @@ export default function SimpleTabs(props) {
               showPrintMargin={false}
               showGutter={false}
               highlightActiveLine={true}
-              value={`inst myInst {
-                Node = Node1 + Node2
-                edges = Node1 -> Node2
-              }`}
+              value={instanceText}
               setOptions={{
               enableBasicAutocompletion: false,
               enableLiveAutocompletion: false,
