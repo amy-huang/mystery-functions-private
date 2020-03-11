@@ -289,7 +289,7 @@ export default function SimpleTabs(props) {
       </AppBar>
       <TabPanel className={classes.panel} value={value} index={0}>
         <Grid container spacing={2}>
-          <Grid item direction="column" height={100}>
+          <Grid item>
             <AceEditor
               height={250}
               mode="javascript"

@@ -23,17 +23,27 @@ class Node {
         return this.from
     }
 
+    cycle() {
+        for (var i = 0; i < this.to.length; i++) {
+            var toNode = this.to[i]
+            if (toNode.cycleHelper(this) === true) {
+                return true
+            }
+        }
+        return false
+    }
+
     // Returns the empty set if cycle detected, otherwise
     // returns all nodes reachable from this one by DFS
     // including itself
-    cycle(origin: Node): boolean {
+    cycleHelper(origin: Node): boolean {
         if (origin.name === this.name) {
             return true
         }
 
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
-            if (toNode.cycle(origin) === true) {
+            if (toNode.cycleHelper(origin) === true) {
                 return true
             }
         }

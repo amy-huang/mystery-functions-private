@@ -11,9 +11,9 @@ class isDag {
 
   static defaultInstance(): string {
     return `inst myInst {
-        Node = none
-        edges = none
-      }`
+      Node = none
+      edges = none
+    }`
   }
 
   // Assumed isnt already screened as valid
@@ -28,7 +28,7 @@ class isDag {
     while (!nextNode.done) {
       var node = nodes.get(nextNode.value)
       if (node !== undefined) {
-        if (node.cycle(node) === true) {
+        if (node.cycle() === true) {
           alert("found cycle on node: " + node.name)
           return false
         }
