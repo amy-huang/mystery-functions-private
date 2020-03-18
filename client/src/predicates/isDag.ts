@@ -23,47 +23,40 @@ class isDag {
     
     // To check for acyclicity, do a DFS from every node
     // Should never get back to itself
-    var keys = nodes.keys()
-    var nextNode = keys.next()
-    while (!nextNode.done) {
-      var node = nodes.get(nextNode.value)
-      if (node !== undefined) {
-        if (node.cycle() === true) {
-          alert("found cycle on node: " + node.name)
-          return false
-        }
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].cycle()) {
+        return false
       }
-      nextNode = keys.next()
     }
     
     return true
   }
 
-  static makeNodes(sets: Map<string, Array<string>>): Map<string, Node> {
+  static makeNodes(sets: Map<string, Array<string>>): Array<Node> {
     var nodes = new Map<string, Node>()
+    var nodeList = Array<Node>()
 
     // Get nodes and map them 
     var nodeNames = sets.get("Node")
     if (nodeNames !== undefined) {
       // Check for empty set of nodes
       if (nodeNames.length === 1 && nodeNames[0] === "none") {
-        return nodes
+        return nodeList
       }
       // Add node names to map
       nodeNames.forEach((name) => {
           var newNode = new Node(name)
           nodes.set(name, newNode)
+          nodeList.push(newNode)
       })
     }
-    // console.log(nodes)
 
     // Build node edge relationships
     var edgesTexts = sets.get("edges")
-    console.log(edgesTexts)
     if (edgesTexts !== undefined) {
       // Check for empty relation for edges
       if (edgesTexts.length === 1 && edgesTexts[0] === "none") {
-        return nodes
+        return nodeList
       }
       // Add edge relationships to mapped nodes
       for (var j = 0; j < edgesTexts.length; j++) {
@@ -73,15 +66,18 @@ class isDag {
         var toName = elems[1].trim()
         
         var fromNode = nodes.get(fromName)
-        var toNode = nodes.get(fromName)
+        var toNode = nodes.get(toName)
         if (fromNode !== undefined && toNode !== undefined ) {
           fromNode.addDest(toNode)
           toNode.addSrc(fromNode)
-        }
+        } 
       }
     }
 
-    return nodes
+    nodes.forEach((node) => {
+      console.log(node.printout())
+    })
+    return nodeList
   }
 
   // Checks if concrete inst specified is valid

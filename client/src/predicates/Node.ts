@@ -7,6 +7,19 @@ class Node {
         this.name = name
     }
 
+    printout(): string {
+        var print = this.name + "\n"
+        print += "  to:\n" 
+        for (var i = 0; i < this.to.length; i++) {
+            print += "  " + this.to[i].name + "\n"
+        }
+        print += "  from:\n" 
+        for (var i = 0; i < this.from.length; i++) {
+            print += "  " + this.from[i].name + "\n"
+        }
+        return print
+    }
+
     addDest(n: Node) {
         this.to.push(n)
     }
@@ -24,9 +37,12 @@ class Node {
     }
 
     cycle() {
+        console.log("doing cycle")
+        console.log(this.printout())
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
             if (toNode.cycleHelper(this) === true) {
+                console.log(toNode.name, "cycle found")
                 return true
             }
         }
@@ -37,6 +53,8 @@ class Node {
     // returns all nodes reachable from this one by DFS
     // including itself
     cycleHelper(origin: Node): boolean {
+        console.log("doing cycle helper")
+        console.log(this.printout())
         if (origin.name === this.name) {
             return true
         }
@@ -44,6 +62,7 @@ class Node {
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
             if (toNode.cycleHelper(origin) === true) {
+                console.log(toNode.name, "cycle found")
                 return true
             }
         }

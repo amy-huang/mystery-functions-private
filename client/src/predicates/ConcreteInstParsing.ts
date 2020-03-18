@@ -48,13 +48,11 @@ class ConcreteInstParsing {
           var setName = onEqual[0].trim()
           if (!setName.match(/^[A-Za-z0-9]+$/)) {
             alert("Malformed concrete instance - set name should be alphanumeric")
-            // console.log(setName)
             return new Map<string, Array<string>>()
           }
           // Setname already exists
           if (defs.has(setName)) {
             alert("Malformed concrete instance - repeated set name")
-            // console.log(setName)
             return new Map<string, Array<string>>()
           }
           
@@ -65,23 +63,26 @@ class ConcreteInstParsing {
             var item = items[j].trim()
             if (item === "") {
               alert("Malformed concrete instance")
-              // console.log("empty item", item)
               return new Map<string, Array<string>>()
             }
   
-            // console.log("item", item)
-            if (!defs.has(setName)) {
+            if (defs.has(setName)) {
+              // Check if item already exists
+              if (defs.get(setName)?.includes(item)) {
+                alert("Malformed concrete instance - repeated item name")
+                return new Map<string, Array<string>>()
+              }
+            } else {
               defs.set(setName, [])
-            } 
+            }
+
             var newSet = defs.get(setName)
             if (newSet !== undefined) {
               newSet.push(item)
               defs.set(setName, newSet)
             }
           }
-        }
-        // console.log("final defs", defs)
-  
+        }  
         return defs
     }
 }
