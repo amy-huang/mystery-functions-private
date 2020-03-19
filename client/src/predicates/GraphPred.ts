@@ -2,34 +2,12 @@ import ConcreteInstParsing from "./ConcreteInstParsing"
 import Node from "./Node"
 import Bool from "../types/Bool"
 
-class isDag {
-  static outputType = Bool
-
-  static description(): string {
-    return "isDag"
-  }
-
+class GraphPred {
   static defaultInstance(): string {
     return `inst myInst {
       Node = none
       edges = none
     }`
-  }
-
-  // Assumed isnt already screened as valid
-  static evaluate(rawText: string): boolean {
-    var sets = ConcreteInstParsing.setDefs(rawText)
-    var nodes = this.makeNodes(sets)
-    
-    // To check for acyclicity, do a DFS from every node
-    // Should never get back to itself
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i].cycle()) {
-        return false
-      }
-    }
-    
-    return true
   }
 
   static makeNodes(sets: Map<string, Array<string>>): Array<Node> {
@@ -148,7 +126,6 @@ class isDag {
         seenEdges.push([firstName, secondName])
       }
     }
-
     return true
   }
 
@@ -157,8 +134,8 @@ class isDag {
   }
 
   static outputDescription(): string {
-    return this.outputType.longDescription()
+    return Bool.longDescription()
   }
 
 }
-export default isDag
+export default GraphPred

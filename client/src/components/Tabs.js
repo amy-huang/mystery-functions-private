@@ -15,7 +15,6 @@ import ConcreteInstParsing from '../predicates/ConcreteInstParsing'
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
-import isDag from '../predicates/isDag'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -264,7 +263,7 @@ export default function SimpleTabs(props) {
     if (!predObj.validInst(instanceText)) {
       return
     }
-    var result = isDag.evaluate(instanceText)
+    var result = predObj.evaluate(instanceText)
     var displayGuess = {}
     displayGuess.type = "eval_pred_input"
     displayGuess.key = Util.newDisplayKey()
