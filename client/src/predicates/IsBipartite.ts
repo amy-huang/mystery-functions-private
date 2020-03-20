@@ -7,7 +7,7 @@ class IsBipartite extends GraphPred {
   }
 
   // Assumed isnt already screened as valid
-  static evaluate(rawText: string): boolean {
+  static function(rawText: string): boolean {
     var sets = ConcreteInstParsing.setDefs(rawText)
     var nodes = this.makeNodes(sets)
     
@@ -20,6 +20,10 @@ class IsBipartite extends GraphPred {
       }
     }
     return true
+  }
+
+  static answerText(): string {
+    return "if is bipartite graph or, if does NOT have an odd length cycle"
   }
 }
 export default IsBipartite

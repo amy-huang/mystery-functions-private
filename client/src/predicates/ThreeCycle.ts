@@ -7,7 +7,7 @@ class ThreeCycle extends GraphPred {
   }
 
   // Assumed isnt already screened as valid
-  static evaluate(rawText: string): boolean {
+  static function(rawText: string): boolean {
     var sets = ConcreteInstParsing.setDefs(rawText)
     var nodes = this.makeNodes(sets)
     
@@ -15,11 +15,14 @@ class ThreeCycle extends GraphPred {
     // Should never get back to itself
     for (var i = 0; i < nodes.length; i++) {
       if (nodes[i].threeCycle()) {
-        return false
+        return true
       }
     }
-    
-    return true
+    return false
+  }
+
+  static answerText(): string {
+    return "if has 3 cycle"
   }
 }
 export default ThreeCycle

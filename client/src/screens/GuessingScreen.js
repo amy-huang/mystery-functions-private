@@ -258,7 +258,6 @@ class GuessingScreen extends Component {
   render() {
     const { classes } = this.props
     var funcObj = this.props.funcObj
-    var predObj = this.props.predObj
     window.scrollTo(0,0)
 
     return (
@@ -270,7 +269,7 @@ class GuessingScreen extends Component {
             < Grid container justify="center" spacing={2} direction="row" alignContent="center">
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
-                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={funcObj} predObj={predObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
+                <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
               </ Grid>
 
               {/* Current guess and function output type */}
@@ -292,20 +291,20 @@ class GuessingScreen extends Component {
                   Mystery predicate <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
                     <ol>
                     {Array(funcObj.numArgs).fill(<li>
-                      <Typography>{predObj.inputDescription()}</Typography>
+                      <Typography>{funcObj.inputDescription()}</Typography>
                     </li>)}
                   </ol>
                   and an output of type
                   <ol>
                     <li>
-                      <Typography>{predObj.outputDescription()}</Typography>
+                      <Typography>{funcObj.outputDescription()}</Typography>
                     </li>
                   </ol>
                 </Grid>
 
                 {/* Tabs */}
                 <Grid item xs={12} >
-                  <TabsWrapper guesses={this.guesses} predObj={predObj} funcObj={funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn} getNextQ={this.getNextQ}></TabsWrapper>
+                  <TabsWrapper guesses={this.guesses} funcObj={funcObj} funcObj={funcObj} updateFunc={this.guessMade} toQuiz={this.quizOn} getNextQ={this.getNextQ}></TabsWrapper>
                 </Grid>
               </Grid>
 

@@ -7,7 +7,7 @@ class IsDag extends GraphPred {
   }
 
   // Assumed isnt already screened as valid
-  static evaluate(rawText: string): boolean {
+  static function(rawText: string): boolean {
     var sets = ConcreteInstParsing.setDefs(rawText)
     var nodes = this.makeNodes(sets)
     
@@ -20,6 +20,23 @@ class IsDag extends GraphPred {
     }
     
     return true
+  }
+
+  static inputGenerators(): Function[] {
+    return [() => {return `inst myInst {
+      Node = A + B + C
+      edges = A->B + A->C + B->C
+    }`}, () => {return `inst myInst {
+      Node = A 
+      edges = A->A
+    }`}, () => {return `inst myInst {
+      Node = A + B
+      edges = A->B + B->B
+    }`}]
+  }
+
+  static answerText(): string {
+    return "is dag"
   }
 }
 export default IsDag

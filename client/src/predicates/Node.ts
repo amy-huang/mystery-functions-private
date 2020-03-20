@@ -57,16 +57,18 @@ class Node {
     cycleHelper(seen: Array<Node>): boolean {
         console.log("doing cycle helper")
         console.log(this.printout())
+        var newSeen = Array<Node>()
         for (var i = 0; i < seen.length; i++) {
             if (seen[i].name === this.name) {
                 return true
             }
+            newSeen.push(seen[i])
         }
-        seen.push(this)
+        newSeen.push(this)
 
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
-            if (toNode.cycleHelper(seen) === true) {
+            if (toNode.cycleHelper(newSeen) === true) {
                 console.log(toNode.name, "cycle found")
                 return true
             }
@@ -94,6 +96,7 @@ class Node {
     // 4 -> length is 1
     // so...length of array - index
     threeCycleHelper(seen: Array<Node>): boolean {
+        var newSeen = Array<Node>()
         for (var i = 0; i < seen.length; i++) {
             if (seen[i].name === this.name) {
                 if (seen.length - i === 3) {
@@ -102,11 +105,12 @@ class Node {
                 // Saw a cycle but wasn't a 3 cycle
                 return false
             }
+            newSeen.push(seen[i])
         }
-        seen.push(this)
+        newSeen.push(this)
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
-            if (toNode.threeCycleHelper(seen) === true) {
+            if (toNode.threeCycleHelper(newSeen) === true) {
                 return true
             }
         }
@@ -126,6 +130,7 @@ class Node {
     }
 
     oddCycleHelper(seen: Array<Node>): boolean {
+        var newSeen = Array<Node>()
         for (var i = 0; i < seen.length; i++) {
             if (seen[i].name === this.name) {
                 if (seen.length - i % 2 === 1) {
@@ -134,11 +139,12 @@ class Node {
                 // Saw a cycle that was even
                 return false
             }
+            newSeen.push(seen[i])
         }
-        seen.push(this)
+        newSeen.push(this)
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
-            if (toNode.oddCycleHelper(seen) === true) {
+            if (toNode.oddCycleHelper(newSeen) === true) {
                 return true
             }
         }

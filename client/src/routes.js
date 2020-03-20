@@ -43,19 +43,19 @@ function shuffle(a) {
 // have an array of random paths and also funcObjs
 // shuffle the funcObjs, and then assign at random with the links 
 // with the indices
-var preds = []
-preds.push(IsDag)
-preds.push(ThreeCycle)
-preds.push(IsBipartite)
+var funcs = []
+funcs.push(IsDag)
+funcs.push(ThreeCycle)
+funcs.push(IsBipartite)
 // shuffle(funcs)
 
 export default props => (
   <HashRouter>
     <Switch>
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
-      <Route exact path='/first' render={(props) => <GuessingScreen {...props} predObj={preds[0]} nextPage={'/second'} current={0} total={preds.length}></GuessingScreen>} />
-      <Route exact path='/second' render={(props) => <GuessingScreen {...props} predObj={preds[1]} nextPage={'/third'} current={1} total={preds.length}></GuessingScreen>} />
-      <Route exact path='/third' render={(props) => <GuessingScreen {...props} predObj={preds[2]} nextPage={'/fourth'} current={2} total={preds.length}></GuessingScreen>} />
+      <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={funcs[0]} nextPage={'/second'} current={0} total={funcs.length}></GuessingScreen>} />
+      <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={funcs[1]} nextPage={'/third'} current={1} total={funcs.length}></GuessingScreen>} />
+      <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={funcs[2]} nextPage={'/fourth'} current={2} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/thanks' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>

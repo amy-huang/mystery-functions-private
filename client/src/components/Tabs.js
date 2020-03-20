@@ -83,13 +83,12 @@ export default function SimpleTabs(props) {
   var guesses = props.children.guesses
   var updateFunc = props.children.updateFunc
   var funcObj = props.children.funcObj
-  var predObj = props.children.predObj
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
 
   // Set default instance if first time seeing evaluation
   if (localStorage.getItem('instanceText') === null) {
-    instanceText = predObj.defaultInstance()
+    instanceText = funcObj.inputPlaceHolderText()
   } else {
     instanceText = localStorage.getItem('instanceText') 
   }
@@ -260,10 +259,10 @@ export default function SimpleTabs(props) {
   }
 
   function evaluateInst() {
-    if (!predObj.validInst(instanceText)) {
+    if (!funcObj.validInst(instanceText)) {
       return
     }
-    var result = predObj.evaluate(instanceText)
+    var result = funcObj.function(instanceText)
     var displayGuess = {}
     displayGuess.type = "eval_pred_input"
     displayGuess.key = Util.newDisplayKey()

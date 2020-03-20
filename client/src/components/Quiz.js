@@ -122,7 +122,7 @@ class Quiz extends Component {
   }
 
   funcObj = this.props.funcObj
-  inputGens = this.props.funcObj.inputGenerators()
+  inputGens = this.funcObj.inputGenerators()
   currInput = ""
   answerText = ""
   setNextQ = this.props.setNextQ
@@ -260,7 +260,7 @@ class Quiz extends Component {
 
           </Typography>
           <Typography variant="h5">Our answer</Typography>
-          <Typography variant="h6">{this.props.funcObj.answerText()}</Typography>
+          <Typography variant="h6">{this.funcObj.answerText()}</Typography>
         </Grid>
         <Grid item>
           {this.toNextFuncButton(this.props.nextPage)}

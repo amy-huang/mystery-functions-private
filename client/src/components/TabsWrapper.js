@@ -8,7 +8,6 @@ class TabsWrapper extends Component {
       guesses: this.props.guesses,
       updateFunc: this.props.updateFunc,
       funcObj: this.props.funcObj,
-      predObj: this.props.predObj,
       nextPage: this.props.nextPage,
       toQuiz: this.props.toQuiz,
       getNextQ: this.props.getNextQ

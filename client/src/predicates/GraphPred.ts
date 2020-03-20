@@ -3,12 +3,7 @@ import Node from "./Node"
 import Bool from "../types/Bool"
 
 class GraphPred {
-  static defaultInstance(): string {
-    return `inst myInst {
-      Node = none
-      edges = none
-    }`
-  }
+  numArgs = 1
 
   static makeNodes(sets: Map<string, Array<string>>): Array<Node> {
     var nodes = new Map<string, Node>()
@@ -137,5 +132,48 @@ class GraphPred {
     return Bool.longDescription()
   }
 
+  static parseOutput(out: any): boolean {
+    return Bool.parse(out)
+  }
+
+  static validOutput(out: any): boolean {
+    return Bool.valid(out)
+  }
+
+  static equivalentOutputs(first: any, second: any): boolean {
+    return Bool.areEquivalent(first, second)
+  }
+
+  static inputPlaceHolderText(): string {
+    return `inst myInst {
+      Node = none
+      edges = none
+    }`
+  }
+
+  static outputPlaceHolderText(): string {
+    return Bool.placeholderText()
+  }
+
+  static inputGenerators(): Function[] {
+    return [() => {return "quiz q instance 1 goes here"}, () => {return "quiz q instance 2 goes here"}, () => {return "quiz q instance 3 goes here"}]
+  }
+
+  // TODO: problem, special characters brackets
+  static inputDBStr(input: string): string {
+    return input
+  }
+  // TODO: problem, special characters brackets
+  static outputDBStr(output: string): string {
+    return output
+  }
+
+  // TODO: input/outputDisplayStr
+  static inputDisplayStr(input: string): string {
+    return input
+  }
+  static outputDisplayStr(output: string): string {
+    return output
+  }
 }
 export default GraphPred
