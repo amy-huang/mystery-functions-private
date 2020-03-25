@@ -102,7 +102,7 @@ class Node {
                 if (seen.length - i === 3) {
                     return true
                 }
-                // Saw a cycle but wasn't a 3 cycle
+                // Cycle not of length 3 seen
                 return false
             }
             newSeen.push(seen[i])
@@ -120,6 +120,7 @@ class Node {
     // is bipartite graph - can't have odd sized cycle
     oddCycle() {
         var seen = new Array<Node>()
+        seen.push(this)
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
             if (toNode.oddCycleHelper(seen) === true) {
@@ -133,10 +134,14 @@ class Node {
         var newSeen = Array<Node>()
         for (var i = 0; i < seen.length; i++) {
             if (seen[i].name === this.name) {
-                if (seen.length - i % 2 === 1) {
+                // console.log("found dup", seen[i].name)
+                // console.log("seen is:", seen)
+                // console.log("cycle len is", seen.length - i)
+                // console.log("parity is", (seen.length - i) % 2 )
+                if ((seen.length - i) % 2 === 1) {
                     return true
                 }
-                // Saw a cycle that was even
+                // Even length cycle seen
                 return false
             }
             newSeen.push(seen[i])
