@@ -16,7 +16,7 @@ class EvalPredInputLine extends Component {
     return (
       <Grid container direction="column" spacing={1} justify="flex-start">
         <Grid item>
-          <Typography style={{whiteSpace: 'pre-line'}} className={classes.text}>{classes.in}</Typography>
+          <Typography style={{whiteSpace: 'pre'}} className={classes.text}>{classes.in}</Typography>
         </Grid>
 
         <Grid container spacing={1} item direction="row">

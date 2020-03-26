@@ -266,7 +266,7 @@ export default function SimpleTabs(props) {
     var displayGuess = {}
     displayGuess.type = "eval_pred_input"
     displayGuess.key = Util.newDisplayKey()
-    displayGuess.in = instanceText.trim()
+    displayGuess.in = instanceText.trim().replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
     displayGuess.out = result.toString()
 
     // Preserve submitted instance text; don't change back to default
@@ -303,7 +303,7 @@ export default function SimpleTabs(props) {
               enableLiveAutocompletion: false,
               enableSnippets: false,
               showLineNumbers: false,
-              tabSize: 2,
+              tabSize: 4,
               }}/>
           </Grid>
           <Grid item>

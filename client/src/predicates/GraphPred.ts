@@ -64,7 +64,6 @@ class GraphPred {
 
   static predSpecificValid(sets: Map<string, Array<string>>): boolean {
     if (!sets.has("edges") || !sets.has("Node")) {
-      alert("Concrete instance doesn't specify one of required sets")
       return false
     }
     if (sets.size > 2) {
@@ -146,17 +145,13 @@ class GraphPred {
 
   static inputPlaceHolderText(): string {
     return `inst myInst {
-      Node = none
-      edges = none
-    }`
+  Node = none
+  edges = none
+  }`
   }
 
   static outputPlaceHolderText(): string {
     return Bool.placeholderText()
-  }
-
-  static inputGenerators(): Function[] {
-    return [() => {return "quiz q instance 1 goes here"}, () => {return "quiz q instance 2 goes here"}, () => {return "quiz q instance 3 goes here"}]
   }
 
   // TODO: problem, special characters brackets

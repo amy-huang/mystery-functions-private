@@ -311,7 +311,11 @@ class Quiz extends Component {
             ?
             <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput()[0])} and {this.funcObj.inputDisplayStr(this.questionInput()[1])}? </Typography>
             :
-            <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput())}? </Typography>
+            <div>
+              <Typography variant="h4" style={{whiteSpace: 'pre-wrap'}} variant="h3">What would the predicate output given this input? </Typography>
+              <br></br>
+              <Typography variant="h5" style={{whiteSpace: 'pre-wrap'}} variant="h3">{this.funcObj.inputDisplayStr(this.questionInput())} </Typography>
+            </div>
           }
 
           <TextField onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit" disabled={this.state.answered}>
