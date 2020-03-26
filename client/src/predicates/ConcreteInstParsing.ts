@@ -31,34 +31,39 @@ class ConcreteInstParsing {
         var onBracks = instance.split(/{|}/)
         var lines = onBracks[1].split(/\n|and/)
         var successFul = true
+        var setName = ""
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim()
           if (line === "") {
             continue
           }
   
-          var onEqual = lines[i].split("=")
-          if (onEqual.length !== 2) {
-            alert("Malformed concrete instance")
-            // console.log("equal not between 2 strings", onEqual)
-            return new Map<string, Array<string>>()
+          var items = Array<String>()
+          if (line.split(/\s+/)[0] !== "+") {
+            // New set name
+            var onEqual = lines[i].split("=")
+            if (onEqual.length !== 2) {
+              alert("Malformed concrete instance - need exactly 1 equals sign")
+              return new Map<string, Array<string>>()
+            }
+
+            setName = onEqual[0].trim()
+            if (!setName.match(/^[A-Za-z0-9]+$/)) {
+              alert("Malformed concrete instance - set name should be alphanumeric")
+              return new Map<string, Array<string>>()
+            }
+            // Setname already exists
+            if (defs.has(setName)) {
+              alert("Malformed concrete instance - repeated set name")
+              return new Map<string, Array<string>>()
+            }
+            items = onEqual[1].split("\+")
+          } else {
+            // Continued set definition from line before
+            // Since + is at beginning of line, omit first item after split
+            items = line.split("\+").slice(1)
           }
-  
-          // Get set name
-          var setName = onEqual[0].trim()
-          if (!setName.match(/^[A-Za-z0-9]+$/)) {
-            alert("Malformed concrete instance - set name should be alphanumeric")
-            return new Map<string, Array<string>>()
-          }
-          // Setname already exists
-          if (defs.has(setName)) {
-            alert("Malformed concrete instance - repeated set name")
-            return new Map<string, Array<string>>()
-          }
-          
-          // For now only support union operater
-          var items = onEqual[1].split("\+")
-          // console.log("items", items)
+
           for (var j = 0; j < items.length; j++) {
             var item = items[j].trim()
             if (item === "") {
