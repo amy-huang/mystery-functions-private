@@ -6,10 +6,11 @@ import { TextField, Typography } from '@material-ui/core'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
-import first from '../pics/time.png'
-import second from '../pics/functions.png'
-import third from '../pics/quiz.png'
-import fourth from '../pics/goodluck.png'
+import first from '../pics/1-time.jpg'
+import second from '../pics/2-predicates.jpg'
+import third from '../pics/3-instances.jpg'
+import fourth from '../pics/4-quiz.jpg'
+import fifth from '../pics/5-goodluck.jpg'
 
 const styles = theme => ({
   root: {
@@ -179,19 +180,25 @@ class StartScreen extends Component {
 
           <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
-              <img src={second} alt="functions" />
+              <img src={second} alt="predicates" />
             </Paper>
           </Grid>
 
           <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
-              <img src={third} alt="quiz" />
+              <img src={third} alt="instances" />
             </Paper>
           </Grid>
 
           <Grid item className={classes.panel}>
             <Paper className={classes.paper}>
-              <img src={fourth} alt="good luck" />
+              <img src={fourth} alt="quiz" />
+            </Paper>
+          </Grid>
+
+          <Grid item className={classes.panel}>
+            <Paper className={classes.paper}>
+              <img src={fifth} alt="good luck" />
             </Paper>
           </Grid>
 
@@ -205,7 +212,7 @@ class StartScreen extends Component {
             }
 
             <Grid item>
-              <Typography variant="h5">Enter your cs login. Example: Amy Huang's login is <b>ahuang14</b></Typography>
+              <Typography variant="h5">Enter your cs login.</Typography>
               <TextField defaultValue={this.state.enteredID} label="Enter your ID here" onKeyUp={(e) => { this.updateUserID(e.target.value) }} >
               </TextField>
             </Grid>
