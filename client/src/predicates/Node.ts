@@ -41,7 +41,6 @@ class Node {
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
             if (toNode.cycleHelper(seen) === true) {
-                console.log(toNode.name, "cycle found")
                 return true
             }
         }

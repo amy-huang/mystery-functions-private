@@ -153,5 +153,19 @@ class GraphPred {
   static outputPlaceHolderText(): string {
     return Bool.placeholderText()
   }
+
+  // strings for instances and booleans shouldn't need changing
+  static inputDBStr(input: any): string {
+    return input.toString()
+  }
+  static outputDBStr(output: any): string {
+    return output.toString()
+  }
+  static inputDisplayStr(input: any): string {
+    return input.toString()
+  }
+  static outputDisplayStr(output: any): string {
+    return output.toString()
+  }
 }
 export default GraphPred
