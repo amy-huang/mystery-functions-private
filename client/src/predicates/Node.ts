@@ -37,8 +37,6 @@ class Node {
     }
 
     cycle() {
-        console.log("doing cycle")
-        console.log(this.printout())
         var seen = new Array<Node>()
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
@@ -55,8 +53,6 @@ class Node {
     // including itself
     // Needs to pass in a list of seen nodes, check against that instead
     cycleHelper(seen: Array<Node>): boolean {
-        console.log("doing cycle helper")
-        console.log(this.printout())
         var newSeen = Array<Node>()
         for (var i = 0; i < seen.length; i++) {
             if (seen[i].name === this.name) {
@@ -69,7 +65,6 @@ class Node {
         for (var i = 0; i < this.to.length; i++) {
             var toNode = this.to[i]
             if (toNode.cycleHelper(newSeen) === true) {
-                console.log(toNode.name, "cycle found")
                 return true
             }
         }

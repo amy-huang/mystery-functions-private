@@ -153,22 +153,5 @@ class GraphPred {
   static outputPlaceHolderText(): string {
     return Bool.placeholderText()
   }
-
-  // TODO: problem, special characters brackets
-  static inputDBStr(input: string): string {
-    return input
-  }
-  // TODO: problem, special characters brackets
-  static outputDBStr(output: string): string {
-    return output
-  }
-
-  // TODO: input/outputDisplayStr
-  static inputDisplayStr(input: string): string {
-    return input
-  }
-  static outputDisplayStr(output: string): string {
-    return output
-  }
 }
 export default GraphPred

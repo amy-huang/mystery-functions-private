@@ -262,16 +262,30 @@ export default function SimpleTabs(props) {
     if (!funcObj.validInst(instanceText)) {
       return
     }
-    var result = funcObj.function(instanceText)
-    var displayGuess = {}
-    displayGuess.type = "eval_pred_input"
-    displayGuess.key = Util.newDisplayKey()
-    displayGuess.in = instanceText.trim().replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-    displayGuess.out = result.toString()
-
     // Preserve submitted instance text; don't change back to default
     localStorage.setItem("instanceText", instanceText)
 
+    var cleanInst = instanceText.trim().replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+    var result = funcObj.function(instanceText)
+
+    var serverGuess = {}
+    serverGuess.id = localStorage.getItem('userID')
+    serverGuess.fcn = funcObj.description()
+    serverGuess.type = "eval_input"
+    serverGuess.in = cleanInst
+    serverGuess.out = result.toString()
+    serverGuess.finalGuess = evalInputReason.trim()
+    serverGuess.time = Util.getCurrentTime()
+    if (localStorage.getItem(funcObj.description()) === null) {
+      serverGuess.key = Util.newServerKey()
+      Util.sendToServer(serverGuess)
+    }
+
+    var displayGuess = {}
+    displayGuess.type = "eval_pred_input"
+    displayGuess.key = Util.newDisplayKey()
+    displayGuess.in = cleanInst
+    displayGuess.out = result.toString()
     guesses.push(displayGuess)
     updateFunc()
   }
