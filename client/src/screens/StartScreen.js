@@ -150,7 +150,7 @@ class StartScreen extends Component {
 
       // Check for IDs with numbers in them
       if (this.validID(localStorage.getItem('userID')) === false) {
-        alert("Your ID should only contain lowercase letters, or lowercase letters and then a number. For example, Amy Huang's ID would be 'ahuang14'.")
+        alert("Your ID should only contain lowercase letters, or lowercase letters and then a number.")
         return
       }
 
