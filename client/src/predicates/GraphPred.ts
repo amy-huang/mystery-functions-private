@@ -46,17 +46,13 @@ class GraphPred {
         } 
       }
     }
-
-    nodes.forEach((node) => {
-      console.log(node.printout())
-    })
     return nodeList
   }
 
   // Checks if concrete inst specified is valid
   static validInst(rawText: string): boolean {
     var sets = ConcreteInstParsing.setDefs(rawText)
-    if (!this.predSpecificValid(sets)) {
+    if (!GraphPred.predSpecificValid(sets)) {
       return false
     }
     return true
@@ -166,6 +162,165 @@ class GraphPred {
   }
   static outputDisplayStr(output: any): string {
     return output.toString()
+  }
+
+  // node A, edge A -> A
+  static equivToFirstInst(defs: Map<string, Array<string>>): boolean {
+    var nodes = GraphPred.makeNodes(defs)
+    if (nodes.length !== 1) {
+      return false
+    }
+    if (nodes[0].to.length !== 1) {
+      return false
+    }
+    if (nodes[0].to[0] !== nodes[0]) {
+      return false
+    }
+    return true
+  }
+
+  // node A, no edges
+  static equivToSecondInst(defs: Map<string, Array<string>>): boolean {
+    var nodes = GraphPred.makeNodes(defs)
+    if (nodes.length !== 1) {
+      return false
+    }
+    if (nodes[0].to.length !== 0) {
+      return false
+    }
+    return true
+  }
+
+  // node A, no edges
+  static equivToThirdInst(defs: Map<string, Array<string>>): boolean {
+    var nodes = GraphPred.makeNodes(defs)
+    if (nodes.length !== 2) {
+      return false
+    }
+    var A = nodes[0]
+    var B = nodes[1]
+    if (A.to.length !== 1) {
+      return false
+    }
+    if (A.to[0] !== B) {
+      return false
+    }
+    if (B.to.length !== 1) {
+      return false
+    }
+    if (B.to[0] !== A) {
+      return false
+    }
+    return true
+  }
+
+  static ringChecker(size: number): (defs: Map<string, Array<string>>) => boolean {
+    if (size < 1) {
+      alert("warning: ring of size < 1 checked for") 
+    }
+
+    return (defs: Map<string, Array<string>>) => {
+      var edges = defs.get("edges")
+      if (edges !== undefined) {
+        if (edges.length !== size) {
+          return false
+        }
+      } 
+      var nodes = GraphPred.makeNodes(defs)
+      if (nodes.length !== size) {
+        return false
+      }
+      var start = nodes[0]
+      var seen = Array<Node>()
+      var next = start
+      for (var i = 0; i < size; i++) {
+        if (next.to.length !== 1) {
+          return false
+        }
+        seen.push(next)
+        next = next.to[0]
+      }
+
+      // Should have returned to start node
+      if (next !== start) {
+        return false
+      }
+
+      // Check that seen includes all nodes exactly once
+      for (var i = 0; i < size; i++) {
+        if (!seen.includes(nodes[i])) {
+          return false
+        }
+        if (!nodes.includes(seen[i])) {
+          return false
+        }
+      }
+      return true
+    }
+  }
+
+  static equivToFourthInst(defs: Map<string, Array<string>>): boolean {
+    var nodes = GraphPred.makeNodes(defs)
+    if (nodes.length !== 3) {
+      return false
+    }
+    // Possible combos of A, B, C
+    var combos = [[0, 1, 2],[0, 2, 1],[1, 2, 0],[1, 0, 2],[2, 0, 1],[2, 1, 0]]
+    for (var i = 0; i < combos.length; i++) {
+      var currCombo = combos[i]
+      var A = nodes[currCombo[0]]
+      var B = nodes[currCombo[1]]
+      var C = nodes[currCombo[2]]
+
+      if (A.to.length !== 2) {
+        continue
+      }
+      if (!((A.to[0] === B && A.to[1] === C) || (A.to[0] === C && A.to[1] === B))) {
+        continue
+      }
+      if (B.to.length !== 1) {
+        continue
+      } 
+      if (B.to[0] !== C) {
+        continue
+      } 
+      return true
+    }
+    return false
+  }
+
+  static equivToSixthInst(defs: Map<string, Array<string>>): boolean {
+    var nodes = GraphPred.makeNodes(defs)
+    if (nodes.length !== 3) {
+      return false
+    }
+    // Possible combos of A, B, C
+    var combos = [[0, 1, 2],[0, 2, 1],[1, 2, 0],[1, 0, 2],[2, 0, 1],[2, 1, 0]]
+    for (var i = 0; i < combos.length; i++) {
+      var currCombo = combos[i]
+      var A = nodes[currCombo[0]]
+      var B = nodes[currCombo[1]]
+      var C = nodes[currCombo[2]]
+
+      if (A.to.length !== 1) {
+        continue
+      } 
+      if (A.to[0] !== C) {
+        continue
+      } 
+      if (B.to.length !== 1) {
+        continue
+      } 
+      if (B.to[0] !== C) {
+        continue
+      } 
+      return true
+    }
+    return false
+  }
+
+  static quizQChecks(): Function[] {
+    return [GraphPred.ringChecker(1), GraphPred.equivToSecondInst, GraphPred.ringChecker(2), GraphPred.equivToFourthInst, GraphPred.ringChecker(3), GraphPred.equivToSixthInst, GraphPred.ringChecker(4), GraphPred.ringChecker(5)]
   }
 }
 export default GraphPred

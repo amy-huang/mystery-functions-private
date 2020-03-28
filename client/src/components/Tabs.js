@@ -262,6 +262,17 @@ export default function SimpleTabs(props) {
     if (!funcObj.validInst(instanceText)) {
       return
     }
+    // Check if cheat attempt
+    // var defs = ConcreteInstParsing.setDefs(instanceText)
+    // var checkers = funcObj.quizQChecks().slice(0, getNextQ())
+    // for (var i = 0; i < checkers.length; i++) {
+    //   var check = checkers[i]
+    //   if (check(defs)) {
+    //     alert("Cannot evaluate instances seen during a quiz attempt!")
+    //     return
+    //   }
+    // }
+
     // Preserve submitted instance text; don't change back to default
     localStorage.setItem("instanceText", instanceText)
 
