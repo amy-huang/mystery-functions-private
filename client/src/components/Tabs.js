@@ -269,6 +269,19 @@ export default function SimpleTabs(props) {
     //   var check = checkers[i]
     //   if (check(defs)) {
     //     alert("Cannot evaluate instances seen during a quiz attempt!")
+    // TODO test...
+            // var action = {}
+            // action.id = localStorage.getItem('userID')
+            // action.fcn = funcObj.description()
+            // action.type = "cheat_attempt"
+            // action.time = Util.getCurrentTime()
+            // action.in = instanceText
+            // action.out = funcObj.outputDBStr(funcObj.function(instanceText))
+            // if (localStorage.getItem(funcObj.description()) === null) {
+            //   // console.log("sent to server", serverGuess)
+            //   action.key = Util.newServerKey()
+            //   Util.sendToServer(action)
+            // }
     //     return
     //   }
     // }
