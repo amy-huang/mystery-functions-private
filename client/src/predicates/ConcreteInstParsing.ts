@@ -8,22 +8,18 @@ class ConcreteInstParsing {
         var spaceTokens = instance.trim().split(/\s+/)
         if (spaceTokens.length < 4) {
           alert("Malformed concrete instance")
-          // console.log("less than 4 space tokens")
           return defs
         }
         if (spaceTokens[0] !== "inst") {
           alert("Malformed concrete instance")
-          // console.log("inst keyword missing")
           return defs
         }
         if (spaceTokens[2] !== "{") {
           alert("Malformed concrete instance")
-          console.log("no start bracket")
           return defs
         }
         if (spaceTokens[spaceTokens.length - 1] !== "}") {
           alert("Malformed concrete instance")
-          // console.log("no end bracket")
           return defs
         }
   

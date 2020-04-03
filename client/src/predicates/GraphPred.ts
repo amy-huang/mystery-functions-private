@@ -60,10 +60,11 @@ class GraphPred {
 
   static predSpecificValid(sets: Map<string, Array<string>>): boolean {
     if (!sets.has("edges") || !sets.has("Node")) {
+      alert("Instance does not specify both atom sets Node and edges")
       return false
     }
     if (sets.size > 2) {
-      alert("Concrete instance specifies extra set")
+      alert("Instance specifies too many atom sets. There should only be Node and edges")
       return false
     }
 
@@ -71,8 +72,7 @@ class GraphPred {
     if (nodeNames !== undefined) {
       for (var i = 0; i < nodeNames.length; i++) {
         if (!nodeNames[i].match(/^[A-Za-z0-9]+$/)) {
-          alert("invalid node name:" + nodeNames[i])
-          // console.log("invalid node name")
+          alert(nodeNames[i] + " is an invalid node name. Please only use alphanumeric characters in node names")
           return false
         }
       }
@@ -89,28 +89,24 @@ class GraphPred {
         var elems = edges[j].split("->")
         // Check is a tuple
         if (elems.length != 2) {
-          alert("edge is not a tuple:" + edges[j])
-          // console.log("not a tuple")
+          alert("Edge " + edges[j] + " is not a valid binary tuple:")
           return false
         }
         // Check if each element is a node
         var firstName = elems[0].trim()
         var secondName = elems[1].trim()
         if (!nodeNames.includes(firstName)) {
-          alert("First element in tuple not in Node:" + firstName)
-          // console.log("1st node not included in nodes")
+          alert("Element " + firstName + " of tuple " + edges[j] + " is not in Node")
           return false
         }
         if (!nodeNames.includes(secondName)) {
-          alert("Second element in tuple not in Node:" + secondName)
-          // console.log("2nd node not included in nodes")
+          alert("Element " + secondName + " of tuple " + edges[j] + " is not in Node")
           return false
         }
 
         // Check if edge seen before
         if (seenEdges.includes([firstName, secondName])) {
-            alert("Edge repeated:" + edges[j])
-            // console.log("edge repeated")
+            alert("Duplicate edge: " + edges[j])
             return false
         }
         seenEdges.push([firstName, secondName])
@@ -120,7 +116,7 @@ class GraphPred {
   }
 
   static inputDescription(): string {
-    return "This predicate takes in an instance representing a graph: a set Node of node names and binary relation edges (Node->Node)."
+    return "a set Node of node names and binary relation edges (Node->Node)."
   }
 
   static outputDescription(): string {
@@ -216,7 +212,7 @@ class GraphPred {
 
   static ringChecker(size: number): (defs: Map<string, Array<string>>) => boolean {
     if (size < 1) {
-      alert("warning: ring of size < 1 checked for") 
+      console.log("warning: ring of size < 1 checked for") 
     }
 
     return (defs: Map<string, Array<string>>) => {
