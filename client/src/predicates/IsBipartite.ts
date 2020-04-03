@@ -52,7 +52,9 @@ class IsBipartite extends GraphPred {
   }
 
   static answerText(): string {
-    return "This predicate evaluates to true if the input graph is bipartite - the vertices can be paritioned into two disjoint sets such that no two adjacent vertices are in the same set, and every edge (undirected or directed) connects two vertices in different sets. If a graph does NOT contain an odd-length cycle, it is bipartite. This predicate is false otherwise."
+    return `This predicate evaluates to true if and only if the input graph is bipartite - the vertices can be partitioned into two disjoint sets so that no two adjacent vertices are in the same set, and every edge connects two vertices in different sets. 
+    
+    Equivalently, if a graph does NOT contain an odd-length cycle, it is bipartite.`
   }
 }
 export default IsBipartite

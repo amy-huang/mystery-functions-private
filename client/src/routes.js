@@ -47,7 +47,7 @@ var funcs = []
 funcs.push(IsDag)
 funcs.push(ThreeCycle)
 funcs.push(IsBipartite)
-// shuffle(funcs)
+shuffle(funcs)
 
 export default props => (
   <HashRouter>
@@ -55,7 +55,7 @@ export default props => (
       <Route exact path='/' render={(props) => <StartScreen {...props} nextPage='/first'></StartScreen>} />
       <Route exact path='/first' render={(props) => <GuessingScreen {...props} funcObj={funcs[0]} nextPage={'/second'} current={0} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/second' render={(props) => <GuessingScreen {...props} funcObj={funcs[1]} nextPage={'/third'} current={1} total={funcs.length}></GuessingScreen>} />
-      <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={funcs[2]} nextPage={'/fourth'} current={2} total={funcs.length}></GuessingScreen>} />
+      <Route exact path='/third' render={(props) => <GuessingScreen {...props} funcObj={funcs[2]} nextPage={'/thanks'} current={2} total={funcs.length}></GuessingScreen>} />
       <Route exact path='/thanks' render={(props) => <ThankYouScreen></ThankYouScreen>} />
     </Switch>
   </HashRouter>

@@ -289,17 +289,17 @@ class GuessingScreen extends Component {
                 {/* Function signature */}
                 < Grid item xs={12} >
                   Mystery predicate <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
-                    <ol>
+                    <ul>
                     {Array(funcObj.numArgs).fill(<li>
                       <Typography>{funcObj.inputDescription()}</Typography>
                     </li>)}
-                  </ol>
+                  </ul>
                   and an output of type
-                  <ol>
+                  <ul>
                     <li>
                       <Typography>{funcObj.outputDescription()}</Typography>
                     </li>
-                  </ol>
+                  </ul>
                 </Grid>
 
                 {/* Tabs */}
