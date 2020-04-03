@@ -47,7 +47,7 @@ var funcs = []
 funcs.push(IsDag)
 funcs.push(ThreeCycle)
 funcs.push(IsBipartite)
-shuffle(funcs)
+// shuffle(funcs)
 
 export default props => (
   <HashRouter>
