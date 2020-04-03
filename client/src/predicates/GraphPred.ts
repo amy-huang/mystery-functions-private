@@ -120,7 +120,7 @@ class GraphPred {
   }
 
   static inputDescription(): string {
-    return "Node, edges description here"
+    return "This predicate takes in an instance representing a graph: a set Node of node names and binary relation edges (Node->Node)."
   }
 
   static outputDescription(): string {

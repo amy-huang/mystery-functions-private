@@ -357,7 +357,7 @@ export default function SimpleTabs(props) {
       <TabPanel value={value} index={1}>
         <Grid container spacing={4} direction="column">
           <Grid item>
-            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think this function does?" onChange={(e) => { finalGuess = e.target.value }}>
+            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think the predicate is?" onChange={(e) => { finalGuess = e.target.value }}>
             </TextField>
           </Grid>
           <Grid item>

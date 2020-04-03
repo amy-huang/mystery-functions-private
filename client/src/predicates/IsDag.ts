@@ -3,7 +3,7 @@ import GraphPred from "./GraphPred"
 
 class IsDag extends GraphPred {
   static description(): string {
-    return "isDag"
+    return "IsDag"
   }
 
   // Assumed isnt already screened as valid
