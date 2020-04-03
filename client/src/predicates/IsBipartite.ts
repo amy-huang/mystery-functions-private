@@ -22,8 +22,37 @@ class IsBipartite extends GraphPred {
     return true
   }
 
+  static inputGenerators(): Function[] {
+    return [() => {return `inst myInst {
+      Node = A 
+      edges = A->A
+    }`}, () => {return `inst myInst {
+      Node = A
+      edges = none
+    }`}, () => {return `inst myInst {
+      Node = A + B
+      edges = A->B + B->A
+    }`}, () => {return `inst myInst {
+      Node = A + B + C
+      edges = A->B + A->C + B->C
+    }`}, () => {return `inst myInst {
+      Node = A + B + C
+      edges = A->B + B->C + C->A
+    }`}, () => {return `inst myInst {
+      Node = A + B + C
+      edges = A->B + C->B
+    }`}, () => {return `inst myInst {
+      Node = A + B + C + D
+      edges = A->B + B->C + C->D + D->A
+    }`}, () => {return `inst myInst {
+      Node = A + B + C + D + E
+      edges = A->B + B->C + C->D + D->E + E->A
+    }`}
+  ]
+  }
+
   static answerText(): string {
-    return "if is bipartite graph or, if does NOT have an odd length cycle"
+    return "This predicate evaluates to true if the input graph is bipartite - the vertices can be paritioned into two disjoint sets such that no two adjacent vertices are in the same set, and every edge (undirected or directed) connects two vertices in different sets. If a graph does NOT contain an odd-length cycle, it is bipartite. This predicate is false otherwise."
   }
 }
 export default IsBipartite

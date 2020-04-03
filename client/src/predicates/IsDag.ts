@@ -52,7 +52,7 @@ class IsDag extends GraphPred {
   }
 
   static answerText(): string {
-    return "is dag"
+    return "This predicate evalutates to true if the input graph is a directed acyclic graph; false otherwise."
   }
 }
 export default IsDag
