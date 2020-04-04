@@ -266,40 +266,45 @@ class GuessingScreen extends Component {
         < div className={classes.root} >
           {/* Center all Grids */}
           {this.state.quiz ?
-            < Grid container justify="center" spacing={2} direction="row" alignContent="center">
+            < Grid container justify="center" spacing={2} direction="row" alignItems="center">
+              {/* Current guess and function output type */}
+              < Grid container item className={classes.smallPanel} direction="column" spacing={4} alignContent="center" >
+                {/* Output type description */}
+                < Grid item>
+                  <Typography variant="h6">Output type: </Typography>{funcObj.outputDescription()}
+                </Grid>
+                {/* Your current guess description */}
+                < Grid item>
+                  <Typography color="secondary" variant="h6">Your current guess: </Typography>
+                  <Typography style={{whiteSpace: 'pre'}} color="secondary">{this.state.guessText} </Typography>
+                </Grid>
+              </ Grid>
+
               {/* Quiz zone */}
               < Grid container item className={classes.panel}>
                 <Quiz nextPage={this.props.nextPage} guessText={this.state.guessText} funcObj={funcObj} cancelFcn={this.quizOff} resetFcn={this.resetGuesses} setNextQ={this.setNextQ}></Quiz>
-              </ Grid>
-
-              {/* Current guess and function output type */}
-              < Grid container item className={classes.smallPanel} direction="column" spacing={4}>
-                {/* Output type description */}
-                < Grid item>
-                  <Typography color="secondary" variant="h6">Your current guess: </Typography>{this.state.guessText}
-                </Grid>
-                < Grid item>
-                  <Typography color="secondary" variant="h6">Output type: </Typography>{funcObj.outputDescription()}
-                </Grid>
               </ Grid>
             </Grid>
             :
             < Grid container justify="center" spacing={4}>
               < Grid container item spacing={4} className={classes.panel} alignContent="flex-start" >
                 {/* Function signature */}
-                < Grid item xs={12} >
-                  Mystery predicate <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes an input of type
+                < Grid item>
+                  Mystery predicate <b>{this.props.current + 1}</b> out of <b>{this.props.total}</b> takes in a 
                     <ul>
                     {Array(funcObj.numArgs).fill(<li>
-                      <Typography>{funcObj.inputDescription()}</Typography>
+                     {funcObj.inputDescription()}
                     </li>)}
-                  </ul>
-                  and an output of type
+                    </ul>
+                  and outputs a 
                   <ul>
                     <li>
-                      <Typography>{funcObj.outputDescription()}</Typography>
+                      {funcObj.outputDescription()}
                     </li>
                   </ul>
+                  <Typography color="secondary">The only operators supported are union (+) and cartesian product (->) on single atoms. Also, you can specify an empty set like so: Node = none
+                  
+                  </Typography>
                 </Grid>
 
                 {/* Tabs */}

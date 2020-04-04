@@ -182,7 +182,7 @@ class Quiz extends Component {
     if (gotCorrect) {
       answerText = "Nice, that's correct!"
     } else {
-      answerText = "Incorrect."
+      answerText = "Incorrect"
     }
     this.setState({ 'answerText': answerText })
     this.setState({ 'answered': true })
@@ -306,15 +306,15 @@ class Quiz extends Component {
       <div>
         <Grid item>
 
-          <Typography variant="h4">Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
+          <Typography> Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
           {this.funcObj.numArgs === 2
             ?
             <Typography variant="h3">What would this function output for {this.funcObj.inputDisplayStr(this.questionInput()[0])} and {this.funcObj.inputDisplayStr(this.questionInput()[1])}? </Typography>
             :
             <div>
-              <Typography variant="h4" style={{whiteSpace: 'pre-wrap'}} variant="h3">What would the predicate output given this input? </Typography>
+              <Typography variant="h6" style={{whiteSpace: 'pre-wrap'}}>What would the predicate output given this input? </Typography>
               <br></br>
-              <Typography variant="h5" style={{whiteSpace: 'pre-wrap'}} variant="h3">{this.funcObj.inputDisplayStr(this.questionInput())} </Typography>
+              <Typography variant="h6" style={{whiteSpace: 'pre-wrap'}} variant="h4">{this.funcObj.inputDisplayStr(this.questionInput())} </Typography>
             </div>
           }
 

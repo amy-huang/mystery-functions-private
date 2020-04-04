@@ -116,7 +116,7 @@ class GraphPred {
   }
 
   static inputDescription(): string {
-    return "a set Node of node names and binary relation edges (Node->Node)."
+    return "set named 'Node' of node names, and a binary relation named 'edges' containing pairs of nodes."
   }
 
   static outputDescription(): string {
@@ -137,9 +137,11 @@ class GraphPred {
 
   static inputPlaceHolderText(): string {
     return `inst myInst {
-  Node = none
+  Node = A
+       + B
+       + C
   edges = none
-  }`
+}`
   }
 
   static outputPlaceHolderText(): string {

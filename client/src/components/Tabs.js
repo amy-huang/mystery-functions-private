@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   panel: {
-    height: 350, 
+    height: 280, 
   },
 }))
 
@@ -327,7 +327,7 @@ export default function SimpleTabs(props) {
         <Grid container spacing={2}>
           <Grid item>
             <AceEditor
-              height={250}
+              height={180}
               mode="javascript"
               theme="tomorrow"
               onChange={updateInstText}
@@ -341,7 +341,7 @@ export default function SimpleTabs(props) {
               enableLiveAutocompletion: false,
               enableSnippets: false,
               showLineNumbers: false,
-              tabSize: 4,
+              tabSize: 2,
               }}/>
           </Grid>
           <Grid item>
