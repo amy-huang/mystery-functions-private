@@ -234,7 +234,7 @@ class GuessingScreen extends Component {
     this.setNextQ(1)
     this.setState({
       quiz: true,
-      guessText: guessText
+      guessText: guessText.trim()
     })
   }
 
@@ -276,7 +276,7 @@ class GuessingScreen extends Component {
                 {/* Your current guess description */}
                 < Grid item>
                   <Typography color="secondary" variant="h6">Your current guess: </Typography>
-                  <Typography style={{whiteSpace: 'pre'}} color="secondary">{this.state.guessText} </Typography>
+                  <Typography style={{whiteSpace: 'pre'}} color="secondary"><b>{this.state.guessText}</b></Typography>
                 </Grid>
               </ Grid>
 
