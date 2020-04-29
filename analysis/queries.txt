@@ -1,0 +1,9 @@
+average minutes spent on each function
+select avg(minutes) from (select userid, fcnname, EXTRACT(EPOCH FROM max(time)-min(time))/60 as minutes from actions where userid !='hlucco' group by fcnname, userid order by userid) as foo;
+
+outlier for 32 is hlucco, for 32-second dgraves, dkhullar, gwarre, ''??
+
+select avg(minutes) from (select userid, fcnname, EXTRACT(EPOCH FROM max(time)-min(time))/60 as minutes from actions where userid !='dgraves' and userid !='dkhullar' and userid !='gwarre' and userid !=' ' group by fcnname, userid order by userid) as foo;
+
+average evals inputted
+select avg(evals) from (select userid, fcnname, count(*) as evals from actions where actiontype='eval_input' group by userid, fcnname) as foo;

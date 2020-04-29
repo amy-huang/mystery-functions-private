@@ -1,0 +1,85 @@
+,Induced,,,"I-OTH is for example answer for different function; not nonsense, but not right at all",COR MCOR SCOR XCOR ?COR,"Naming inputs and outputs something other than input or output, or ""number"""
+,"Given integer X, returns X * (X-1) / 2",,,,,
+User ID,Answer,Comprehensible?,Negative inputs mentioned?,Expression?,Correctness?,Miscellaneous?
+eadelacr,take number and divide by two and times by original number minus 1,NORM,,I-ATH,COR,
+bnschust,divided by 2 times x-1,NORM,,I-ATH,COR,
+2000391206,"As the first input increases by one, the second output increases by one larger than it did previously.",NORM,,I-PAT,COR,I-DIST
+emsipes,"The function begins with the input of 0 being multiplied by-.5. As the input either increases or decreases, the multiplier increases or decreases by .5. (i.e. 0*-.5; 1*0; 3*1)",NORM,I-NEG,I-PAT,COR,I-MULT
+mlobo,with each increase by one in input the value it's multiplied by increases by 0.5,NORM,,I-PAT,COR,I-MULT
+aleatki,"Starting at 0, the function multiplies the input by .5 and then increasing the multiple by .5 for every input greater than 0",NORM,,I-PAT,COR,I-MULT
+vscheper,"No longer confusion, each integer is multiplied by .5 higher starting at 1=0, 2=1, 3=3 and so on.",NORM,,I-PAT,COR,I-MULT
+amlindqu,"as each input increases by one, the input is multiplied by a number that increases by 0.5 with each input",NORM,,I-PAT,COR,I-MULT
+2000477853,Each number evaluates to equal the input+output of the number prior. (ex. 9=36 so 10=36+9),NORM,,I-RBN I-R1ST,MCOR,IO
+sinschwa,"If 6 evaluates to 15 and 7 evaluates to 21 then 8 evaluates to 28. 8+21=29-1=28. The function takes the previous answer, adds it to the new number, and then subtracted one.",NORM,,I-RBN I-R1ST,MCOR,IO
+asdrury,"for each input integer you subtract one and add it to the previous output to get the new output. so 1=0, 2=0+1, 3=0+1+2, so on and so forth.",NORM,,I-RBN I-R1ST,MCOR,IO
+bduffett,"It adds the input and output together, yielding the product of the next ""n""",NORM,,I-RBN I-R1ST,MCOR,NINP
+cwidder,input plus previous output -1,NORM,,I-RBN I-R1ST,MCOR,
+maojwu,to add last number and its result,NORM,,I-RBN I-R1ST,MCOR,
+marghend,"If the input increases by 1 each time, the output is equal to the previous output plus the previous input (AKA the current input - 1).",NORM,,I-RBN I-R1ST,MCOR,
+andhell,add number before and its value together,NORM,,I-RBN I-R1ST,MCOR,
+ ,This function adds the input of the one prior to it to its output.,NORM,,I-RBN I-R1ST,MCOR,
+Jonesham,The output is equal to the sum of the input minus one and the output for that number,NORM,,I-RBN I-R1ST,MCOR,
+jsarria,the input is multiplied by half of its total and then subtracted from the same amount,NORM,,I-RBN I-R1ST,MCOR,
+jocorr,"Odd number follow x*(n+1),  and even  follow  (x-n)*(n+1)",NORM,,I-ATH,SCOR,I-EO
+zburon,This function multiplies the input by an integer,NORM,,I-PAT,SCOR,I-MULT
+namassa,"takes the number, multiplies it and then subtracts by n term",NORM,,I-PAT,SCOR,I-MULT
+tacruse,odd numbers are multiplied by a depending on how large they are in the sequence of odd numbers.  even numbers are multiplied by two and then added to half of the original input,NORM,,I-PAT,SCOR,"I-MULT, I-EO"
+2000351028,"odd number times the number that is odd, so like 1,3,5,7,9 and you take 9 and multiply it by 4. if you take 7 you multiply by 3, if you take 5 multiply by 2.",NORM,,I-PAT,SCOR,"IO, I-MULT"
+bahurd,the output is the input plus one,NORM,,I-ATH,XCOR,
+lamkat,"If the first input is even and the second input is odd, it equals 1",NORM,,I-OTH,XCOR,I-EO
+2000310231,Multiplies integer by 1,NORM,,I-OTH,XCOR,I-MULT
+aeckard,"output=x-1 if x<=2, output=x if x=3, output=3*x/2 if x=4, output=x*2 if x=5, output=3*x/2 if x=6",NORM,,I-OTH,XCOR,IO
+tjdurkin,positive numbers return a 0 and negative number return a 1,NORM,I-DNEG,I-OTH,XCOR,
+vidhawan,adds .5,NORM,,I-OTH,XCOR,
+2000375187,y = is the quotient in numerical order of x,NORM,,I-OTH,XCOR,
+2000398552,Its listing non-fractional integers,NORM,,I-OTH,XCOR,
+thagerma,create an interger,NORM,,I-OTH,XCOR,
+2000328575,I think this function calculates a slope,NORM,,I-OTH,XCOR,
+macfein,a number that goes into the number,NORM,,I-OTH,XCOR,
+mcarafio,"integer, it is 1 because it is even",NORM,,I-OTH,XCOR,
+btesto,everything to 0,NORM,,I-OTH,XCOR,
+krbuen,multiplies the first integer by 2 and then subtracts by x,NORM,,I-OTH,XCOR,
+srivallu,x2 -1,NORM,,I-OTH,XCOR,
+dmachay,Serves as average,NORM,,I-OTH,XCOR,
+sujprak,Assigns random value for every input.,NORM,,I-OTH,XCOR,
+nshatkow,Adds 2 to the input integer,NORM,,I-OTH,XCOR,
+mattroac,middle value,NORM,,I-OTH,XCOR,
+erimwood,1 or goes to the even,NORM,,I-OTH,XCOR,
+allenak,an even number is multiplied and an odd number is added,NORM,,I-OTH,XCOR,
+breichar,It adds a number to be added each time.,NORM,,I-OTH,XCOR,
+pputzbac,It multiplies odd numbers by what odd number they are in a list the first number being number 0.,NORM,,I-OTH,XCOR,
+longrob,2,NONS,,,,
+2000009154,Decimal?,NONS,,,,
+kyflaher,determines guessing skills,NONS,,,,
+jmperlst,36,NONS,,,,
+eslough,1,NONS,,,,
+ddichter,0,NONS,,,,
+amagates,3,NONS,,,,
+mfkone,alot,NONS,,,,
+rlaramie,solves,NONS,,,,
+matshish,6,NONS,,,,
+jasgodur,FALSE,NONS,,,,
+taylbrod,"if the addition is odd, false",NONS,,,,
+cbsorens,evaluates fractional values from the integer,NONS,,,,
+elsaren,count,NONS,,,,
+oviers,boolean,NONS,,,,
+chrblank@iu.edu,i don't know,IDK,,,,
+200028423,not sure,IDK,,,,
+3287604,no clue at all,IDK,,,,
+aolshan,im really not sure,IDK,,,,
+esctatum,I still do not kn ow,IDK,,,,
+loralee,no clue,IDK,,,,
+liuyit,no idea,IDK,,,,
+nnhenson,dont know,IDK,,,,
+tidellis,i am not sure,IDK,,,,
+lwnorris,I have no idea,IDK,,,,
+bpcole,No idea,IDK,,,,
+lizhix,no idea,IDK,,,,
+ripander,no idea,IDK,,,,
+dixonjan,i do not understand,IDK,,,,
+goldrsto,honestly I have no idea,IDK,,,,
+jjandrad,idk,IDK,,,,
+ctrierwi,"I really don't know, I'm very bad at math",IDK,,,,
+calbray,I can't decide,IDK,,,,
+gsuico,?,IDK,,,,
+cjlatty,I have no idea.,IDK,,,,

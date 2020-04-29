@@ -1,0 +1,33 @@
+,,usable,operation,correctness,misc.
+ysayin,It outputs the average of the inputs,NORM,A-WORD,COR,
+ojohnso3,average of set (mean),NORM,A-WORD,COR,SET
+sduraide,Sum of numbers/length of list,NORM,A-CALC,COR,
+tnguye99,This function starts with one number and then evaluates to that number and then it increments by or decrement by the new number - the previous divided by the size of the list,NORM,A-OTH,MCOR,
+nrshaida,"It is the number that when the sum of the list is divided by it, it returns the last number in the list.",NORM,A-OTH,SCOR,
+kreyes7,The output is the average of all the numbers in the list.,NORM,A-WORD,COR,
+pdam,finds averages of inputs,NORM,A-WORD,COR,
+rgupta33,mean,NORM,A-WORD,COR,
+mabouela,Gets the median of the list of values from 0 to the first int and so forth,NORM,A-MED,SCOR,
+mgans,Average of the integers in the list,NORM,A-WORD,COR,
+cander23,average,NORM,A-WORD,COR,
+jzhang30,"LOL I can't do math, it's the mean of the list. (Hopefully you guys keep track of my previous responses).",NORM,A-WORD,COR,SET
+kfeinbe1,mean of the set of numbers,NORM,A-WORD,COR,SET
+nnguye20,The sum of the integers divided by length of the list.,NORM,A-CALC,COR,
+dtoth1,computes mean of input list,NORM,A-WORD,COR,
+jbernar3,Sum of the elements divided by the amount of elements in the list.,NORM,A-CALC,COR,
+elevin3,return average of all the numbers in the list,NORM,A-WORD,COR,
+jtarlows,returns the average,NORM,A-WORD,COR,
+nparekh1,The function sums the numbers in the list and returns the result of the sum divided by the number of items in the list,NORM,A-CALC,COR,
+,The returned value is the average of all the elements in the list.,NORM,A-WORD,COR,
+xzhan180,averages the list,NORM,A-WORD,COR,
+ncousin2,Average,NORM,A-WORD,COR,
+kazhar,sum of input integers divided by number of input integers,NORM,A-CALC,COR,
+gwarre,Sum of elements divided by the number of elements,NORM,A-CALC,COR,
+bhurd1,AVERAGE OF LIST,NORM,A-WORD,,
+lqu2,mean of the sum of all the integers in the list,NORM,A-WORD,MCOR,
+mislam8,average of integers in input,NORM,A-WORD,COR,
+mthain,"Calculates the mean of the integers (sum the integers, divide by list size; not defined for empty list)",NORM,A-WORD A-CALC,COR,
+egrimsh1,This will always output the average!,NORM,A-WORD,COR,
+spark108,Mean of all integers in list,NORM,A-WORD,COR,
+ksang1,This function takes the average of the numbers in the list.,NORM,A-WORD,COR,
+abrown53,Prints out the average of the numbers in the list.,NORM,A-WORD,COR,PRINT
