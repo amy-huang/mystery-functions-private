@@ -62,7 +62,15 @@ def makeCharaMappings():
     for i in range(len(sortedKeys)):
         charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
 
+def inducedDiff(first, second: EvalInput):
+    firstNum = int(first.input)
+    secondNum = int(second.input)
+    return abs(firstNum - secondNum)
+
 def inputDifference(fcn:str, first, second: EvalInput):
+    if fcn == "Induced":
+        return inducedDiff(first, second)
+
     inType = in_out_types[fcn][0]
     firstCharas = inType.toCharas(first.input)
     secondCharas = inType.toCharas(second.input)
@@ -223,10 +231,16 @@ if __name__ == "__main__":
     # Make character mappings using the characters observed
     makeCharaMappings()
 
+    # Distributions to look at
+    COR = "COR"
+    MCOR = "MCOR"
+    SCOR = "SCOR"
+    XCOR = "XCOR"
+
     # Get fine grained tags 
     for whichFile in ["32", "IU"]:
         for fcn in FCN_NAMES:
-            with open("{} fine grained labels - {}.csv".format(whichFile, fcn), newline='') as csvfile:
+            with open("answer_labels/{} fine grained labels - {}.csv".format(whichFile, fcn), newline='') as csvfile:
                 rows = csv.reader(csvfile, delimiter=',')
                 header = next(rows) # header
 
@@ -248,9 +262,64 @@ if __name__ == "__main__":
                         continue
                     if idsToSubs[ID].didFcn(fcn):
                         idsToSubs[ID].addAnswerTags(fcn, tags)
-            
-    for sub in idsToSubs.keys():
-        print(idsToSubs[sub].answerTags())
+
+
+
+    # Open a csv for each corr rating, then go through subs and write Ls to csv
+    for fcn in ["Induced"]:
+        distros = DistributionKeeper()
+        with open("COR_Ls.csv", "w") as COR_CSV:
+            with open("MCOR_Ls.csv", "w") as MCOR_CSV:
+                with open("SCOR_Ls.csv", "w") as SCOR_CSV:
+                    with open("XCOR_Ls.csv", "w") as XCOR_CSV:
+                        csv_dict = {}
+                        csv_dict["COR"] = COR_CSV
+                        csv_dict["MCOR"] = MCOR_CSV
+                        csv_dict["SCOR"] = SCOR_CSV
+                        csv_dict["XCOR"] = XCOR_CSV
+
+                        for ID in idsToSubs.keys():
+                            # Get correctness tag for answer
+                            rating = None
+                            tags = idsToSubs[ID].getAnswerTags(fcn)
+                            if tags != None:
+                                if "COR" in tags:
+                                    rating = "COR"
+                                elif "MCOR" in tags:
+                                    rating = "MCOR"
+                                elif "SCOR" in tags:
+                                    rating = "SCOR"
+                                elif "XCOR" in tags:
+                                    rating = "XCOR"
+                                else:
+                                    print("ID {} fcn {} has no rating".format(ID, fcn))
+                                    continue
+
+                                # Consec input diffs to csv
+                                evals = idsToSubs[ID].functionAttempts[fcn].allEvals()
+                                distros.addNumEvals(rating, len(evals))
+                                # if (rating == "COR" or rating == "MCOR") and len(evals) < 5:
+                                #     print("Subject {} rating {} only evaluated {} inputs".format(ID, rating, len(evals)))
+
+                                csvfile = csv_dict[rating]
+                                line = "{},".format(ID)
+                                maxDiff = 0
+                                for i in range(1, len(evals)):
+                                    diff = inputDifference(fcn, evals[i-1], evals[i])
+                                    line += "{},".format(diff) # raw diff
+
+                                    if diff > maxDiff:
+                                        maxDiff = diff
+                                line += "\n"
+                                # csvfile.write(line)
+                                distros.addMaxDiff(rating, maxDiff)
+                                
+                                sub = idsToSubs[ID]
+                                acts, EIs, QAs = sub.allFcnActions(fcn)
+                                distros.addQuizAttempts(rating, len(QAs.keys()))
+                                distros.addEIsBwQAs(rating, sub.ID, sub.getEvalLens(fcn))
+        print(distros)
+    
 
     # with open("all_Ls.csv", "x") as csvfile:
     #     # Map each fcn to map of eval inputs length to list of traces from subjects

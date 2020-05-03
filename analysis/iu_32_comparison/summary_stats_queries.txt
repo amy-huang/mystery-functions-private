@@ -1,2 +1,0 @@
-GETTING WRITTEN ANSWERS TO GRADE
-select userid, final_guess from actions where final_guess != null and final_guess != '' order by fcnname;
