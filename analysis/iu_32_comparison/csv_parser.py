@@ -8,8 +8,11 @@ from Levenshtein import distance
 from distance import jaccard
 from stringdist import rdlevenshtein, levenshtein
 
-if len(sys.argv) < 2:
-    print("Usage: python3 csv_parser.py <csv0> [csv1, csv2, ...]")
+from sklearn.cluster import KMeans
+import numpy as np
+
+if len(sys.argv) < 3:
+    print("Usage: python3 csv_parser.py <csv0> <fcns>")
     exit(1)
 
 #################################################################
@@ -74,7 +77,7 @@ def inputDifference(fcn:str, first, second: EvalInput):
     inType = in_out_types[fcn][0]
     firstCharas = inType.toCharas(first.input)
     secondCharas = inType.toCharas(second.input)
-    return levenshtein(firstCharas, secondCharas)
+    return rdlevenshtein(firstCharas, secondCharas)
 
 class Bool:
 	@staticmethod
@@ -155,78 +158,72 @@ FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween",
 
 if __name__ == "__main__":
     # Do initial recording of each subject's traces
-    csvs = {}
     idsToSubs = {}
-    for CSV_NAME in sys.argv[1:]:
-        # Keep track of each subject's data
-        csvs[CSV_NAME] = []
+    with open(sys.argv[1], newline='') as csvfile:
+        rows = csv.reader(csvfile, delimiter=',')
+        header = next(rows) # header
 
-        with open(CSV_NAME, newline='') as csvfile:
-            rows = csv.reader(csvfile, delimiter=',')
-            header = next(rows) # header
+        # Current subject we're recording actions for
+        subject = None
 
-            # Current subject we're recording actions for
-            subject = None
+        for row in rows:
+            # See if we need to start a new Subject
+            ID = row[0]
+            if subject == None:
+                subject = Subject(ID)
+                idsToSubs[ID] = subject
+            elif ID != subject.ID:
+                subject = Subject(ID)
+                idsToSubs[ID] = subject
 
-            for row in rows:
-                # See if we need to start a new Subject
-                ID = row[0]
-                if subject == None:
-                    subject = Subject(ID)
-                    idsToSubs[ID] = subject
-                elif ID != subject.ID:
-                    csvs[CSV_NAME].append(subject)
-                    subject = Subject(ID)
-                    idsToSubs[ID] = subject
+            fcnName = row[1]
+            key = row[2]
+            time = row[4]
+            actType = row[3]
+            action = None
 
-                fcnName = row[1]
-                key = row[2]
-                time = row[4]
-                actType = row[3]
-                action = None
+            inType = in_out_types[fcnName]
+            outType = in_out_types[fcnName]
 
-                inType = in_out_types[fcnName]
-                outType = in_out_types[fcnName]
+            # Record specific action taken
+            if (actType == "eval_input"):
+                action = EvalInput(key, time)
+                inp = row[5]
+                out = row[6]
+                action.setInputOutput(inp, out)
 
-                # Record specific action taken
-                if (actType == "eval_input"):
-                    action = EvalInput(key, time)
-                    inp = row[5]
-                    out = row[6]
-                    action.setInputOutput(inp, out)
+                recordSeenVals(getVals(fcnName, True, inp))
+                recordSeenVals(getVals(fcnName, False, out))
 
-                    recordSeenVals(getVals(fcnName, True, inp))
-                    recordSeenVals(getVals(fcnName, False, out))
+                subject.addEvalInput(fcnName, action)
 
-                    subject.addEvalInput(fcnName, action)
+            elif (actType == "quiz_answer"):
+                action = QuizQ(key, time)
+                quizQ = row[7]
+                inp = row[5]
+                out = row[6]
+                realOut = row[8]
+                result = row[9]
 
-                elif (actType == "quiz_answer"):
-                    action = QuizQ(key, time)
-                    quizQ = row[7]
-                    inp = row[5]
-                    out = row[6]
-                    realOut = row[8]
-                    result = row[9]
+                display = "✗"
+                if (result == "true"):
+                    display = "✓"
 
-                    display = "✗"
-                    if (result == "true"):
-                        display = "✓"
+                action.setQ(quizQ, inp, out, realOut, display)
 
-                    action.setQ(quizQ, inp, out, realOut, display)
+                recordSeenVals(getVals(fcnName, True, inp))
+                recordSeenVals(getVals(fcnName, False, out))
+                recordSeenVals(getVals(fcnName, False, realOut))
 
-                    recordSeenVals(getVals(fcnName, True, inp))
-                    recordSeenVals(getVals(fcnName, False, out))
-                    recordSeenVals(getVals(fcnName, False, realOut))
+                subject.addQuizQ(fcnName, action)
 
-                    subject.addQuizQ(fcnName, action)
-
-                elif (actType == "final_answer"):
-                    action = FinalAnswer(key, time)
-                    guess = row[10]
-                    action.setGuess(guess)
-                    subject.addFinalAnswer(fcnName, action)
-                # else:
-                #     print("WARNING: unknown action type")
+            elif (actType == "final_answer"):
+                action = FinalAnswer(key, time)
+                guess = row[10]
+                action.setGuess(guess)
+                subject.addFinalAnswer(fcnName, action)
+            # else:
+            #     print("WARNING: unknown action type")
 
     # Make character mappings using the characters observed
     makeCharaMappings()
@@ -255,19 +252,30 @@ if __name__ == "__main__":
                                 tags.append(tag)
 
                     if ID not in idsToSubs:
-                        print("WARNING: this ID has no subject", ID)
+                        # print("WARNING: this ID has no subject", ID)
                         continue
                     if idsToSubs[ID] == None:
-                        print("WARNING: this ID has None subject", ID)
+                        # print("WARNING: this ID has None subject", ID)
                         continue
                     if idsToSubs[ID].didFcn(fcn):
                         idsToSubs[ID].addAnswerTags(fcn, tags)
 
+    # Map fcn to correctness to tag frequencies. uh oh this calls for another class!!!
+    # Then we can look at each fcn's things
+    tagsByRating = TagsByFcn()
 
+    # fcn to list of diff IDs
+    diffsIDs = {} 
+    # fcn to list of diff lists
+    diffsLists = {}
 
     # Open a csv for each corr rating, then go through subs and write Ls to csv
-    for fcn in ["Induced"]:
+    for fcn in sys.argv[2:]:
+        print(fcn)
         distros = DistributionKeeper()
+        diffsIDs[fcn] = []
+        diffsLists[fcn] = []
+        maxConsecLen = 0
         with open("COR_Ls.csv", "w") as COR_CSV:
             with open("MCOR_Ls.csv", "w") as MCOR_CSV:
                 with open("SCOR_Ls.csv", "w") as SCOR_CSV:
@@ -292,20 +300,22 @@ if __name__ == "__main__":
                                 elif "XCOR" in tags:
                                     rating = "XCOR"
                                 else:
-                                    print("ID {} fcn {} has no rating".format(ID, fcn))
+                                    # print("ID {} fcn {} has no rating".format(ID, fcn))
                                     continue
+
+                                tagsByRating.addTags(fcn, tags)
 
                                 # Consec input diffs to csv
                                 evals = idsToSubs[ID].functionAttempts[fcn].allEvals()
                                 distros.addNumEvals(rating, len(evals))
-                                # if (rating == "COR" or rating == "MCOR") and len(evals) < 5:
-                                #     print("Subject {} rating {} only evaluated {} inputs".format(ID, rating, len(evals)))
 
                                 csvfile = csv_dict[rating]
                                 line = "{},".format(ID)
                                 maxDiff = 0
+                                diffsArray = []
                                 for i in range(1, len(evals)):
                                     diff = inputDifference(fcn, evals[i-1], evals[i])
+                                    diffsArray.append(diff)
                                     line += "{},".format(diff) # raw diff
 
                                     if diff > maxDiff:
@@ -313,13 +323,96 @@ if __name__ == "__main__":
                                 line += "\n"
                                 # csvfile.write(line)
                                 distros.addMaxDiff(rating, maxDiff)
+
+                                # Add to list of all diff traces for this fcn
+                                diffsIDs[fcn].append(ID)
+                                diffsLists[fcn].append(diffsArray)
+                                if len(evals) > maxConsecLen:
+                                    maxConsecLen = len(evals)
                                 
                                 sub = idsToSubs[ID]
                                 acts, EIs, QAs = sub.allFcnActions(fcn)
                                 distros.addQuizAttempts(rating, len(QAs.keys()))
                                 distros.addEIsBwQAs(rating, sub.ID, sub.getEvalLens(fcn))
-        print(distros)
-    
+        # Per function printouts
+        # print(distros.EIsBwQAs())
+        # print(distros.highestDiffs())
+
+        # Consecutive input difference clustering
+        # Fill with 0s
+        filled = []
+        for trace in diffsLists[fcn]:
+            while len(trace) < maxConsecLen:
+                trace.append(0)
+            filled.append(trace)
+        for trace in filled:
+            print(trace)
+
+        toCluster = np.array(filled)
+        print("WSS vals for {}".format(fcn))
+        # Try a bunch of values for k, and record WSS for each to choose a final result
+        for k in range(1, 11):
+            kmeans = KMeans(n_clusters = k).fit(toCluster)
+            centroids = kmeans.cluster_centers_
+            pred_clusters = kmeans.predict(toCluster)
+            curr_sse = 0
+
+            # Write result to CSV
+            clusterIDs = {}
+            for i in range(len(toCluster)):
+                if kmeans.labels_[i] not in clusterIDs:
+                    clusterIDs[kmeans.labels_[i]] = []
+                clusterIDs[kmeans.labels_[i]].append(diffsIDs[fcn][i])
+
+            csv_name = "{}_k{}.csv".format(fcn, k)
+            with open(csv_name, "w") as CSVFILE:
+                for label in sorted(clusterIDs.keys()):
+                    CSVFILE.write("Cluster {},\n".format(label))
+                    for i in range(len(clusterIDs[label])):
+                        line = "{}, ".format(ID)
+                        ID = clusterIDs[label][i]
+                        trace = diffsLists[fcn][i]
+                        for val in trace:
+                            line += "{}, ".format(val)
+                        CSVFILE.write(line)
+            
+            # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
+            for i in range(len(toCluster)):
+                curr_center = centroids[pred_clusters[i]]
+                curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
+            
+            print("{}, {},".format(k, curr_sse))
+
+    # print(tagsByRating)
+
+    # Across all printouts
+    # print("Ratings across all fcns done")
+    # for ID in idsToSubs:
+    #     sub = idsToSubs[ID]
+    #     line = "{}, ".format(ID)
+    #     for rating in sub.answerTagsByOrder():
+    #         line += "{}, ".format(rating)
+    #     print(line)
+
+    # print("Function distros")
+    # posToFcnTotals = {}
+    # for pos in range(5):
+    #     posToFcnTotals[pos] = {}
+    #     for fcn in FCN_NAMES:
+    #         posToFcnTotals[pos][fcn] = 0
+    # for ID in idsToSubs:
+    #     sub = idsToSubs[ID]
+    #     distro = sub.getFcnDistro()
+    #     for pos in range(len(distro)):
+    #         if pos in posToFcnTotals:
+    #             fcn = distro[pos]
+    #             if fcn in posToFcnTotals[pos]:
+    #                 posToFcnTotals[pos][fcn] = posToFcnTotals[pos][fcn] + 1
+    # for pos in range(5):
+    #     line = "{}, ".format(pos)
+    #     for fcn in FCN_NAMES:
+    #         line += "{}, ".format(posToFcnTotals[pos][fcn])
+    #     print(line)
 
     # with open("all_Ls.csv", "x") as csvfile:
     #     # Map each fcn to map of eval inputs length to list of traces from subjects

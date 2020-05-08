@@ -1,5 +1,6 @@
 import enum
 from typing import *
+from math import floor
 
 class Action:
 	def __init__(self, key, time):
@@ -78,7 +79,8 @@ class SectionCounter:
 		return name	
 
 class FunctionAttempt:
-	def __init__(self):
+	def __init__(self, name):
+		self.name = name
 		self.sectionOrder = []
 		self.EIs = {} # string name to list of eval inputs
 		self.QAs = {} # string name to quiz attempts
@@ -178,6 +180,7 @@ class Subject:
 	def __init__(self, ID):
 		self.ID = ID
 		self.functionAttempts = {} # Map fcn names to the section
+		self.FAsInOrder = []
 
 	def __str__(self):
 		res = "Subject {}\n".format(self.ID)
@@ -188,21 +191,47 @@ class Subject:
 
 	def addEvalInput(self, fcnName: str, evalInput: EvalInput):
 		if fcnName not in self.functionAttempts:
-			self.functionAttempts[fcnName] = FunctionAttempt()
+			self.functionAttempts[fcnName] = FunctionAttempt(fcnName)
+			self.FAsInOrder.append(self.functionAttempts[fcnName])
 		self.functionAttempts[fcnName].addEvalInput(evalInput)
 
 	def addQuizQ(self, fcnName: str, quizQ: QuizQ):
 		if fcnName not in self.functionAttempts:
-			self.functionAttempts[fcnName] = FunctionAttempt()
+			self.functionAttempts[fcnName] = FunctionAttempt(fcnName)
+			self.FAsInOrder.append(self.functionAttempts[fcnName])
 		self.functionAttempts[fcnName].addQuizQ(quizQ)
 
 	def addFinalAnswer(self, fcnName: str, finalAnswer: FinalAnswer):
 		if fcnName not in self.functionAttempts:
-			self.functionAttempts[fcnName] = FunctionAttempt()
+			self.functionAttempts[fcnName] = FunctionAttempt(fcnName)
+			self.FAsInOrder.append(self.functionAttempts[fcnName])
 		self.functionAttempts[fcnName].addFinalAnswer(finalAnswer)
 
 	def addAnswerTags(self, fcnName: str, tags):
 		self.functionAttempts[fcnName].addAnswerTags(tags)
+
+	def answerTagsByOrder(self):
+		ratingsInOrder = []
+		for FA in self.FAsInOrder:
+			tags = FA.answerTags()
+			rating = None
+			if tags == None:
+				ratingsInOrder.append(0)
+				continue
+
+			if "COR" in tags:
+				rating = 4
+			elif "MCOR" in tags:
+				rating = 3
+			elif "SCOR" in tags:
+				rating = 2
+			elif "XCOR" in tags:
+				rating = 1
+			else:
+				rating = 0
+
+			ratingsInOrder.append(rating)
+		return ratingsInOrder
 
 	def getAnswerTags(self, fcnName: str):
 		if fcnName in self.functionAttempts:
@@ -214,6 +243,12 @@ class Subject:
 		for fcn in self.functionAttempts.keys():
 			tags += "{}: {}\n".format(fcn, self.functionAttempts[fcn].answerTags())
 		return tags
+
+	def getFcnDistro(self):
+		names = []
+		for FA in self.FAsInOrder:
+			names.append(FA.name)
+		return names
 
 	def didFcn(self, name):
 		if name in self.functionAttempts:
@@ -243,12 +278,12 @@ class Distributions:
 	def __str__(self):
 		res = "Distributions for {}\n".format(self.ID)
 
-		# res += ("Num of inputs evaluated\n")
-		# for i in range(sorted(self.traceLens.keys())[-1] + 1):
-		# 	if i in self.traceLens:
-		# 		res += "{}, {},\n".format(i, self.traceLens[i])
-		# 	else:
-		# 		res += "{}, {},\n".format(i, 0)
+		res += ("Num of inputs evaluated\n")
+		for i in range(sorted(self.traceLens.keys())[-1] + 1):
+			if i in self.traceLens:
+				res += "{}, {},\n".format(i, self.traceLens[i])
+			else:
+				res += "{}, {},\n".format(i, 0)
 
 		res += ("Highest input diffs\n")
 		for i in range(sorted(self.highestInputDiff.keys())[-1] + 1):
@@ -269,10 +304,47 @@ class Distributions:
 			res += "	{}, {},\n".format(k, curr)
 		res += "Average {} % multiple attempts {}\n".format(sum/numSubs, (100 * multipleAttempts)/numSubs)
 
-		res += ("Inputs evaluated between quiz attempts\n")
+		res += "Inputs evaluated between quiz attempts\n"
 		for k in sorted(self.EIsbetweenQAs.keys()):
 			res += "	{}, {},\n".format(k, self.EIsbetweenQAs[k])
 
+		return res
+
+	def printHighestDiffs(self):
+		res = ""
+		diffs = []
+		for diff in sorted(self.highestInputDiff.keys()):
+			freq = self.highestInputDiff[diff]
+			for _ in range(freq):
+				diffs.append(diff)
+		median = sorted(diffs)[floor(len(diffs)/2)]
+		res += "Median highest diff {}\n".format(median)
+		return res
+
+	def printEIsBwQAs(self):
+		res = ""
+		for k in sorted(self.EIsbetweenQAs.keys()):
+			res += "{}, ".format(k)
+			for stretch in self.EIsbetweenQAs[k]:
+				res += "{}, ".format(stretch)
+			res += "\n"
+
+		return res
+
+	def printMedianQuizAttempts(self):
+		allNumAttempts = []
+		res = ""
+		sum = 0
+		numSubs = 0
+		for numAttempts in sorted(self.quizAttempts.keys()):
+			freq = self.quizAttempts[numAttempts]
+			for _ in range(freq):
+				sum += numAttempts
+				numSubs += 1
+				allNumAttempts.append(numAttempts)
+		median = sorted(allNumAttempts)[floor(len(allNumAttempts)/2)]
+		res += "Median quiz attempts {}\n".format(median)
+		res += "Average quiz attempts {}\n".format(sum/numSubs)
 		return res
 
 	def addNumEvals(self, numEvals):
@@ -310,6 +382,27 @@ class DistributionKeeper:
 			res += "Rating {} distributions:\n".format(rating)
 			res += str(self.ratingsToDistros[rating])
 		return res
+
+	def highestDiffs(self):
+		res = ""
+		for rating in sorted(self.ratingsToDistros):
+			res += "Rating {}\n".format(rating)
+			res += self.ratingsToDistros[rating].printHighestDiffs()
+		return res
+
+	def EIsBwQAs(self):
+		res = ""
+		for rating in sorted(self.ratingsToDistros):
+			# res += "Rating {}\n".format(rating)
+			res += self.ratingsToDistros[rating].printEIsBwQAs()
+		return res
+
+	def quizAttempts(self):
+		res = ""
+		for rating in sorted(self.ratingsToDistros):
+			res += "Rating {}\n".format(rating)
+			res += self.ratingsToDistros[rating].printMedianQuizAttempts()
+		return res
 	
 	def addNumEvals(self, rating, numEvals):
 		if rating not in self.ratingsToDistros:
@@ -330,3 +423,61 @@ class DistributionKeeper:
 		if rating not in self.ratingsToDistros:
 			self.ratingsToDistros[rating] = Distributions(rating)
 		self.ratingsToDistros[rating].addEIsBwQAs(ID, evalLens)
+
+#########################################################################
+
+class TagsByFcn:
+	def __init__(self):
+		self.tagKeepers = {}
+
+	def __str__(self):
+		res = ""
+		for fcn in self.tagKeepers:
+			res += "Function {}\n".format(fcn)
+			res += str(self.tagKeepers[fcn])
+		return res
+
+	def addTags(self, fcn, tags):
+		if fcn not in self.tagKeepers:
+			self.tagKeepers[fcn] = TagsByCorrectness(fcn)
+		self.tagKeepers[fcn].addTags(tags)
+
+class TagsByCorrectness:
+	def __init__(self, fcn):
+		self.fcn = fcn
+		self.CORs = {}
+		self.MCORs = {}
+		self.SCORs = {}
+		self.XCORs = {}
+
+	def __str__(self):
+		# lines = "Tags for {}\n".format(self.fcn)
+		lines = ""
+		for tag in sorted(self.CORs.keys()):
+			lines += "{}, {}, {},\n".format("COR", tag, self.CORs[tag])
+		for tag in sorted(self.MCORs.keys()):
+			lines += "{}, {}, {},\n".format("MCOR", tag, self.MCORs[tag])
+		for tag in sorted(self.SCORs.keys()):
+			lines += "{}, {}, {},\n".format("SCOR", tag, self.SCORs[tag])
+		for tag in sorted(self.XCORs.keys()):
+			lines += "{}, {}, {},\n".format("XCOR", tag, self.XCORs[tag])
+		return lines
+	
+	def addTags(self, tags):
+		ratingDict = {}
+		if "COR" in tags:
+			ratingDict = self.CORs
+		elif "MCOR" in tags:
+			ratingDict = self.MCORs
+		elif "SCOR" in tags:
+			ratingDict = self.SCORs
+		elif "XCOR" in tags:
+			ratingDict = self.XCORs
+		else:
+			print("Error: no rating in tags from a subject")
+		for tag in tags:
+			if tag == "COR" or tag == "MCOR" or tag == "SCOR" or tag == "XCOR":
+				continue
+			if tag not in ratingDict:
+				ratingDict[tag] = 0
+			ratingDict[tag] = ratingDict[tag] + 1
