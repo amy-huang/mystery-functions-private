@@ -269,13 +269,13 @@ if __name__ == "__main__":
     # fcn to list of diff lists
     diffsLists = {}
 
+    allIDs = []
+    allLists = []
+
     # Open a csv for each corr rating, then go through subs and write Ls to csv
     for fcn in sys.argv[2:]:
         print(fcn)
         distros = DistributionKeeper()
-        diffsIDs[fcn] = []
-        diffsLists[fcn] = []
-        maxConsecLen = 0
         with open("COR_Ls.csv", "w") as COR_CSV:
             with open("MCOR_Ls.csv", "w") as MCOR_CSV:
                 with open("SCOR_Ls.csv", "w") as SCOR_CSV:
@@ -325,10 +325,8 @@ if __name__ == "__main__":
                                 distros.addMaxDiff(rating, maxDiff)
 
                                 # Add to list of all diff traces for this fcn
-                                diffsIDs[fcn].append(ID)
-                                diffsLists[fcn].append(diffsArray)
-                                if len(evals) > maxConsecLen:
-                                    maxConsecLen = len(evals)
+                                allIDs.append("{}_{}".format(ID, fcn))
+                                allLists.append(diffsArray)
                                 
                                 sub = idsToSubs[ID]
                                 acts, EIs, QAs = sub.allFcnActions(fcn)
@@ -338,50 +336,56 @@ if __name__ == "__main__":
         # print(distros.EIsBwQAs())
         # print(distros.highestDiffs())
 
-        # Consecutive input difference clustering
-        # Fill with 0s
-        filled = []
-        for trace in diffsLists[fcn]:
-            while len(trace) < maxConsecLen:
-                trace.append(0)
-            filled.append(trace)
-        for trace in filled:
-            print(trace)
+    # Consecutive input difference clustering
+    maxConsecLen = 0
+    for t in allLists:
+        if len(t) > maxConsecLen:
+            maxConsecLen = len(t)
+    # Fill with 0s
+    filled = []
+    for trace in allLists:
+        newTrace = []
+        for val in trace:
+            newTrace.append(val)
+        while len(newTrace) < maxConsecLen:
+            newTrace.append(0)
+        filled.append(newTrace)
 
-        toCluster = np.array(filled)
-        print("WSS vals for {}".format(fcn))
-        # Try a bunch of values for k, and record WSS for each to choose a final result
-        for k in range(1, 11):
-            kmeans = KMeans(n_clusters = k).fit(toCluster)
-            centroids = kmeans.cluster_centers_
-            pred_clusters = kmeans.predict(toCluster)
-            curr_sse = 0
+    toCluster = np.array(filled)
+    print("WSS vals for {}".format(sys.argv[2:]))
+    # Try a bunch of values for k, and record WSS for each to choose a final result
+    for k in range(1, 11):
+        kmeans = KMeans(n_clusters = k).fit(toCluster)
+        centroids = kmeans.cluster_centers_
+        pred_clusters = kmeans.predict(toCluster)
+        curr_sse = 0
 
-            # Write result to CSV
-            clusterIDs = {}
-            for i in range(len(toCluster)):
-                if kmeans.labels_[i] not in clusterIDs:
-                    clusterIDs[kmeans.labels_[i]] = []
-                clusterIDs[kmeans.labels_[i]].append(diffsIDs[fcn][i])
+        # Write result to CSV
+        clusterIdxs = {}
+        for i in range(len(kmeans.labels_)):
+            if kmeans.labels_[i] not in clusterIdxs:
+                clusterIdxs[kmeans.labels_[i]] = []
+            clusterIdxs[kmeans.labels_[i]].append(i)
 
-            csv_name = "{}_k{}.csv".format(fcn, k)
-            with open(csv_name, "w") as CSVFILE:
-                for label in sorted(clusterIDs.keys()):
-                    CSVFILE.write("Cluster {},\n".format(label))
-                    for i in range(len(clusterIDs[label])):
-                        line = "{}, ".format(ID)
-                        ID = clusterIDs[label][i]
-                        trace = diffsLists[fcn][i]
-                        for val in trace:
-                            line += "{}, ".format(val)
-                        CSVFILE.write(line)
-            
-            # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
-            for i in range(len(toCluster)):
-                curr_center = centroids[pred_clusters[i]]
-                curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
-            
-            print("{}, {},".format(k, curr_sse))
+        csv_name = "{}_k{}.csv".format(sys.argv[2:], k)
+        with open(csv_name, "w") as CSVFILE:
+            for label in sorted(clusterIdxs.keys()):
+                CSVFILE.write("Cluster {},\n".format(label))
+                for idx in clusterIdxs[label]:
+                    ID = allIDs[idx]
+                    line = "{}, ".format(ID)
+                    trace = allLists[idx]
+                    for val in trace:
+                        line += "{}, ".format(val)
+                    line += "\n"
+                    CSVFILE.write(line)
+        
+        # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
+        for i in range(len(toCluster)):
+            curr_center = centroids[pred_clusters[i]]
+            curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
+        
+        print("{}, {},".format(k, curr_sse))
 
     # print(tagsByRating)
 
