@@ -216,7 +216,7 @@ class Subject:
 			tags = FA.answerTags()
 			rating = None
 			if tags == None:
-				ratingsInOrder.append(0)
+				# ratingsInOrder.append(0)
 				continue
 
 			if "COR" in tags:
@@ -228,7 +228,8 @@ class Subject:
 			elif "XCOR" in tags:
 				rating = 1
 			else:
-				rating = 0
+				# rating = 0
+				continue
 
 			ratingsInOrder.append(rating)
 		return ratingsInOrder
@@ -321,6 +322,19 @@ class Distributions:
 		res += "Median highest diff {}\n".format(median)
 		return res
 
+	def printFirstStretchStats(self):
+		all = []
+		sum = 0
+		numSubs = 0
+		for ID in sorted(self.EIsbetweenQAs.keys()):
+			stretchLens = self.EIsbetweenQAs[ID]
+			if len(stretchLens):
+				all.append(stretchLens[0])
+				sum += stretchLens[0]
+				numSubs += 1
+		median = sorted(all)[floor(len(all)/2)]
+		return "{}, {},\n".format(median, sum/numSubs)
+
 	def printEIsBwQAs(self):
 		res = ""
 		for k in sorted(self.EIsbetweenQAs.keys()):
@@ -346,6 +360,22 @@ class Distributions:
 		res += "Median quiz attempts {}\n".format(median)
 		res += "Average quiz attempts {}\n".format(sum/numSubs)
 		return res
+
+	def printMedianEvals(self):
+		allNumEvals = []
+		# res = ""
+		sum = 0
+		numSubs = 0
+		for numEvals in sorted(self.traceLens.keys()):
+			freq = self.traceLens[numEvals]
+			for _ in range(freq):
+				sum += numEvals
+				numSubs += 1
+				allNumEvals.append(numEvals)
+		median = sorted(allNumEvals)[floor(len(allNumEvals)/2)]
+		# res += "Median # evals {}\n".format(median)
+		# res += "Average # evals {}\n".format(sum/numSubs)
+		return "{}, {},\n".format(median, sum/numSubs)
 
 	def addNumEvals(self, numEvals):
 		if numEvals not in self.traceLens:
@@ -393,7 +423,7 @@ class DistributionKeeper:
 	def EIsBwQAs(self):
 		res = ""
 		for rating in sorted(self.ratingsToDistros):
-			# res += "Rating {}\n".format(rating)
+			res += "Rating {}\n".format(rating)
 			res += self.ratingsToDistros[rating].printEIsBwQAs()
 		return res
 
@@ -402,6 +432,18 @@ class DistributionKeeper:
 		for rating in sorted(self.ratingsToDistros):
 			res += "Rating {}\n".format(rating)
 			res += self.ratingsToDistros[rating].printMedianQuizAttempts()
+		return res
+
+	def numEvals(self):
+		res = ""
+		for rating in sorted(self.ratingsToDistros):
+			res += "{}, {}".format(rating, self.ratingsToDistros[rating].printMedianEvals())
+		return res
+
+	def firstStretchStats(self):
+		res = ""
+		for rating in sorted(self.ratingsToDistros):
+			res += "{}, {}".format(rating, self.ratingsToDistros[rating].printFirstStretchStats())
 		return res
 	
 	def addNumEvals(self, rating, numEvals):

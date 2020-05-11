@@ -335,68 +335,70 @@ if __name__ == "__main__":
         # Per function printouts
         # print(distros.EIsBwQAs())
         # print(distros.highestDiffs())
+        # print(distros.numEvals())
+        # print(distros.firstStretchStats())
 
     # Consecutive input difference clustering
-    maxConsecLen = 0
-    for t in allLists:
-        if len(t) > maxConsecLen:
-            maxConsecLen = len(t)
-    # Fill with 0s
-    filled = []
-    for trace in allLists:
-        newTrace = []
-        for val in trace:
-            newTrace.append(val)
-        while len(newTrace) < maxConsecLen:
-            newTrace.append(0)
-        filled.append(newTrace)
+    # maxConsecLen = 0
+    # for t in allLists:
+    #     if len(t) > maxConsecLen:
+    #         maxConsecLen = len(t)
+    # # Fill with 0s
+    # filled = []
+    # for trace in allLists:
+    #     newTrace = []
+    #     for val in trace:
+    #         newTrace.append(val)
+    #     while len(newTrace) < maxConsecLen:
+    #         newTrace.append(0)
+    #     filled.append(newTrace)
 
-    toCluster = np.array(filled)
-    print("WSS vals for {}".format(sys.argv[2:]))
-    # Try a bunch of values for k, and record WSS for each to choose a final result
-    for k in range(1, 11):
-        kmeans = KMeans(n_clusters = k).fit(toCluster)
-        centroids = kmeans.cluster_centers_
-        pred_clusters = kmeans.predict(toCluster)
-        curr_sse = 0
+    # toCluster = np.array(filled)
+    # print("WSS vals for {}".format(sys.argv[2:]))
+    # # Try a bunch of values for k, and record WSS for each to choose a final result
+    # for k in range(1, 11):
+    #     kmeans = KMeans(n_clusters = k).fit(toCluster)
+    #     centroids = kmeans.cluster_centers_
+    #     pred_clusters = kmeans.predict(toCluster)
+    #     curr_sse = 0
 
-        # Write result to CSV
-        clusterIdxs = {}
-        for i in range(len(kmeans.labels_)):
-            if kmeans.labels_[i] not in clusterIdxs:
-                clusterIdxs[kmeans.labels_[i]] = []
-            clusterIdxs[kmeans.labels_[i]].append(i)
+    #     # Write result to CSV
+    #     clusterIdxs = {}
+    #     for i in range(len(kmeans.labels_)):
+    #         if kmeans.labels_[i] not in clusterIdxs:
+    #             clusterIdxs[kmeans.labels_[i]] = []
+    #         clusterIdxs[kmeans.labels_[i]].append(i)
 
-        csv_name = "{}_k{}.csv".format(sys.argv[2:], k)
-        with open(csv_name, "w") as CSVFILE:
-            for label in sorted(clusterIdxs.keys()):
-                CSVFILE.write("Cluster {},\n".format(label))
-                for idx in clusterIdxs[label]:
-                    ID = allIDs[idx]
-                    line = "{}, ".format(ID)
-                    trace = allLists[idx]
-                    for val in trace:
-                        line += "{}, ".format(val)
-                    line += "\n"
-                    CSVFILE.write(line)
+    #     csv_name = "{}_k{}.csv".format(sys.argv[2:], k)
+    #     with open(csv_name, "w") as CSVFILE:
+    #         for label in sorted(clusterIdxs.keys()):
+    #             CSVFILE.write("Cluster {},\n".format(label))
+    #             for idx in clusterIdxs[label]:
+    #                 ID = allIDs[idx]
+    #                 line = "{}, ".format(ID)
+    #                 trace = allLists[idx]
+    #                 for val in trace:
+    #                     line += "{}, ".format(val)
+    #                 line += "\n"
+    #                 CSVFILE.write(line)
         
-        # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
-        for i in range(len(toCluster)):
-            curr_center = centroids[pred_clusters[i]]
-            curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
+    #     # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
+    #     for i in range(len(toCluster)):
+    #         curr_center = centroids[pred_clusters[i]]
+    #         curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
         
-        print("{}, {},".format(k, curr_sse))
+    #     print("{}, {},".format(k, curr_sse))
 
     # print(tagsByRating)
 
     # Across all printouts
-    # print("Ratings across all fcns done")
-    # for ID in idsToSubs:
-    #     sub = idsToSubs[ID]
-    #     line = "{}, ".format(ID)
-    #     for rating in sub.answerTagsByOrder():
-    #         line += "{}, ".format(rating)
-    #     print(line)
+    print("Ratings across all fcns done")
+    for ID in idsToSubs:
+        sub = idsToSubs[ID]
+        line = "{}, ".format(ID)
+        for rating in sub.answerTagsByOrder():
+            line += "{}, ".format(rating)
+        print(line)
 
     # print("Function distros")
     # posToFcnTotals = {}
@@ -452,48 +454,6 @@ if __name__ == "__main__":
 
     #             idsToFcnTraces[sub.ID][fcn] = evals
 
-        # Printing raw traces to terminal
-        # for fcn in fcnToTraces:
-        #     inType = in_out_types[fcn][0]
-        #     # print("{}\n".format(fcn))
-        #     csvfile.write("{}\n".format(fcn))
-
-        #     for trace_len in sorted(fcnToTraces[fcn].keys()):
-        #         if trace_len == 0:
-        #             csvfile.write("0,0,\n") # placeholder for checking num people correctness
-        #             continue
-
-        #         traces = fcnToTraces[fcn][trace_len]
-        #         sums = [0] * (trace_len - 1)
-
-        #         for trace in traces:
-        #             # TEST to see example trace, double check distance measure
-        #             # if len(trace) == 13 and fcn == "Induced":
-        #             #     print(fcn)
-        #             #     for i in range(len(trace)):
-        #             #         print(trace[i].input)
-
-        #             # sumJacc = 0
-        #             # line = "{},".format(trace_len)
-        #             # for i in range(1, len(trace)):
-        #             #     diff = inputDifference(fcn, trace[i-1], trace[i])
-        #             #     sumJacc += diff
-        #             # line += "{},".format(sumJacc/trace_len) # average jaccard dist
-
-        #             # ones = 0
-        #             # line = "{},".format(trace_len)
-        #             # for i in range(1, len(trace)):
-        #             #     diff = inputDifference(fcn, trace[i-1], trace[i])
-        #             #     if diff == 1:
-        #             #         ones += 1
-        #             # line += "{},".format(100 * ones/trace_len) # % of ones
-
-        #             line = "{},".format(trace_len)
-        #             for i in range(1, len(trace)):
-        #                 diff = inputDifference(fcn, trace[i-1], trace[i])
-        #                 line += "{},".format(diff) # raw diff
-        #             line += "\n"
-        #             csvfile.write(line)
 
 
 
