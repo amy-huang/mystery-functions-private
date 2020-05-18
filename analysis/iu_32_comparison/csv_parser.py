@@ -4,7 +4,7 @@ from datetime import *
 from action_classes import *
 from statistics import *
 
-from Levenshtein import distance
+from Levenshtein import distance, editops
 from distance import jaccard
 from stringdist import rdlevenshtein, levenshtein
 
@@ -66,9 +66,38 @@ def makeCharaMappings():
         charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
 
 def inducedDiff(first, second: EvalInput):
-    firstNum = int(first.input)
-    secondNum = int(second.input)
-    return abs(firstNum - secondNum)
+    # firstNum = int(first.input)
+    # secondNum = int(second.input)
+    # return abs(firstNum - secondNum)
+    return rdlevenshtein(first.input, second.input)
+
+def inducedEditOps(first, second: EvalInput):
+    return editops(first.input, second.input)
+
+def inputEditOps(fcn:str, first, second: EvalInput):
+    if fcn == "Induced":
+        return inducedEditOps(first, second)
+
+    inType = in_out_types[fcn][0]
+    firstCharas = inType.toCharas(first.input)
+    secondCharas = inType.toCharas(second.input)
+    return editops(firstCharas, secondCharas)
+
+def opsToNum(ops):
+    if len(ops) == 0:
+        return 0
+
+    num = ""
+    for op in ops:
+        if op[0] == "insert":
+            num += "1"
+        if op[0] == "delete":
+            num += "2"
+        if op[0] == "replace":
+            num += "3"
+        num += str(op[1])
+        num += str(op[2])
+    return int(num)
 
 def inputDifference(fcn:str, first, second: EvalInput):
     if fcn == "Induced":
@@ -272,6 +301,17 @@ if __name__ == "__main__":
     allIDs = []
     allLists = []
 
+    # ID and fcn to ops vector
+    numOps = {}
+    # ID to num op trace
+    editOps = {}
+    # ID to average len of same op sequence size 2 and up
+    stretchLens = {}
+    # from this, get line graph, avg/med, frequency
+
+    # ops frequency, list ops to num
+    opsFreq = {}
+
     # Open a csv for each corr rating, then go through subs and write Ls to csv
     for fcn in sys.argv[2:]:
         print(fcn)
@@ -310,17 +350,70 @@ if __name__ == "__main__":
                                 distros.addNumEvals(rating, len(evals))
 
                                 csvfile = csv_dict[rating]
-                                line = "{},".format(ID)
+                                # stretchLens = "{},".format(ID)
                                 maxDiff = 0
                                 diffsArray = []
-                                for i in range(1, len(evals)):
-                                    diff = inputDifference(fcn, evals[i-1], evals[i])
-                                    diffsArray.append(diff)
-                                    line += "{},".format(diff) # raw diff
+                                ID_FCN = "{}_{}".format(ID, fcn)
+                                numOps[ID_FCN] = []
 
-                                    if diff > maxDiff:
-                                        maxDiff = diff
-                                line += "\n"
+                                currOps = ""
+                                currLen = 0
+                                editOps[ID_FCN] = []
+
+                                for i in range(1, len(evals)):
+                                    # edit ops
+                                    ops = inputEditOps(fcn, evals[i-1], evals[i])
+                                    # editOps[idfcn].append(opsToNum(ops)) # encoding actual ops
+                                    numOps[ID_FCN].append(len(ops))
+                                    
+                                    # Look at average length of same op sequences
+                                    currOpsList = []
+                                    for op in ops:
+                                        currOpsList.append(op[0])
+                                    nextOps = " ".join(sorted(currOpsList))
+
+                                    if nextOps not in opsFreq:
+                                        opsFreq[nextOps] = 0
+                                    opsFreq[nextOps] += 1
+
+                                    # Next group of operations is the same as current streak
+                                    if nextOps == currOps:
+                                        currLen += 1
+                                    else:
+                                        # If no change in input, count as part of streak, keep currOps same
+                                        if len(nextOps) == 0:
+                                            currLen += 1
+                                        else:
+                                            # Change in ops means streak just ended
+                                            if len(currOps) > 0:
+                                                if not ID_FCN in stretchLens:
+                                                    stretchLens[ID_FCN] = []
+                                                stretchLens[ID_FCN].append(currLen)
+                                                editOps[ID_FCN].append(currOps)
+                                                # print("{} change in op {} to {}".format(ID_FCN, currOps, nextOps))
+
+                                            # Start new streak
+                                            currOps = nextOps
+                                            currLen = 1
+
+                                    # Edit distance for writing to csv
+                                    # diff = inputDifference(fcn, evals[i-1], evals[i])
+                                    # diffsArray.append(diff)
+                                    # line += "{},".format(diff) # raw diff
+
+                                    # if diff > maxDiff:
+                                    #     maxDiff = diff
+
+                                # If a stretch went all the way to the end, make sure to record if max
+                                if len(currOps) > 0:
+                                    if not ID_FCN in stretchLens:
+                                        stretchLens[ID_FCN] = []
+                                    stretchLens[ID_FCN].append(currLen)
+                                    editOps[ID_FCN].append(currOps)
+                                    # print("{} end trace w streak {}".format(ID_FCN, currOps))
+
+                                # Writing edit distance to csv
+                                # line += "\n"
                                 # csvfile.write(line)
                                 distros.addMaxDiff(rating, maxDiff)
 
@@ -338,7 +431,14 @@ if __name__ == "__main__":
         # print(distros.numEvals())
         # print(distros.firstStretchStats())
 
-    # Consecutive input difference clustering
+        # Print edit ops
+        # for ID in editOps:
+        #     line = "{}, ".format(ID)
+        #     for ops in editOps[ID]:
+        #         line += "{}, ".format(ops)
+        #     print(line)
+
+    # # Consecutive input difference clustering
     # maxConsecLen = 0
     # for t in allLists:
     #     if len(t) > maxConsecLen:
@@ -353,8 +453,90 @@ if __name__ == "__main__":
     #         newTrace.append(0)
     #     filled.append(newTrace)
 
+    # Across all printouts
+    # print("Ratings across all fcns done")
+    # for ID in idsToSubs:
+    #     sub = idsToSubs[ID]
+    #     line = "{}, ".format(ID)
+    #     # for rating in sub.answerTagsByOrder():
+    #     #     line += "{}, ".format(rating)
+    #     totalScore = sum(sub.answerTagsByOrder())
+    #     print(line)
+
+    # Stretch len stats
+    with open("sameOps.csv", "w") as SAMEOPS:
+        with open("sameOpStats.csv", "w") as SAMEOPSTATS:
+            for ID_FCN in stretchLens:
+                ID = ID_FCN.split("_")[0]
+                FCN = ID_FCN.split("_")[1]
+
+                lentrace = ""
+                score = idsToSubs[ID].ratingsByFcn()[FCN]
+                avg = 0
+                median = 0
+                if len(stretchLens[ID_FCN]) > 0:
+                    avg = sum(stretchLens[ID_FCN]) / len(stretchLens[ID_FCN])
+                    median = sorted(stretchLens[ID_FCN])[floor(len(stretchLens[ID_FCN]) / 2)]
+
+                    lentrace += "{}, {}, {}, {}, ".format(len(editOps[ID_FCN]), FCN, score, ID)
+
+                    # Trace of stretch lengths
+                    lenDistro = {}
+                    for sl in stretchLens[ID_FCN]:
+                        if sl not in lenDistro:
+                            lenDistro[sl] = 0
+                        lenDistro[sl] += 1
+                        lentrace += "{}, ".format(sl)
+
+                    # Terminal printout of same ops stretch length distros
+                    # termPrint = "{}, ".format(ID_FCN)
+                    # for sl in range(sorted(lenDistro.keys())[-1] + 1):
+                    #     if sl not in lenDistro:
+                    #         termPrint += "0, "
+                    #     else:
+                    #         termPrint += "{}, ".format(lenDistro[sl])
+
+                    alleditOps = "{}, {}, {}, {}, ".format(len(editOps[ID_FCN]), FCN, score, ID)
+                    lastOps = ""
+                    for ops in editOps[ID_FCN]:
+                        if ops == lastOps:
+                            print("ERROR {} same consecutive ops not caught {}".format(ID_FCN, ops))
+                        lastOps = ops
+                        alleditOps += "{}, ".format(ops)
+                    alleditOps += "\n"
+                    SAMEOPS.write(alleditOps)
+
+                # # Add actual trace of ops
+                # for op in editOps[ID]:
+                #     line += "{}, ".format(op)
+                lentrace += "\n"
+                SAMEOPSTATS.write(lentrace)
+
+    # # Most common ops between consecutive input evals
+    # for ops in sorted(opsFreq.keys()):
+    #     print("{}, {}".format(ops, opsFreq[ops]))
+
+    # # Consecutive edit ops vector clustering
+    # maxConsecLen = 0
+    # allLists = []
+    # for user in numOps:
+    #     trace = numOps[user]
+    #     if len(trace) > maxConsecLen:
+    #         maxConsecLen = len(trace)
+    #     allLists.append(numOps[user])
+        
+    # # Fill with 0s
+    # filled = []
+    # for l in allLists:
+    #     newTrace = []
+    #     for num in l:
+    #         newTrace.append(num)
+    #     while len(newTrace) < maxConsecLen:
+    #         newTrace.append(0)
+    #     filled.append(newTrace)
+
     # toCluster = np.array(filled)
-    # print("WSS vals for {}".format(sys.argv[2:]))
+    # print("WSS vals for {}".format("".join(sys.argv[2:])))
     # # Try a bunch of values for k, and record WSS for each to choose a final result
     # for k in range(1, 11):
     #     kmeans = KMeans(n_clusters = k).fit(toCluster)
@@ -369,7 +551,7 @@ if __name__ == "__main__":
     #             clusterIdxs[kmeans.labels_[i]] = []
     #         clusterIdxs[kmeans.labels_[i]].append(i)
 
-    #     csv_name = "{}_k{}.csv".format(sys.argv[2:], k)
+    #     csv_name = "{}_k{}.csv".format("".join(sys.argv[2:]), k)
     #     with open(csv_name, "w") as CSVFILE:
     #         for label in sorted(clusterIdxs.keys()):
     #             CSVFILE.write("Cluster {},\n".format(label))
@@ -390,15 +572,6 @@ if __name__ == "__main__":
     #     print("{}, {},".format(k, curr_sse))
 
     # print(tagsByRating)
-
-    # Across all printouts
-    print("Ratings across all fcns done")
-    for ID in idsToSubs:
-        sub = idsToSubs[ID]
-        line = "{}, ".format(ID)
-        for rating in sub.answerTagsByOrder():
-            line += "{}, ".format(rating)
-        print(line)
 
     # print("Function distros")
     # posToFcnTotals = {}

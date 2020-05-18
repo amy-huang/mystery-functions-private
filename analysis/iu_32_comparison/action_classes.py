@@ -234,6 +234,30 @@ class Subject:
 			ratingsInOrder.append(rating)
 		return ratingsInOrder
 
+	def ratingsByFcn(self):
+		fcnToRating = {}
+		for FA in self.FAsInOrder:
+			tags = FA.answerTags()
+			rating = None
+			if tags == None:
+				# ratingsInOrder.append(0)
+				continue
+
+			if "COR" in tags:
+				rating = 4
+			elif "MCOR" in tags:
+				rating = 3
+			elif "SCOR" in tags:
+				rating = 2
+			elif "XCOR" in tags:
+				rating = 1
+			else:
+				# rating = 0
+				continue
+
+			fcnToRating[FA.name] = rating
+		return fcnToRating
+
 	def getAnswerTags(self, fcnName: str):
 		if fcnName in self.functionAttempts:
 			return self.functionAttempts[fcnName].answerTags()
