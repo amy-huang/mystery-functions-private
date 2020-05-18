@@ -464,8 +464,8 @@ if __name__ == "__main__":
     #     print(line)
 
     # Stretch len stats
-    with open("sameOps.csv", "w") as SAMEOPS:
-        with open("sameOpStats.csv", "w") as SAMEOPSTATS:
+    with open("sameOps.csv", "x") as SAMEOPS:
+        with open("sameOpStats.csv", "x") as SAMEOPSTATS:
             for ID_FCN in stretchLens:
                 ID = ID_FCN.split("_")[0]
                 FCN = ID_FCN.split("_")[1]
@@ -497,12 +497,8 @@ if __name__ == "__main__":
                     #         termPrint += "{}, ".format(lenDistro[sl])
 
                     alleditOps = "{}, {}, {}, {}, ".format(len(editOps[ID_FCN]), FCN, score, ID)
-                    lastOps = ""
-                    for ops in editOps[ID_FCN]:
-                        if ops == lastOps:
-                            print("ERROR {} same consecutive ops not caught {}".format(ID_FCN, ops))
-                        lastOps = ops
-                        alleditOps += "{}, ".format(ops)
+                    for opGroup in editOps[ID_FCN]:
+                        alleditOps += "{}, ".format(opGroup)
                     alleditOps += "\n"
                     SAMEOPS.write(alleditOps)
 
