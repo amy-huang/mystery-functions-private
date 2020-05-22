@@ -1,0 +1,103 @@
+fcnname,userid,finalguess
+Average,bhurd1,AVERAGE OF LIST
+Average,lqu2,mean of the sum of all the integers in the list
+Average,mislam8,average of integers in input
+Average,mthain,"Calculates the mean of the integers (sum the integers, divide by list size; not defined for empty list)"
+Average,egrimsh1,This will always output the average!
+Average,spark108,Mean of all integers in list
+Average,ksang1,This function takes the average of the numbers in the list.
+Average,abrown53,Prints out the average of the numbers in the list.
+FirstIntoSecondDivisible,spark108,"Given (a,b), evaluates if b is divisible by a"
+FirstIntoSecondDivisible,egrimsh1,If the first number is neither a factor nor a multiple of the second (no relation) it is false. Else it is true.
+FirstIntoSecondDivisible,ilayzer,"True if second number is divisible by first number, false otherwise."
+FirstIntoSecondDivisible,dli72,Checks if the first integer divides the second integer
+FirstIntoSecondDivisible,zmothner,Returns true if input 1 is a factor of input 2.
+FirstIntoSecondDivisible,bhurd1,"If the second number is a multiple of the first, true
+else, false"
+FirstIntoSecondDivisible,ksang1,If the second number is divisible by the first
+FirstIntoSecondDivisible,lqu2,"returns true if the second number is divisible by the first, returns false otherwise"
+FirstIntoSecondDivisible,mthain,"?? 2nd is a multiple of the first ?? omg i literally ignored the f(4,0)=true kms"
+Induced,iilozor,"Incrementing the previous answer by the first number, with 0 outputting 0."
+Induced,zmothner,Returns the sum of all numbers less than the absolute value of the input - 1.
+Induced,mthain,"for pos, fib(x-1); for neg, fib(|x|) (i wrote this last time but i messed it up writing the answer lol)
+"
+Induced,abrown53,"Given a number n, prints out the number ((n)(n-1))/2."
+Induced,ksachan,"Let n be input.
+
+If n > 0: return (n-1)(n-2)/2
+else: return (-n)(-n - 1)/2"
+Induced,spark108,Absolute value of arithmetic series
+Induced,lqu2,"first it adds 1 to the previous output, then 2, then 3, then 4, and so on"
+Induced,agoldb10,"The function returns 0 when the input is 0.  Otherwise, it returns f(x)  = f(x - 1) + (x - 1)."
+Induced,emadsen,(int-1) + (int-2) + .. + 0
+Induced,srockhil,"squares the input, divides that by 2 (rounds down) and then subtracts half of the original input."
+Induced,bhurd1,(input / 2) * (input) - (input / 2)
+Induced,hlucco,sum of all the numbers up to input
+Induced,mislam8,"for f(n), outputs f(n-1)+(n-1)"
+Induced,egrimsh1,If the number is positive it will sum from 0  - number and then subtract the number from answer. If the number is negative it will sum the absolute value from 0 - absolute value of number. 
+Induced,ilayzer,"some kind of summation, difference increases by 1 each time"
+Induced,ksang1,"Given input  = 0 or 1, inputs greater = 1+2+3+...+x_n, where n is the input number"
+Induced,dli72,Returns n*(n-1)/2.
+Induced,tristandyer,n * (n - 1) / 2
+Median,zmothner,This function returns the median of the input list.
+Median,emadsen,"if [A,B]-> (A+B)/2
+if [A,B,C] -> B"
+Median,dli72,Returns the median of the given list of integers
+Median,hlucco,"if the list length is even take the median, if the list length is odd take the average of the two median"
+Median,srockhil,"pairs of two coordinates represent bounds. function returns midpoint of bounds if length of array is even. if its odd it returns the upper or lower bound depending if the last element is above or below the bounds, respectively "
+Median,ksachan,calculates median
+Median,ilayzer,median
+Median,iilozor,Average of the list input.
+Median,agoldb10,"If the number of elements in the list is odd, it returns the median value.  If the number of elements is even, it returns the average of the two median values.  (either way, it returns the average of the median value(s))"
+SecondIntoFirstDivisible,iilozor,"If the first and second numbers have the same abs(), return true. Else false."
+SecondIntoFirstDivisible,ksachan,Let x1 be the first number and x2 be the second number. True when x2 is a divisor (positive or negative) of x1.
+SecondIntoFirstDivisible,agoldb10,I think this function returns true if the second input is a factor of the first.
+SecondIntoFirstDivisible,srockhil,if the second input is a factor of the first
+SecondIntoFirstDivisible,hlucco,"If b is greater than a return false, else return true"
+SecondIntoFirstDivisible,mislam8,"returns true if second input divides first input, else returns false"
+SecondIntoFirstDivisible,emadsen,difference is 0 or 1 false
+SecondIntoFirstDivisible,abrown53,"Returns TRUE if the first number is divisible by the second, and FALSE otherwise."
+SumBetween,bhurd1,(average) * (1 + difference)
+SumBetween,agoldb10,"This function returns 0 when the second input is less than the first.  When the two inputs are both x, it returns x.  For any inputs (x, y), where y > x, the function f returns f(x, y - 1) + y."
+SumBetween,emadsen,"Int 1 = B and int 2 = A
+if A>B return 0
+if A=B return B
+if A<B return B + (B-1) + (B-2) + ... + A"
+SumBetween,iilozor,"If the second number is less than the first number, return 0. 
+If the second number equals the first number, return the number.
+If the second number is greater, then add the second number to the first number plus 1 less than the second number."
+SumBetween,abrown53,Returns the sum of the numbers between the first and second numbers.
+SumBetween,zmothner,It adds up all the numbers less than input 1 and then subtracts that sum from the sum of all numbers less than (and including) input 2.
+SumBetween,dli72,Returns the sum of all integers greater than or equal to the first number and less than or equal to the second.
+SumBetween,ksang1,"Given the first number, if the second number is greater than the first number,  it is (first number + (1 + 2 + 3 +... secondnumber)"
+SumBetween,srockhil,first input + sum from first input to second input
+SumBetween,lqu2,"the function returns 0 if the first number is greater than the second number. then, from the moment when the two numbers are equal, it will evaluate to the second number plus the previous output"
+SumBetween,spark108,"Given (a,b), if b<a, return 0
+if a >=b, return ((a+b)(b-a+1)/2)"
+SumBetween,hlucco,This function takes in two numbers and then adds the first to the second and then adds that sum to the second.
+SumBetween,ksachan,"sum numbers from first number to second numbers, inclusive as long as first number < second number"
+SumBetween,mthain,noooo give me my answer back. basically fib stuff but ..
+SumBetween,mislam8,"if the second output is greater than the first, returns the sum of integers from first input to second input (inclusive)
+else returns zero"
+SumParityBool,ksachan,"True for lists of length 2 or 3
+"
+SumParityBool,dli72,Returns whether the sum of all numbers in the list is odd.
+SumParityBool,ksang1,"If the sum of list is odd, return true"
+SumParityBool,srockhil,"adds up elements, true if odd false if even
+"
+SumParityBool,emadsen,"even sum - False
+odd sum - True"
+SumParityInt,agoldb10,"I think this function returns 0 if 2 is a factor of the sum of the elements in the list, otherwise it returns 1."
+SumParityInt,egrimsh1,Even sum goes to 0. Odd sum goes to 1. 
+SumParityInt,spark108,.
+SumParityInt,bhurd1,"0 if sum is even
+1 if sum is odd"
+SumParityInt,lqu2,0 if the sum of all integers is even and 1 if sum of all integers is odd
+SumParityInt,mislam8,Counts the number of composite values in the set - an odd number of composite values outputs 0 and even number of composite values outputs 1
+SumParityInt,ilayzer,odd number of odd numbers
+SumParityInt,abrown53,"If the sum of the numbers in the list is odd, print 1. If the sum is even, print 0."
+SumParityInt,mthain,"parity of the sum -> odd =1, even =0"
+SumParityInt,zmothner,"Outputs 1 if the sum of all numbers is odd, otherwise outputs 0."
+SumParityInt,iilozor,"If integers in list add up to even number: 0
+else: 1"
+SumParityInt,hlucco,Returns the index of the first prime in the list

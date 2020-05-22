@@ -11,6 +11,7 @@ import FirstIntoSecondDivisible from './functions/FirstIntoSecondDivisible'
 import SumParityBool from './functions/SumParityBool';
 import SumParityInt from './functions/SumParityInt';
 import Induced from './functions/Induced';
+import Dummy from './functions/Dummy'
 
 function coinFlip(first, second) {
   const flip = Math.random()
@@ -39,7 +40,7 @@ function shuffle(a) {
 // shuffle the funcObjs, and then assign at random with the links 
 // with the indices
 var funcs = []
-funcs.push(coinFlip(Average, Median))
+funcs.push(Dummy)
 funcs.push(coinFlip(SecondIntoFirstDivisible, FirstIntoSecondDivisible))
 funcs.push(coinFlip(SumParityBool, SumParityInt))
 funcs.push(Induced)
