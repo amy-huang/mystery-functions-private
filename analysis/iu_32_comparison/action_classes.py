@@ -210,6 +210,27 @@ class Subject:
 	def addAnswerTags(self, fcnName: str, tags):
 		self.functionAttempts[fcnName].addAnswerTags(tags)
 
+	def fcnNames(self):
+		return self.functionAttempts.keys()
+
+	def fcnScore(self, fcn):
+		tags = self.functionAttempts[fcn].answerTags()
+		if tags == None:
+			return 0
+
+		rating = 0
+		if "COR" in tags:
+			rating = 4
+		elif "MCOR" in tags:
+			rating = 3
+		elif "SCOR" in tags:
+			rating = 2
+		elif "XCOR" in tags:
+			rating = 1
+		else:
+			return 0
+		return rating
+
 	def answerTagsByOrder(self):
 		ratingsInOrder = []
 		for FA in self.FAsInOrder:
@@ -380,9 +401,13 @@ class Distributions:
 				sum += numAttempts
 				numSubs += 1
 				allNumAttempts.append(numAttempts)
-		median = sorted(allNumAttempts)[floor(len(allNumAttempts)/2)]
+		median = 0
+		avg = 0
+		if len(allNumAttempts) > 0:
+			median = sorted(allNumAttempts)[floor(len(allNumAttempts)/2)]
+			avg = sum/numSubs
 		res += "Median quiz attempts {}\n".format(median)
-		res += "Average quiz attempts {}\n".format(sum/numSubs)
+		res += "Average quiz attempts {}\n".format(avg)
 		return res
 
 	def printMedianEvals(self):
@@ -390,6 +415,7 @@ class Distributions:
 		# res = ""
 		sum = 0
 		numSubs = 0
+		print("duds", self.traceLens[0] + self.traceLens[1])
 		for numEvals in sorted(self.traceLens.keys()):
 			freq = self.traceLens[numEvals]
 			for _ in range(freq):
@@ -447,14 +473,14 @@ class DistributionKeeper:
 	def EIsBwQAs(self):
 		res = ""
 		for rating in sorted(self.ratingsToDistros):
-			res += "Rating {}\n".format(rating)
+			# res += "Rating {} EIs bw QAs\n".format(rating)
 			res += self.ratingsToDistros[rating].printEIsBwQAs()
 		return res
 
 	def quizAttempts(self):
 		res = ""
 		for rating in sorted(self.ratingsToDistros):
-			res += "Rating {}\n".format(rating)
+			res += "Rating {} quiz attempts\n".format(rating)
 			res += self.ratingsToDistros[rating].printMedianQuizAttempts()
 		return res
 

@@ -83,6 +83,9 @@ def inputEditOps(fcn:str, first, second: EvalInput):
     secondCharas = inType.toCharas(second.input)
     return editops(firstCharas, secondCharas)
 
+def inputEditOpsFromBlank(inp: EvalInput):
+    return editops("", inp.input)
+
 def opsToNum(ops):
     if len(ops) == 0:
         return 0
@@ -263,6 +266,12 @@ if __name__ == "__main__":
     SCOR = "SCOR"
     XCOR = "XCOR"
 
+    # ID to subject source
+    subSource = {}
+
+    # Answer ratings, ID to "fcn score"
+    answerRatings = {}
+
     # Get fine grained tags 
     for whichFile in ["32", "IU"]:
         for fcn in FCN_NAMES:
@@ -289,6 +298,27 @@ if __name__ == "__main__":
                     if idsToSubs[ID].didFcn(fcn):
                         idsToSubs[ID].addAnswerTags(fcn, tags)
 
+                    subSource[ID] = whichFile
+
+                    if "{}_{}".format(whichFile, ID) not in answerRatings:
+                        answerRatings["{}_{}".format(whichFile, ID)] = []
+
+                    rating = 0
+                    if "COR" in tags:
+                        rating = 4
+                    elif "MCOR" in tags:
+                        rating = 3
+                    elif "SCOR" in tags:
+                        rating = 2
+                    elif "XCOR" in tags:
+                        rating = 1
+                    if rating == 0:
+                        continue
+                    answerRatings["{}_{}".format(whichFile, ID)].append("{} {}".format(fcn, rating))
+    # for arID in answerRatings:
+    #     print(arID)
+    #     print("{}, {}, {}".format(arID.split("_")[0], arID.split("_")[1], len(answerRatings[arID])))    
+
     # Map fcn to correctness to tag frequencies. uh oh this calls for another class!!!
     # Then we can look at each fcn's things
     tagsByRating = TagsByFcn()
@@ -312,10 +342,15 @@ if __name__ == "__main__":
     # ops frequency, list ops to num
     opsFreq = {}
 
+    # stretch lens of op groups
+    groupLens = {}
+
+    # freq of higher/lower relationships - previous one vs. next one
+    trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
+
     # Open a csv for each corr rating, then go through subs and write Ls to csv
+    distros = DistributionKeeper()
     for fcn in sys.argv[2:]:
-        print(fcn)
-        distros = DistributionKeeper()
         with open("COR_Ls.csv", "w") as COR_CSV:
             with open("MCOR_Ls.csv", "w") as MCOR_CSV:
                 with open("SCOR_Ls.csv", "w") as SCOR_CSV:
@@ -360,10 +395,13 @@ if __name__ == "__main__":
                                 currLen = 0
                                 editOps[ID_FCN] = []
 
-                                for i in range(1, len(evals)):
+                                for i in range(0, len(evals)):
                                     # edit ops
                                     ops = inputEditOps(fcn, evals[i-1], evals[i])
                                     # editOps[idfcn].append(opsToNum(ops)) # encoding actual ops
+                                    if i == 0:
+                                        ops = inputEditOpsFromBlank(evals[i])
+
                                     numOps[ID_FCN].append(len(ops))
                                     
                                     # Look at average length of same op sequences
@@ -371,10 +409,6 @@ if __name__ == "__main__":
                                     for op in ops:
                                         currOpsList.append(op[0])
                                     nextOps = " ".join(sorted(currOpsList))
-
-                                    if nextOps not in opsFreq:
-                                        opsFreq[nextOps] = 0
-                                    opsFreq[nextOps] += 1
 
                                     # Next group of operations is the same as current streak
                                     if nextOps == currOps:
@@ -390,7 +424,14 @@ if __name__ == "__main__":
                                                     stretchLens[ID_FCN] = []
                                                 stretchLens[ID_FCN].append(currLen)
                                                 editOps[ID_FCN].append(currOps)
+
+                                                if currOps not in groupLens:
+                                                    groupLens[currOps] = []
+                                                groupLens[currOps].append(currLen)
                                                 # print("{} change in op {} to {}".format(ID_FCN, currOps, nextOps))
+                                                if nextOps not in opsFreq:
+                                                    opsFreq[nextOps] = []
+                                                opsFreq[nextOps].append(currLen)
 
                                             # Start new streak
                                             currOps = nextOps
@@ -410,7 +451,15 @@ if __name__ == "__main__":
                                         stretchLens[ID_FCN] = []
                                     stretchLens[ID_FCN].append(currLen)
                                     editOps[ID_FCN].append(currOps)
+
+                                    if currOps not in groupLens:
+                                        groupLens[currOps] = []
+                                    groupLens[currOps].append(currLen)
                                     # print("{} end trace w streak {}".format(ID_FCN, currOps))
+
+                                    if nextOps not in opsFreq:
+                                        opsFreq[nextOps] = []
+                                    opsFreq[nextOps].append(currLen)
 
                                 # Writing edit distance to csv
                                 # line += "\n"
@@ -423,12 +472,12 @@ if __name__ == "__main__":
                                 
                                 sub = idsToSubs[ID]
                                 acts, EIs, QAs = sub.allFcnActions(fcn)
-                                distros.addQuizAttempts(rating, len(QAs.keys()))
-                                distros.addEIsBwQAs(rating, sub.ID, sub.getEvalLens(fcn))
+
+                                if subSource[ID] == "32":
+                                    distros.addQuizAttempts(rating, len(QAs.keys()))
+                                    distros.addEIsBwQAs(rating, ID_FCN, sub.getEvalLens(fcn))
         # Per function printouts
-        # print(distros.EIsBwQAs())
-        # print(distros.highestDiffs())
-        # print(distros.numEvals())
+        
         # print(distros.firstStretchStats())
 
         # Print edit ops
@@ -437,6 +486,11 @@ if __name__ == "__main__":
         #     for ops in editOps[ID]:
         #         line += "{}, ".format(ops)
         #     print(line)
+
+    # print(distros.EIsBwQAs())
+    # # print(distros.highestDiffs())
+    # print(distros.numEvals())
+    # print(distros.quizAttempts())
 
     # # Consecutive input difference clustering
     # maxConsecLen = 0
@@ -453,15 +507,167 @@ if __name__ == "__main__":
     #         newTrace.append(0)
     #     filled.append(newTrace)
 
-    # Across all printouts
+    # # Across all printouts
     # print("Ratings across all fcns done")
     # for ID in idsToSubs:
     #     sub = idsToSubs[ID]
-    #     line = "{}, ".format(ID)
-    #     # for rating in sub.answerTagsByOrder():
-    #     #     line += "{}, ".format(rating)
+    #     if ID not in subSource:
+    #         continue
+    #     if len(sub.answerTagsByOrder()) == 0:
+    #         continue
+    #     line = "{}, {}, ".format(subSource[ID], ID)
+    #     for rating in sub.answerTagsByOrder():
+    #         line += "{}, ".format(rating)
     #     totalScore = sum(sub.answerTagsByOrder())
     #     print(line)
+
+
+    print("Ratings across all fcns done")
+    allRatings = { "32": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }, "IU": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }}
+    for ID in idsToSubs:
+        sub = idsToSubs[ID]
+        fcns = sub.fcnNames()
+        for f in fcns:
+            rating = sub.fcnScore(f)
+            if rating > 0:
+                # print("{}, {}, {}, {}".format(subSource[ID], ID, f, rating))
+                allRatings[subSource[ID]][f][rating] += 1
+
+    for which in allRatings:
+        for fcn in allRatings[which]:
+            line = "{}, {}, ".format(which, fcn)
+            for rating in range(1, 5):
+                line += "{}, ".format(allRatings[which][fcn][rating])
+            print(line)
+
+    #     sub.EIs
+    # EIsBwQAs
+
+    # avg lens per stretch of each operation group
+    # for opsGroup in sorted(groupLens.keys()):
+    #     print("{}, {}, {}".format(opsGroup, len(groupLens[opsGroup]), sum(groupLens[opsGroup])/ len(groupLens[opsGroup])))
+
+    # duds32 = 0
+    # dudsIU = 0
+    # for stretchID in stretchLens:
+    #     ID = stretchID.split("_")[0]
+    #     trace = stretchLens[stretchID]
+    #     if len(trace) < 2:
+    #         if subSource[ID] == "32":
+    #             duds32 += 1
+    #         elif subSource[ID] == "IU":
+    #             dudsIU += 1
+    # print("duds 32 {}".format(duds32))
+    # print("duds IU {}".format(dudsIU))
+
+    # averiage deviation from average change in op chain length
+    # chainLenDiffs = []
+    # chainLenDiffFromAvgs = []
+    # allChainLens = []
+    # for eoID in stretchLens:
+    #     for sl in stretchLens[eoID]:
+    #         allChainLens.append(sl)
+    # chainLenAvg = sum(allChainLens)/len(allChainLens)
+    # print("chain len avg {}".format(chainLenAvg))
+    # for eoID in stretchLens:
+    #     lensTrace = stretchLens[eoID]
+    #     for i in range(0, len(lensTrace)):
+    #         if i > 0:
+    #             diff = abs(lensTrace[i-1] - lensTrace[i])
+    #             chainLenDiffs.append(diff)
+    #             if eoID == "mghani1_Median":
+    #                 print("{} idx {} diff bw lenths is {}".format(eoID, i, diff))
+    #         diffFromAvg = abs(lensTrace[i] - chainLenAvg)
+    #         chainLenDiffFromAvgs.append(diffFromAvg)
+    #         if eoID == "mghani1_Median":
+    #             print("{} idx {} diff from avg is {}".format(eoID, i, diffFromAvg))
+    # avgDiffFromAvg = sum(chainLenDiffFromAvgs)/len(chainLenDiffFromAvgs)
+    # avgConsecDiff = sum(chainLenDiffs)/len(chainLenDiffs)
+    # print("Avg chain length diff from average: {} Avg diff bw consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
+
+    # magnDicts = { "lower": { "lower": [], "same": [], "higher": [] }, "same": { "lower": [], "same": [], "higher": [] }, "higher": { "lower": [], "same": [], "higher": [] } }
+    # trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
+    # for stretchID in stretchLens:
+    #     ID = stretchID.split("_")[0]
+    #     trace = stretchLens[stretchID]
+    #     # print(stretchID, trace)
+    #     for i in range(1, len(trace)-1):
+    #         if i + 1 < len(trace):
+    #             prevNum = trace[i-1]
+    #             nextNum = trace[i+1]
+    #             currNum = trace[i]
+    #             # print(currNum, prevNum, nextNum)
+
+    #             prevDict = {}
+    #             dictName = ""
+    #             if prevNum < currNum:
+    #                 dictName = "lower"
+    #             elif prevNum == currNum:
+    #                 dictName = "same"
+    #             elif prevNum > currNum:
+    #                 dictName = "higher"
+    #             prevDict = trendDicts[dictName]
+    #             magD = magnDicts[dictName]
+
+    #             if nextNum < currNum:
+    #                 prevDict["lower"] += 1
+    #                 magD["lower"].append(currNum - nextNum)
+    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "lower"))
+    #             elif nextNum == currNum:
+    #                 prevDict["same"] += 1
+    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "same"))
+    #             elif nextNum > currNum:
+    #                 prevDict["higher"] += 1
+    #                 magD["same"].append(nextNum - currNum)
+    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "higher"))
+
+    # # probabilities for spikiness
+    # totals = { "lower": 0, "same": 0, "higher": 0 }
+    # for dictName in sorted(trendDicts.keys()):
+    #     currDict = trendDicts[dictName]
+    #     magnD = magnDicts[dictName]
+    #     for nextRel in sorted(currDict.keys()):
+    #         if len(magnD[nextRel]) > 0:
+    #             print("{} {} {}".format(dictName, nextRel, sum(magnD[nextRel])/len(magnD[nextRel])))
+    #         totals[dictName] += currDict[nextRel]
+    #     print("last data point was {}, total next points is {}".format(dictName, totals[dictName]))
+
+    # for dictName in sorted(trendDicts.keys()):
+    #     currDict = trendDicts[dictName]
+    #     for nextRel in sorted(currDict.keys()):
+    #         print("last data point was {}, next data point is {}: freq is {}, likelihood is {}".format(dictName, nextRel, currDict[nextRel], (100 * currDict[nextRel])/totals[dictName]))
+
+    # BrespondentsPerFcn = { }
+    # IUrespondentsPerFcn = { }
+    # allResps = { "32": {}, "IU": {} }
+    # for combID in stretchLens:
+    #     ID = combID.split("_")[0]
+    #     FCN = combID.split("_")[1]
+
+    #     respDict = {}
+    #     if subSource[ID] == "32":
+    #         respDict = BrespondentsPerFcn
+    #     else:
+    #         respDict = IUrespondentsPerFcn
+
+    #     if FCN not in respDict:
+    #         respDict[FCN] = []
+    #     respDict[FCN].append(ID)
+    #     if ID not in allResps[subSource[ID]]:
+    #         allResps[subSource[ID]][ID] = 1
+    # for fcn in BrespondentsPerFcn:
+    #     print("{}, {}, {},".format("32", fcn, len(BrespondentsPerFcn[fcn])))
+    # for fcn in IUrespondentsPerFcn:
+    #     print("{}, {}, {},".format("IU", fcn, len(IUrespondentsPerFcn[fcn])))
+    # print("{}, {}".format("32", len(allResps["32"])))
+    # print("{}, {}".format("IU", len(allResps["IU"])))
+
+    # # Most common ops between consecutive input evals
+    # print("How many operation chains use these operations, and average lengths")
+    # for ops in sorted(opsFreq.keys()):
+    #     chainLens = opsFreq[ops]
+    #     numChains = len(chainLens)
+    #     print("{}, {}, {}".format(ops, numChains, chainLens[floor(numChains / 2)]))
 
     # Stretch len stats
     with open("sameOps.csv", "x") as SAMEOPS:
@@ -478,7 +684,7 @@ if __name__ == "__main__":
                     avg = sum(stretchLens[ID_FCN]) / len(stretchLens[ID_FCN])
                     median = sorted(stretchLens[ID_FCN])[floor(len(stretchLens[ID_FCN]) / 2)]
 
-                    lentrace += "{}, {}, {}, {}, ".format(len(editOps[ID_FCN]), FCN, score, ID)
+                    lentrace += "{}, {}, {}, {}, {}, ".format(subSource[ID], len(editOps[ID_FCN]), FCN, score, ID)
 
                     # Trace of stretch lengths
                     lenDistro = {}
@@ -496,7 +702,7 @@ if __name__ == "__main__":
                     #     else:
                     #         termPrint += "{}, ".format(lenDistro[sl])
 
-                    alleditOps = "{}, {}, {}, {}, ".format(len(editOps[ID_FCN]), FCN, score, ID)
+                    alleditOps = "{}, {}, {}, {}, {}, ".format(subSource[ID], len(editOps[ID_FCN]), FCN, score, ID)
                     for opGroup in editOps[ID_FCN]:
                         alleditOps += "{}, ".format(opGroup)
                     alleditOps += "\n"
@@ -508,9 +714,7 @@ if __name__ == "__main__":
                 lentrace += "\n"
                 SAMEOPSTATS.write(lentrace)
 
-    # # Most common ops between consecutive input evals
-    # for ops in sorted(opsFreq.keys()):
-    #     print("{}, {}".format(ops, opsFreq[ops]))
+    
 
     # # Consecutive edit ops vector clustering
     # maxConsecLen = 0
