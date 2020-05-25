@@ -1,25 +1,29 @@
-import Integer from "../types/Integer";
+import ListOfInteger from "../types/ListOfInteger";
+import Float from "../types/Float";
 
 class Dummy {
   static numArgs = 1
-
-  static inputType = Integer
-  static outputType = Integer
+  static inputType = ListOfInteger
+  static outputType = Float
 
   static description(): string {
     return "Dummy"
   }
 
-  static function(num: number): number {
-    return Math.abs(num) + 1
+  static function(items: number[]): number {
+    var sum = 0
+    for (var i = 0; i < items.length; i++) {
+        sum += items[i]
+    }
+    return Math.abs(sum)
   }
 
   static inputGenerators(): Function[] {
-    return [() => { return 31 }, () => { return 0 }, () => { return -44 }]
+    return [() => { return [8, 3, 11] }, () => { return [-4, 1] }, () => { return [-10, -2, 0, 0] }]
   }
 
   static answerText(): string {
-    return "Given a number x, this function returns |x| + 1"
+    return "This function returns the median of the input list of numbers. If the size of the list is odd, it is the middle element of the list when sorted; if the size is even, it is the average of the middle two elements of the list when sorted."
   }
 
   static inputPlaceHolderText(): string {
@@ -39,16 +43,30 @@ class Dummy {
   }
 
   static validInput(input: any): boolean {
-    return this.inputType.valid(input)
+    var as_list;
+    try {
+      // Parse string as a list, with brackets required
+      if (input.trim()[0] !== "[") {
+        // console.log("no starting bracket")
+        return false;
+      }
+      as_list = JSON.parse(input);
+      if (as_list.length > 0) {
+        return this.inputType.valid(input)
+      } else {
+        return false
+      }
+    } catch (e) {
+      console.log("error: ", e)
+      return false;
+    }
   }
-
-  /* Should not have to touch functions below here! */
 
   static validOutput(input: any): boolean {
     return this.outputType.valid(input)
   }
 
-  static parseInput(input: any): number {
+  static parseInput(input: any): any[] {
     return this.inputType.parse(input)
   }
 
@@ -64,7 +82,7 @@ class Dummy {
     return this.outputType.areEquivalent(first, second)
   }
 
-  static inputDisplayStr(input: number): string {
+  static inputDisplayStr(input: number[]): string {
     return this.inputType.displayString(input)
   }
 
@@ -72,7 +90,7 @@ class Dummy {
     return this.outputType.displayString(output)
   }
 
-  static inputDBStr(input: number): string {
+  static inputDBStr(input: number[]): string {
     return this.inputType.dbString(input)
   }
 
