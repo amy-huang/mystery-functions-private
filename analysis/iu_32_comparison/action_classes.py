@@ -211,7 +211,7 @@ class Subject:
 		self.functionAttempts[fcnName].addAnswerTags(tags)
 
 	def fcnNames(self):
-		return self.functionAttempts.keys()
+		return [FA.name for FA in self.FAsInOrder]
 
 	def fcnScore(self, fcn):
 		tags = self.functionAttempts[fcn].answerTags()
@@ -573,3 +573,107 @@ class TagsByCorrectness:
 			if tag not in ratingDict:
 				ratingDict[tag] = 0
 			ratingDict[tag] = ratingDict[tag] + 1
+
+class SubKeeper:
+	def __init__(self, ID):
+		self.ID = ID
+		self.fcnNames = []
+		self.compRatings = []
+		self.corRatingsFull = []
+		self.corRatingsCollapsed = []
+
+	def comps(self):
+		line = "{}, ".format(self.ID)
+		for rating in self.compRatings:
+			line += "{}, ".format(rating)
+		return line
+
+	def corsFull(self):
+		line = "{}, ".format(self.ID)
+		for rating in self.corRatingsFull:
+			line += "{}, ".format(rating)
+		return line
+
+	def corsCollapsed(self):
+		line = "{}, ".format(self.ID)
+		for rating in self.corRatingsCollapsed:
+			line += "{}, ".format(rating)
+		return line
+
+	def addCompRating(self, fcn, rating: str):
+		self.fcnNames.append(fcn)
+		self.compRatings.append(rating)
+		# self.corRatingsFull.append(0)
+
+	def addCorRating(self, fcn, rating: int):
+		self.fcnNames.append(fcn)
+		# self.compRatings.append("NORM")
+		self.corRatingsCollapsed.append(rating)
+
+class FcnKeeper:
+	def __init__(self):
+		self.compRatings = {}
+		self.corRatings = {}
+
+	def comps(self):
+		line = ""
+		for fcn in self.compRatings:
+			line += "{}, ".format(fcn)
+			for rating in sorted(self.compRatings[fcn].keys()):
+				line += "{}, ".format(self.compRatings[fcn][rating])
+			line += "\n"
+		return line
+
+	def cors(self):
+		line = ""
+		for fcn in self.corRatings:
+			line += "{}, ".format(fcn)
+			for rating in sorted(self.corRatings[fcn].keys()):
+				line += "{}, ".format(self.corRatings[fcn][rating])
+			line += "\n"
+		return line
+	
+	def addCompRating(self, fcn, rating: str):
+		if fcn not in self.compRatings:
+			self.compRatings[fcn] = { "NONS": 0, "IDK": 0, "NORM": 0 }
+		self.compRatings[fcn][rating] += 1
+
+	def addCorRating(self, fcn, rating: int):
+		if fcn not in self.corRatings:
+			self.corRatings[fcn] = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }
+		self.corRatings[fcn][rating] += 1
+		# self.addCompRating(fcn, "NORM")
+
+class FcnSubDivider:
+	def __init__(self):
+		self.subs = {}
+		self.fcns = FcnKeeper()
+
+	def __str__(self):
+		result = "comps\n"
+		# for ID in self.subs:
+		# 	result += "{}\n".format(self.subs[ID].comps())
+		
+		result += "fcn comps\n"
+		result += "{}\n".format(self.fcns.comps())
+
+		result += "fcn cors\n"
+		result += "{}\n".format(self.fcns.cors())
+		return result
+
+	def addCompRating(self, ID, fcn, rating: str):
+		if ID not in self.subs:
+			self.subs[ID] = SubKeeper(ID)
+		self.subs[ID].addCompRating(fcn, rating)
+
+		self.fcns.addCompRating(fcn, rating)
+
+	def addCorRating(self, ID, fcn, rating: int):
+		if ID not in self.subs:
+			self.subs[ID] = SubKeeper(ID)
+		self.subs[ID].addCorRating(fcn, rating)
+
+		self.fcns.addCorRating(fcn, rating)
+		# self.addCompRating(ID,  fcn, "NORM")
+
+	

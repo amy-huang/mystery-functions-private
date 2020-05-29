@@ -272,6 +272,10 @@ if __name__ == "__main__":
     # Answer ratings, ID to "fcn score"
     answerRatings = {}
 
+    # Subject to list of comprehensiveness labels they got
+    compRatings = {}
+    allAnswerRatings = {}
+
     # Get fine grained tags 
     for whichFile in ["32", "IU"]:
         for fcn in FCN_NAMES:
@@ -290,10 +294,10 @@ if __name__ == "__main__":
                                 tags.append(tag)
 
                     if ID not in idsToSubs:
-                        # print("WARNING: this ID has no subject", ID)
+                        print("WARNING: this ID has no subject", ID)
                         continue
                     if idsToSubs[ID] == None:
-                        # print("WARNING: this ID has None subject", ID)
+                        print("WARNING: this ID has None subject", ID)
                         continue
                     if idsToSubs[ID].didFcn(fcn):
                         idsToSubs[ID].addAnswerTags(fcn, tags)
@@ -312,9 +316,52 @@ if __name__ == "__main__":
                         rating = 2
                     elif "XCOR" in tags:
                         rating = 1
+
+                    if ID not in compRatings:
+                        compRatings[ID] = {}
+                    if "NONS" in tags:
+                        compRatings[ID][fcn] = "NONS"
+                    elif "IDK" in tags:
+                        compRatings[ID][fcn] = "IDK"
+                    elif "NORM" in tags:
+                        compRatings[ID][fcn] = "NORM"
+                    else:
+                        # compRatings[ID][fcn] = ""
+                        print("Warning: {} does not have comprehensiveness rating for {}".format(ID, fcn))
+
+                    # total comps/cors
+                    if ID not in allAnswerRatings:
+                        allAnswerRatings[ID] = {}
+                    allAnswerRatings[ID][fcn] = rating
+
                     if rating == 0:
                         continue
                     answerRatings["{}_{}".format(whichFile, ID)].append("{} {}".format(fcn, rating))
+
+    BrownComps = FcnSubDivider()
+    IUComps = FcnSubDivider()
+    compRatingLists = {}
+    for ID in idsToSubs:
+        if ID not in compRatings or ID not in allAnswerRatings:
+            continue
+        compRatingLists[ID] = []
+        sub = idsToSubs[ID]
+        # compRatingLists[ID] = [compRatings[name] for name in sub.fcnNames()]
+        # print(sub.fcnNames())
+        for fcn in sub.fcnNames():
+            # print(fcn)
+            if fcn in compRatings[ID]:
+                if subSource[ID] == "IU":
+                    IUComps.addCompRating(ID, fcn, compRatings[ID][fcn])
+                    IUComps.addCorRating(ID, fcn, allAnswerRatings[ID][fcn])
+                else:
+                    BrownComps.addCompRating(ID, fcn, compRatings[ID][fcn])
+                    BrownComps.addCorRating(ID, fcn, allAnswerRatings[ID][fcn])
+
+
+    print("IU", IUComps)
+    print("Brown", BrownComps)
+
     # for arID in answerRatings:
     #     print(arID)
     #     print("{}, {}, {}".format(arID.split("_")[0], arID.split("_")[1], len(answerRatings[arID])))    
@@ -522,6 +569,7 @@ if __name__ == "__main__":
     #     print(line)
 
 
+
     print("Ratings across all fcns done")
     allRatings = { "32": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }, "IU": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }}
     for ID in idsToSubs:
@@ -585,43 +633,116 @@ if __name__ == "__main__":
     # avgConsecDiff = sum(chainLenDiffs)/len(chainLenDiffs)
     # print("Avg chain length diff from average: {} Avg diff bw consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
 
-    # magnDicts = { "lower": { "lower": [], "same": [], "higher": [] }, "same": { "lower": [], "same": [], "higher": [] }, "higher": { "lower": [], "same": [], "higher": [] } }
-    # trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
-    # for stretchID in stretchLens:
-    #     ID = stretchID.split("_")[0]
-    #     trace = stretchLens[stretchID]
-    #     # print(stretchID, trace)
-    #     for i in range(1, len(trace)-1):
-    #         if i + 1 < len(trace):
-    #             prevNum = trace[i-1]
-    #             nextNum = trace[i+1]
-    #             currNum = trace[i]
-    #             # print(currNum, prevNum, nextNum)
+    magnDicts = { "lower": { "lower": [], "same": [], "higher": [] }, "same": { "lower": [], "same": [], "higher": [] }, "higher": { "lower": [], "same": [], "higher": [] } }
+    trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
+    adjacentAreOnes = 0
+    totalPoints = 0
+    pointLens = [] 
+    totalOpsDiff = []
+    avgSetDiff = []
+    for stretchID in stretchLens:
+        ID = stretchID.split("_")[0]
+        trace = stretchLens[stretchID]
+        # print(stretchID, trace)
+        for i in range(0, len(trace)):
+            # Current point is > 1
+            if trace[i] > 1:
+                isSpikePoint = False
+                # First point
+                if i == 0:
+                    # If exists next point
+                    if len(trace) > 1:
+                        totalPoints += 1
+                        # If next point is 1
+                        if trace[i+1] == 1:
+                            adjacentAreOnes += 1
+                            pointLens.append(trace[i])
 
-    #             prevDict = {}
-    #             dictName = ""
-    #             if prevNum < currNum:
-    #                 dictName = "lower"
-    #             elif prevNum == currNum:
-    #                 dictName = "same"
-    #             elif prevNum > currNum:
-    #                 dictName = "higher"
-    #             prevDict = trendDicts[dictName]
-    #             magD = magnDicts[dictName]
+                            currOps = editOps[stretchID][i].split()
+                            nextOps = editOps[stretchID][i+1].split()
+                            avgNumOpDiff = abs(len(currOps) - len(nextOps))
+                            totalOpsDiff.append(avgNumOpDiff)
 
-    #             if nextNum < currNum:
-    #                 prevDict["lower"] += 1
-    #                 magD["lower"].append(currNum - nextNum)
-    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "lower"))
-    #             elif nextNum == currNum:
-    #                 prevDict["same"] += 1
-    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "same"))
-    #             elif nextNum > currNum:
-    #                 prevDict["higher"] += 1
-    #                 magD["same"].append(nextNum - currNum)
-    #                 # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "higher"))
+                            currSet = set(editOps[stretchID][i].split())
+                            nextSet = set(editOps[stretchID][i+1].split())
+                            maxSetDiff = max(len(currSet - nextSet) , len(nextSet - currSet))
+                            avgSetDiff.append(maxSetDiff)
+                elif i == len(trace) - 1:
+                   # If exists prev point
+                    if len(trace) > 1:
+                        totalPoints += 1
+                        # If prev point is 1
+                        if trace[i-1] == 1:
+                            adjacentAreOnes += 1 
+                            pointLens.append(trace[i])
 
-    # # probabilities for spikiness
+                            currOps = editOps[stretchID][i].split()
+                            prevOps = editOps[stretchID][i-1].split()
+                            avgNumOpDiff = abs(len(currOps) - len(prevOps))
+                            totalOpsDiff.append(avgNumOpDiff)
+
+                            prevSet = set(editOps[stretchID][i-1].split())
+                            currSet = set(editOps[stretchID][i].split())
+                            maxSetDiff = max(len(currSet - prevSet) , len(prevSet - currSet))
+                            avgSetDiff.append(maxSetDiff)
+                else:
+                    totalPoints += 1
+                    if trace[i-1] == 1 and trace[i+1] == 1:
+                        adjacentAreOnes += 1
+                        pointLens.append(trace[i])
+
+                        currOps = editOps[stretchID][i].split()
+                        prevOps = editOps[stretchID][i-1].split()
+                        nextOps = editOps[stretchID][i+1].split()
+                        avgNumOpDiff = abs(len(currOps) - len(prevOps))
+                        avgNumOpDiff = abs(len(currOps) - len(nextOps))
+                        avgNumOpDiff = avgNumOpDiff / 2
+                        totalOpsDiff.append(avgNumOpDiff)
+
+                        prevSet = set(editOps[stretchID][i-1].split())
+                        currSet = set(editOps[stretchID][i].split())
+                        nextSet = set(editOps[stretchID][i+1].split())
+                        maxSetDiff = max(len(currSet - prevSet) , len(prevSet - currSet))
+                        maxSetDiff += max(len(currSet - nextSet) , len(prevSet - nextSet))
+                        maxSetDiff = maxSetDiff / 2
+                        avgSetDiff.append(maxSetDiff)
+
+            if i + 1 < len(trace):
+                prevNum = trace[i-1]
+                nextNum = trace[i+1]
+                currNum = trace[i]
+                # print(currNum, prevNum, nextNum)
+
+                prevDict = {}
+                dictName = ""
+                if prevNum < currNum:
+                    dictName = "lower"
+                elif prevNum == currNum:
+                    dictName = "same"
+                elif prevNum > currNum:
+                    dictName = "higher"
+                prevDict = trendDicts[dictName]
+                magD = magnDicts[dictName]
+
+                if nextNum < currNum:
+                    prevDict["lower"] += 1
+                    magD["lower"].append(currNum - nextNum)
+                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "lower"))
+                elif nextNum == currNum:
+                    prevDict["same"] += 1
+                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "same"))
+                elif nextNum > currNum:
+                    prevDict["higher"] += 1
+                    magD["same"].append(nextNum - currNum)
+                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "higher"))
+
+    print("adjacent 1s", adjacentAreOnes)
+    print("total points", totalPoints)
+    print("average point lens", sum(pointLens)/len(pointLens))
+    print("average diff in total num ops", sum(totalOpsDiff)/len(totalOpsDiff))
+    print("average ops set diff", sum(avgSetDiff)/len(avgSetDiff))
+
+    # probabilities for spikiness
     # totals = { "lower": 0, "same": 0, "higher": 0 }
     # for dictName in sorted(trendDicts.keys()):
     #     currDict = trendDicts[dictName]
