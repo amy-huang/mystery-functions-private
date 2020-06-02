@@ -15,8 +15,7 @@ import IsDag from './predicates/IsDag'
 import ThreeCycle from './predicates/ThreeCycle'
 import IsBipartite from './predicates/IsBipartite'
 
-import { InputBase } from '@material-ui/core'
-
+// Decides randomly which object to return
 function coinFlip(first, second) {
   const flip = Math.random()
   if (flip < .5) {

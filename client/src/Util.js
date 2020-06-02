@@ -1,4 +1,8 @@
+/**
+ * Provides client helper methods for logging user actions.
+ */
 class Util {
+  // Get local time in client browser
   static getCurrentTime() {
     var today = new Date()
     var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
@@ -6,6 +10,7 @@ class Util {
     return date + ' ' + time
   }
 
+  // Generate a new key for an input evaluation, for use in displaying it
   static newDisplayKey() {
     if (localStorage.getItem('displayKey') === null) {
       localStorage.setItem('displayKey', 0)
@@ -16,6 +21,7 @@ class Util {
     return localStorage.getItem('displayKey')
   }
 
+  // Generate a new key for identifying action order in the database
   static newServerKey() {
     if (localStorage.getItem('serverKey') === null) {
       localStorage.setItem('serverKey', 0)
@@ -26,14 +32,14 @@ class Util {
     return localStorage.getItem('serverKey')
   }
 
-  static async sendToServer(obj) {
-    // console.log(JSON.stringify(obj))
+  // Send action JSON to server to be made into database row
+  static async sendToServer(action) {
     const response = await fetch('/api/store', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(obj),
+      body: JSON.stringify(action),
     })
     const body = await response.text()
     console.log(body)
