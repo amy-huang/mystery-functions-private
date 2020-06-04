@@ -1,3 +1,9 @@
+/**
+ * This file sets up the URLs of each page in relation to the base URL, and passes in
+ * the necessary props to each page. Each mystery function guessing screen needs to know
+ * how many total functions there are, which one they are in the sequence, their
+ * mystery function object, and the next guessing screen.
+ */
 import React from 'react'
 import { Route, HashRouter, Switch } from 'react-router-dom'
 import GuessingScreen from './screens/GuessingScreen'
@@ -15,7 +21,8 @@ import IsDag from './predicates/IsDag'
 import ThreeCycle from './predicates/ThreeCycle'
 import IsBipartite from './predicates/IsBipartite'
 
-// Decides randomly which object to return
+// Decides randomly which object to return; used for deciding which of a 
+// matched pair of functions should be given to a user
 function coinFlip(first, second) {
   const flip = Math.random()
   if (flip < .5) {
@@ -25,7 +32,8 @@ function coinFlip(first, second) {
   }
 }
 
-// Shuffles an array. https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
+// Shuffles an array. Taken from https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
+// Used for randomizing the order of functions presented
 function shuffle(a) {
   var j, x, i;
   for (i = a.length - 1; i > 0; i--) {
@@ -37,12 +45,11 @@ function shuffle(a) {
   return a;
 }
 
-// Logic to randomize screen order would go here
-// -> have a start page that is just a button
-// have an array of random paths and also funcObjs
-// shuffle the funcObjs, and then assign at random with the links 
-// with the indices
+// Initialize the list of functions. No matched pairs for mystery predicates,
+// only mystery functions
 var funcs = []
+// Example of matched pair function
+// funcs.push(coinFlip(Average, Median))
 funcs.push(IsDag)
 funcs.push(ThreeCycle)
 funcs.push(IsBipartite)
