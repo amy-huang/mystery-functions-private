@@ -1,5 +1,8 @@
 /**
- * The main guessing screen for each mystery function.
+ * The main guessing screen for each mystery function. When the user goes to the quiz,
+ * this same page is used, but the quiz components are displayed onscreen instead.
+ * All of the display console logic is here, but the logic for the tabs is in within Tabs
+ * contained by TabsWrapper, and the quiz logic in Quiz.
  */
 import React, { Component } from 'react'
 import withStyles from '@material-ui/styles/withStyles'
@@ -10,7 +13,6 @@ import Grid from '@material-ui/core/Grid'
 import TabsWrapper from '../components/TabsWrapper'
 import Paper from '@material-ui/core/Paper'
 import { GridList, GridListTile } from '@material-ui/core'
-import EvalGuessLine from '../components/EvalGuessLine'
 import EvalInputLine from '../components/EvalInputLine'
 import Quiz from '../components/Quiz';
 import EvalPredInputLine from '../components/EvalPredInputLine'

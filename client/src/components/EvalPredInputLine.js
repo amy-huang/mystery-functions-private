@@ -1,3 +1,6 @@
+/**
+ * Component for displaying an input evaluation for a mystery predicate
+ */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Grid, Typography } from '@material-ui/core';

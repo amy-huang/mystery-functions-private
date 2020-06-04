@@ -1,3 +1,6 @@
+/**
+ * Component for the quiz
+ */
 import React, { Component } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { TextField } from '@material-ui/core'
@@ -111,33 +114,35 @@ class Quiz extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      question: 0,  // which question
-      answered: false, // whether question answered or not
-      text: this.props.funcObj.outputPlaceHolderText(), // submitted user text
-      done: false,  // finished all questions for this func, so don't show next Q button
-      showAnswer: false, // show answer for function or not
-      notMovingOn: true, // stop showing answer in case next page loads before we navigate to guessing screen
-      gotItRight: false,
+      question: 0,  // Which question to be displayed 
+      answered: false, // Whether question answered or not
+      text: this.props.funcObj.outputPlaceHolderText(), // Set default output text if needed
+      done: false,  // Whether user finished all questions for this func
+      showAnswer: false, // Whether to show answer for function or not
+      notMovingOn: true, // To stop showing answer in case next page loads before we navigate to guessing screen
+      gotItRight: false, // Whether question was answered correctly
     }
   }
 
-  funcObj = this.props.funcObj
-  inputGens = this.funcObj.inputGenerators()
-  currInput = ""
-  answerText = ""
-  setNextQ = this.props.setNextQ
+  funcObj = this.props.funcObj // The function object
+  inputGens = this.funcObj.inputGenerators() // Array of functions that simply return the inputs for the quiz questions
+  currInput = "" // Text of current input for quiz question
+  answerText = "" // Text indicating whether submitted answer is correct or not
+  setNextQ = this.props.setNextQ // Function for telling the guessing screen which question inputs can't be evaluated
 
+  // Get the input for the current question
   questionInput = () => {
     var newInput = this.inputGens[this.state.question]()
     this.currInput = newInput
     return newInput
   }
 
+  // Submit answer to quiz question 
   submitAnswer = (submitted) => {
     if (this.state.answered === true) {
       return
     }
-
+    // Check for empty or ill-formed output
     if (submitted === "") {
       alert("Please submit an answer!")
       return
@@ -147,6 +152,7 @@ class Quiz extends Component {
       return
     }
 
+    // Calculate actual output and see if submitted one matches
     var actual
     if (this.funcObj.numArgs === 2) {
       actual = this.funcObj.function(this.currInput[0], this.currInput[1])
@@ -156,7 +162,7 @@ class Quiz extends Component {
     const submittedAsVal = this.funcObj.parseOutput(submitted)
     const gotCorrect = this.funcObj.equivalentOutputs(submittedAsVal, actual)
 
-    //Construct action object and send to server 
+    // Construct action object and send to server 
     if (localStorage.getItem(this.funcObj.description()) === null) {
       var action = {}
       action.id = localStorage.getItem('userID')
@@ -168,16 +174,12 @@ class Quiz extends Component {
       action.actual = this.funcObj.outputDBStr(actual)
       action.result = gotCorrect.toString()
       action.time = Util.getCurrentTime()
-      // console.log(action)
       action.key = Util.newServerKey()
-      Util.sendToServer(action)
 
-      // console.log("'", action.in, "'")
-      // console.log("'", action.out, "'")
-      // console.log("'", action.actual, "'")
+      Util.sendToServer(action)
     }
 
-    // Show answer onscreen
+    // Show text onscreen to say if answer is correct
     var answerText = ""
     if (gotCorrect) {
       answerText = "Nice, that's correct!"
@@ -187,10 +189,13 @@ class Quiz extends Component {
     this.setState({ 'answerText': answerText })
     this.setState({ 'answered': true })
 
+    // Determine if all quiz questions are done
     if (this.state.question + 1 >= this.inputGens.length) {
       this.setState({ done: true })
     }
 
+    // Set state of getting question correct or not, to determine what
+    // options are shown
     if (gotCorrect) {
       this.setState({ gotItRight: true })
     } else {
@@ -198,6 +203,7 @@ class Quiz extends Component {
     }
   }
 
+  // Reset state variables upon moving on to next question
   goToNextQuestion = () => {
     if (this.state.question + 1 < this.inputGens.length) {
       this.setState({
@@ -210,8 +216,8 @@ class Quiz extends Component {
     this.setNextQ(this.state.question + 2)
   }
 
+  // Construct and submit final guess about function to server
   submitFinalGuess = () => {
-    // Construct and submit final answer to server
     var guess = Object()
     guess.id = localStorage.getItem('userID')
     guess.fcn = this.funcObj.description()
@@ -229,12 +235,14 @@ class Quiz extends Component {
     })
   }
 
+  // Go to the next function page (evaluation screen)
   toNextFunc = (nextPage) => {
     this.props.resetFcn()
     this.props.cancelFcn()
     this.props.history.push(nextPage)
   }
 
+  // Return a button component for going to next function
   toNextFuncButton = (nextPage) => {
     if (nextPage === undefined) {
       return (<div></div>)
@@ -248,6 +256,7 @@ class Quiz extends Component {
     )
   }
 
+  // Return component that lists the submitted function guess and our description
   answerComponent = () => {
     return (
       <div>
@@ -269,6 +278,8 @@ class Quiz extends Component {
     )
   }
 
+  // Return button for submitting final guess and seeing description of function after answering
+  // all quiz questions correctly
   submitGuessButton = () => {
     return (
       <Grid item>
@@ -279,6 +290,8 @@ class Quiz extends Component {
     )
   }
 
+  // Return button for moving on to the next quiz question after the current one is answered
+  // successfully
   nextQuestionButton = () => {
     return (
       < Grid item >
@@ -289,6 +302,8 @@ class Quiz extends Component {
     )
   }
 
+  // Return button for giving up after answering quiz question incorrectly, which would go
+  // directly to description of function
   giveUpButton = () => {
     return (
       <Grid item>
@@ -299,13 +314,14 @@ class Quiz extends Component {
     )
   }
 
+  // Component for displaying the quiz question and text box for submitting answer
   questionDisplay = (my_classes) => {
     this.setNextQ(this.state.question + 1)
 
     return (
       <div>
         <Grid item>
-
+          {/* Display text of the quiz question */}
           <Typography> Question {this.state.question + 1} out of {this.inputGens.length}:  </Typography>
           {this.funcObj.numArgs === 2
             ?
@@ -318,9 +334,12 @@ class Quiz extends Component {
             </div>
           }
 
+          {/* Text box for submitting answer to quiz question */}
           <TextField onChange={(e) => { this.setState({ text: e.target.value }) }} value={this.state.text} onKeyUp={(e) => { if (e.keyCode === 13) { this.submitAnswer(e.target.value) } }} helperText="ENTER to submit" disabled={this.state.answered}>
           </TextField>
         </Grid>
+
+        {/* Text for indicating whether quiz question was answered correctly */}
         <Grid padding={8} margin={8} item>
           <Typography variant="h5">{this.state.answerText}</Typography>
         </Grid>
@@ -328,6 +347,7 @@ class Quiz extends Component {
     )
   }
 
+  // Return button for returning to evaluation screen after answering quiz question incorrectly
   retractGuessButton = () => {
     return (
       <div>
@@ -340,12 +360,12 @@ class Quiz extends Component {
     )
   }
 
-
   render() {
     var my_classes = this.props;
     return (
       <div>
         < Grid container item spacing={6} className={my_classes.panel}>
+          {/* Button to go back to evaluation screen */}
           < Grid item>
             {
               this.state.showAnswer ?
@@ -364,6 +384,8 @@ class Quiz extends Component {
                 </div>
             }
           </ Grid>
+
+          {/* Show either the function answer (description of it) or the current quiz question */}
           <Grid item>
             {
               this.state.showAnswer ?
@@ -378,6 +400,8 @@ class Quiz extends Component {
                 </div>
             }
           </Grid>
+
+          {/* Button to next question */}
           < Grid item>
             {this.state.done ?
               null
@@ -400,6 +424,7 @@ class Quiz extends Component {
                     </div>
                 }</div>
             }
+            {/* Button to give up on guessing */}
             {
               this.state.showAnswer ?
                 null
@@ -417,6 +442,8 @@ class Quiz extends Component {
                 </div>
             }
           </ Grid>
+
+          {/* Button to go to function answer after answering all quiz questions correctly */}
           < Grid item>
             {
               this.state.showAnswer ?
