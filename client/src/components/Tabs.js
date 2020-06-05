@@ -1,3 +1,6 @@
+/**
+ * Functions for creating the tabs for input evaluation and guess submission on the evaluation screen
+ */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
@@ -16,9 +19,9 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/theme-github";
 
+// Components making up the tabs
 function TabPanel(props) {
   const { children, value, index, ...other } = props
-
   return (
     <Typography
       component="div"
@@ -32,13 +35,11 @@ function TabPanel(props) {
     </Typography>
   )
 }
-
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
   value: PropTypes.any.isRequired,
 }
-
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -56,18 +57,12 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-// For storing user input
-var evalInputStr = ""
-var evalInputReason = ""
-var finalGuess = ""
-
-// To make 2 arguments possible, let's just build a different
-// text box component with its associated fcns.
-var evalInputFirstStr = ""
-var evalInputSecondStr = ""
-var instanceText = ""
-// TODO: have the instance text be a state variable, reset with each change to the text box
-// and unchanged after inst eval'd
+// For storing user input strings
+var evalInputStr = "" // Stores the input string for input evaluation
+var funcGuess = "" // Stores string from guess submission
+var evalInputFirstStr = "" // First input string for 2 input functions
+var evalInputSecondStr = "" // Second input string for 2 input functions
+var instanceText = "" // Input string for mystery predicate input instance
 
 export default function SimpleTabs(props) {
   const classes = useStyles()
@@ -86,17 +81,21 @@ export default function SimpleTabs(props) {
   var toQuiz = props.children.toQuiz
   var getNextQ = props.children.getNextQ
 
-  // Set default instance if first time seeing evaluation
+  // Set default instance for mystery predicate
   if (localStorage.getItem('instanceText') === null) {
     instanceText = funcObj.inputPlaceHolderText()
   } else {
     instanceText = localStorage.getItem('instanceText') 
   }
 
-  // Set default input
+  // Set default input for mystery function
   evalInputStr = funcObj.inputPlaceHolderText()
 
+  /**
+   * Function for evaluating inputs of a 2 input mystery function
+   */
   function evalDoubleInput() {
+    // Check validity of both input strings
     if (!funcObj.validInput(evalInputFirstStr)) {
       alert("First input '" + evalInputFirstStr + "' is not valid for this function")
       return
@@ -105,19 +104,19 @@ export default function SimpleTabs(props) {
       alert("Second input '" + evalInputSecondStr + "' is not valid for this function")
       return
     }
-
+    // Parse the inputs to objects
     var firstParsed = funcObj.parseInput(evalInputFirstStr)
     var secondParsed = funcObj.parseInput(evalInputSecondStr)
     var evaluated = funcObj.function(firstParsed, secondParsed)
-
+    // Get formatted strings for use in the database
     var firstDBstr = funcObj.inputDBStr(firstParsed)
     var secondDBstr = funcObj.inputDBStr(secondParsed)
 
+    // Check to see if input being evaluated is allowed to be evaluated (if it was seen during a quiz)
     var gens = funcObj.inputGenerators()
     var forbiddenInputs = []
     gens.forEach((g) => {forbiddenInputs.push(g())})
     var currentlyForbidden = forbiddenInputs.slice(0,  getNextQ())
-    // console.log("next Q is", getNextQ())
     var forbiddenFound = false
     currentlyForbidden.forEach((inputs) => { 
       if (funcObj.equivalentInputs(inputs[0], firstParsed) === true && funcObj.equivalentInputs(inputs[1], secondParsed) === true) {
@@ -130,7 +129,6 @@ export default function SimpleTabs(props) {
         action.in = firstDBstr + " " + secondDBstr
         action.out = funcObj.outputDBStr(evaluated)
         if (localStorage.getItem(funcObj.description()) === null) {
-          // console.log("sent to server", serverGuess)
           action.key = Util.newServerKey()
           Util.sendToServer(action)
         }
@@ -141,6 +139,8 @@ export default function SimpleTabs(props) {
        return
      }
 
+    // Send an input evaluation log action to the server, and also build an
+    // action object for use in displaying the evaluation in the guessing screen console
     var serverGuess = {}
     var displayGuess = {}
     serverGuess.id = localStorage.getItem('userID')
@@ -162,20 +162,24 @@ export default function SimpleTabs(props) {
     serverGuess.out = funcObj.outputDBStr(evaluated)
     displayGuess.out = funcObj.outputDisplayStr(evaluated)
 
-    serverGuess.finalGuess = evalInputReason.trim()
-    displayGuess.finalGuess = evalInputReason.trim()
+    serverGuess.finalGuess = funcGuess.trim()
+    displayGuess.finalGuess = funcGuess.trim()
 
+    // Only if this function wasn't already done (description not already seen)
     if (localStorage.getItem(funcObj.description()) === null) {
       // console.log("sent to server", serverGuess)
       serverGuess.key = Util.newServerKey()
       Util.sendToServer(serverGuess)
     }
 
-    // Update in, out values for display
+    // Update the display console
     guesses.push(displayGuess)
     updateFunc()
   }
 
+  /**
+   * Function for evaluating inputs of a 1 input mystery function
+   */
   function evalInput() {
     if (!funcObj.validInput(evalInputStr)) {
       alert("'" + evalInputStr + "' is not a valid input to this function")
@@ -214,9 +218,6 @@ export default function SimpleTabs(props) {
        return
      }
 
-    // nextQ is 0 upon starting fcn
-    // is question + 1 upon seeing each question
-
     var serverGuess = {}
     var displayGuess = {}
     serverGuess.id = localStorage.getItem('userID')
@@ -234,8 +235,8 @@ export default function SimpleTabs(props) {
     serverGuess.out = funcObj.outputDBStr(evaluated)
     displayGuess.out = funcObj.outputDisplayStr(evaluated)
 
-    serverGuess.finalGuess = evalInputReason.trim()
-    displayGuess.finalGuess = evalInputReason.trim()
+    serverGuess.finalGuess = funcGuess.trim()
+    displayGuess.finalGuess = funcGuess.trim()
     serverGuess.time = Util.getCurrentTime()
     displayGuess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
@@ -249,43 +250,22 @@ export default function SimpleTabs(props) {
     updateFunc()
   }
 
+  // Changes guessing screen from evaluation mode to quiz mode
   function goToQuiz() {
-    toQuiz(finalGuess)
-    finalGuess = ""
+    toQuiz(funcGuess)
+    funcGuess = ""
   }
 
+  // Updates the input text for mystery predicate an input instance
   function updateInstText(newValue) {
     instanceText = newValue
   }
 
+  // Function for evaluting a concrete instance for a mystery predicate
   function evaluateInst() {
     if (!funcObj.validInst(instanceText)) {
       return
     }
-    // Check if cheat attempt
-    // var defs = ConcreteInstParsing.setDefs(instanceText)
-    // var checkers = funcObj.quizQChecks().slice(0, getNextQ())
-    // for (var i = 0; i < checkers.length; i++) {
-    //   var check = checkers[i]
-    //   if (check(defs)) {
-    //     alert("Cannot evaluate instances seen during a quiz attempt!")
-    // TODO test...
-            // var action = {}
-            // action.id = localStorage.getItem('userID')
-            // action.fcn = funcObj.description()
-            // action.type = "cheat_attempt"
-            // action.time = Util.getCurrentTime()
-            // action.in = instanceText
-            // action.out = funcObj.outputDBStr(funcObj.function(instanceText))
-            // if (localStorage.getItem(funcObj.description()) === null) {
-            //   // console.log("sent to server", serverGuess)
-            //   action.key = Util.newServerKey()
-            //   Util.sendToServer(action)
-            // }
-    //     return
-    //   }
-    // }
-
     // Preserve submitted instance text; don't change back to default
     localStorage.setItem("instanceText", instanceText)
 
@@ -298,7 +278,7 @@ export default function SimpleTabs(props) {
     serverGuess.type = "eval_input"
     serverGuess.in = cleanInst
     serverGuess.out = result.toString()
-    serverGuess.finalGuess = evalInputReason.trim()
+    serverGuess.finalGuess = funcGuess.trim()
     serverGuess.time = Util.getCurrentTime()
     if (localStorage.getItem(funcObj.description()) === null) {
       serverGuess.key = Util.newServerKey()
@@ -316,15 +296,18 @@ export default function SimpleTabs(props) {
 
   return (
     <div className={classes.root}>
+      {/* Tab names */}
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
           <Tab label="Evaluate Input" {...a11yProps(0)} />
-          {/* <Tab label="Input/Output pair" {...a11yProps(1)} /> */}
           <Tab label="Make Guess" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
+
+      {/* Input evaluation tab body */}
       <TabPanel className={classes.panel} value={value} index={0}>
         <Grid container spacing={2}>
+          {/* Text editor for concrete instances */}
           <Grid item>
             <AceEditor
               height={180}
@@ -344,6 +327,8 @@ export default function SimpleTabs(props) {
               tabSize: 2,
               }}/>
           </Grid>
+
+          {/* Submit button for concrete instance */}
           <Grid item>
             <div>
               <Button color='primary' variant="contained" className={classes.actionButton} onClick={evaluateInst}>
@@ -354,12 +339,16 @@ export default function SimpleTabs(props) {
         </Grid>
       </TabPanel>
 
+      {/* Function guess submission tab body */}
       <TabPanel value={value} index={1}>
         <Grid container spacing={4} direction="column">
+          {/* Text box for guess */}
           <Grid item>
-            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think the predicate is?" onChange={(e) => { finalGuess = e.target.value }}>
+            <TextField multiline={true} rows={4} fullWidth={true} variant="outlined" placeholder="What do you think the predicate is?" onChange={(e) => { funcGuess = e.target.value }}>
             </TextField>
           </Grid>
+
+          {/* Button to go to quiz */}
           <Grid item>
             <div>
               <Button color='primary' variant="contained" className={classes.actionButton} onClick={goToQuiz}>
