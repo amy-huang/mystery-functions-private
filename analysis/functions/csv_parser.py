@@ -12,63 +12,145 @@ from sklearn.cluster import KMeans
 import numpy as np
 
 if len(sys.argv) < 3:
-    print("Usage: python3 csv_parser.py <csv0> <fcns>")
+    print("Usage: python3 csv_parser.py <CSV with all database rows> [<Function name 1> ...]")
     exit(1)
 
 #################################################################
-# Making the character mappings for input similarity comparison
+# Input Similarity Comparison
 
-# Values seen in inputs, outputs, actual outputs
+# Because we want to consider each integer a single character when
+# using Levenshtein distance, we map each integer seen in the data
+# to a unique string character. The resulting string for each
+# input is then used for calculating distances between inputs.
+
+# To help with mapping integers to characters and inputs to strings,
+# the below classes each have a getNums method for extracting a 
+# list of integers from the value of that type for the mapping of integers
+# to characters, and a toCharas method to turn a value of that type
+# into a string based on the mapping made.
+
+class Bool:
+	@staticmethod
+	def getNums(val):
+		if val == "true":
+			return "1"
+		return ["0"]
+
+	@staticmethod
+	def toCharas(val):
+		return charaMappings[val]
+
+class Int:
+	@staticmethod
+	def getNums(val):
+		return [val]
+
+	@staticmethod
+	def toCharas(val):
+		return charaMappings[val]
+
+class ListInt:
+	@staticmethod
+	def getNums(val):
+		nums = val.split()
+		return nums
+
+	@staticmethod
+	def toCharas(val):
+		charas = ""
+		nums = val.split()
+		for n in nums:
+			charas += charaMappings[n]
+		return charas
+
+class Float:
+	@staticmethod
+	def getNums(val):
+		return [val]
+
+	@staticmethod
+	def toCharas(val):
+		return charaMappings[val]
+
+# Function input and output types
+in_out_types = {
+    "Average": [ListInt, Float],
+    "Median": [ListInt, Float],
+    "SumParityInt": [ListInt, Int],
+    "SumParityBool": [ListInt, Bool],
+    "Induced": [Int, Int],
+    "EvenlyDividesIntoFirst": [ListInt, Bool],
+    "SecondIntoFirstDivisible": [ListInt, Bool],
+    "FirstIntoSecondDivisible": [ListInt, Bool],
+    "SumBetween": [ListInt, Int],
+}
+
+# Number of inputs per function
+num_inputs = {
+    "Average": 1,
+    "Median": 1,
+    "SumParityInt": 1,
+    "SumParityBool": 1,
+    "Induced": 1,
+    "EvenlyDividesIntoFirst": 2,
+    "FirstIntoSecondDivisible": 2,
+    "SecondIntoFirstDivisible": 2,
+    "SumBetween": 2,
+}
+
+# Keys are all of the integers seen; each value is True
 seenNums = {}
-# Mapping seen value to unicode chara
+# Mapping each seen value to a unicode character
 charaMappings = {}
-# For where to start mappings
-UNICODE_START = 0
 
-def getVals(fcn, isIn, inOrOut):
+# Given an input or output for a function, 
+# figure out what type the value is and get the corresponding
+# integer values to return. For single integer, return a list with just itself,
+# for lists of integers, return that list of integers, and for 
+# booleans return 0 or 1
+def getIntVals(fcn, isInput, value):
     valType = None
-    if isIn == True:
+    # See if the value is a function input or output,
+    # and retrieve the right type based on that
+    if isInput == True:
         valType = in_out_types[fcn][0]
     else: 
         valType = in_out_types[fcn][1]
 
-    # Get vals based on arg count
+    # If there are multiple inputs, get values of each input
     if num_inputs[fcn] > 1:
-        args = inOrOut.split()
-        if isIn == True and len(args) != num_inputs[fcn]:
+        args = value.split()
+        if isInput == True and len(args) != num_inputs[fcn]:
             # print("error, num args does not match args found")
-            # print(fcn)
-            # print(args)
-            # for 2 inp fcns
-            args = inOrOut.split(",")
+            args = value.split(",")
 
         vals = []
         for a in args:
+            # Call getNums on each argument to get integer values seen
             vals += valType.getNums(a)
         return vals
 
+    # Only 1 input
     elif num_inputs[fcn] == 1:
-        return valType.getNums(inOrOut)
+        return valType.getNums(value)
 
     else:
-        print("error, > 1 args for fcn")
+        print("error, invalid number of arguments: {}".format(num_inputs[fcn]))
 
-def recordSeenVals(someVals):
-    for val in someVals:
+# Record the given list of integers as seen
+def recordSeenInts(seenInts):
+    for val in seenInts:
         seenNums[val] = True
 
-# Sort seen nums and assign them to characters
+# Sort the list of seen integers and assign each to a character
 def makeCharaMappings():
     sortedKeys = sorted(seenNums.keys())
-    # print("num unique charas", len(sortedKeys))
-    # print(sortedKeys)
     for i in range(len(sortedKeys)):
-        charaMappings[sortedKeys[i]] = chr(i + UNICODE_START)
+        charaMappings[sortedKeys[i]] = chr(i)
+
+####################################################################
 
 def inducedDiff(first, second: EvalInput):
-    # firstNum = int(first.input)
-    # secondNum = int(second.input)
-    # return abs(firstNum - secondNum)
     return rdlevenshtein(first.input, second.input)
 
 def inducedEditOps(first, second: EvalInput):
@@ -111,77 +193,7 @@ def inputDifference(fcn:str, first, second: EvalInput):
     secondCharas = inType.toCharas(second.input)
     return rdlevenshtein(firstCharas, secondCharas)
 
-class Bool:
-	@staticmethod
-	def getNums(val):
-		if val == "true":
-			return "1"
-		return ["0"]
 
-	@staticmethod
-	def toCharas(val):
-		return charaMappings[val]
-
-class Int:
-	@staticmethod
-	def getNums(val):
-		return [val]
-
-	@staticmethod
-	def toCharas(val):
-		# return str(val)
-		return charaMappings[val]
-
-class ListInt:
-	@staticmethod
-	def getNums(val):
-		nums = val.split()
-		return nums
-
-	@staticmethod
-	def toCharas(val):
-		charas = ""
-		nums = val.split()
-		for n in nums:
-			# charas += chr(int(n))
-			charas += charaMappings[n]
-		return charas
-
-class Float:
-	@staticmethod
-	def getNums(val):
-		return [val]
-
-	@staticmethod
-	def toCharas(val):
-		# return str(val)
-		return charaMappings[val]
-
-# Function input and output types
-in_out_types = {
-    "Average": [ListInt, Float],
-    "Median": [ListInt, Float],
-    "SumParityInt": [ListInt, Int],
-    "SumParityBool": [ListInt, Bool],
-    "Induced": [Int, Int],
-    "EvenlyDividesIntoFirst": [ListInt, Bool],
-    "SecondIntoFirstDivisible": [ListInt, Bool],
-    "FirstIntoSecondDivisible": [ListInt, Bool],
-    "SumBetween": [ListInt, Int],
-}
-
-# Number of inputs per function
-num_inputs = {
-    "Average": 1,
-    "Median": 1,
-    "SumParityInt": 1,
-    "SumParityBool": 1,
-    "Induced": 1,
-    "EvenlyDividesIntoFirst": 2,
-    "FirstIntoSecondDivisible": 2,
-    "SecondIntoFirstDivisible": 2,
-    "SumBetween": 2,
-}
 
 # Just the names
 FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween", "Induced"]
@@ -191,71 +203,87 @@ FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween",
 if __name__ == "__main__":
     # Do initial recording of each subject's traces
     idsToSubs = {}
-    with open(sys.argv[1], newline='') as csvfile:
-        rows = csv.reader(csvfile, delimiter=',')
-        header = next(rows) # header
+    idsToAnonIds = {}
+    with open("all_rows_anonymized.csv", "x") as anon:
+        with open(sys.argv[1], newline='') as csvfile:
+            rows = csv.reader(csvfile, delimiter=',')
+            header = next(rows) # header
+            print(header)
+            anon.write(",".join(header) + "\n")
 
-        # Current subject we're recording actions for
-        subject = None
+            # Current subject we're recording actions for
+            subject = None
 
-        for row in rows:
-            # See if we need to start a new Subject
-            ID = row[0]
-            if subject == None:
-                subject = Subject(ID)
-                idsToSubs[ID] = subject
-            elif ID != subject.ID:
-                subject = Subject(ID)
-                idsToSubs[ID] = subject
+            for row in rows:
+                # See if we need to start a new Subject
+                ID = row[0]
+                if subject == None:
+                    subject = Subject(ID)
+                    idsToSubs[ID] = subject
+                elif ID != subject.ID:
+                    subject = Subject(ID)
+                    idsToSubs[ID] = subject
 
-            fcnName = row[1]
-            key = row[2]
-            time = row[4]
-            actType = row[3]
-            action = None
+                fcnName = row[1]
+                key = row[2]
+                time = row[4]
+                actType = row[3]
+                action = None
 
-            inType = in_out_types[fcnName]
-            outType = in_out_types[fcnName]
+                inType = in_out_types[fcnName]
+                outType = in_out_types[fcnName]
 
-            # Record specific action taken
-            if (actType == "eval_input"):
-                action = EvalInput(key, time)
-                inp = row[5]
-                out = row[6]
-                action.setInputOutput(inp, out)
+                # Record specific action taken
+                if (actType == "eval_input"):
+                    action = EvalInput(key, time)
+                    inp = row[5]
+                    out = row[6]
+                    action.setInputOutput(inp, out)
 
-                recordSeenVals(getVals(fcnName, True, inp))
-                recordSeenVals(getVals(fcnName, False, out))
+                    recordSeenInts(getIntVals(fcnName, True, inp))
+                    recordSeenInts(getIntVals(fcnName, False, out))
 
-                subject.addEvalInput(fcnName, action)
+                    subject.addEvalInput(fcnName, action)
 
-            elif (actType == "quiz_answer"):
-                action = QuizQ(key, time)
-                quizQ = row[7]
-                inp = row[5]
-                out = row[6]
-                realOut = row[8]
-                result = row[9]
+                elif (actType == "quiz_answer"):
+                    action = QuizQ(key, time)
+                    quizQ = row[7]
+                    inp = row[5]
+                    out = row[6]
+                    realOut = row[8]
+                    result = row[9]
 
-                display = "✗"
-                if (result == "true"):
-                    display = "✓"
+                    display = "✗"
+                    if (result == "true"):
+                        display = "✓"
 
-                action.setQ(quizQ, inp, out, realOut, display)
+                    action.setQ(quizQ, inp, out, realOut, display)
 
-                recordSeenVals(getVals(fcnName, True, inp))
-                recordSeenVals(getVals(fcnName, False, out))
-                recordSeenVals(getVals(fcnName, False, realOut))
+                    recordSeenInts(getIntVals(fcnName, True, inp))
+                    recordSeenInts(getIntVals(fcnName, False, out))
+                    recordSeenInts(getIntVals(fcnName, False, realOut))
 
-                subject.addQuizQ(fcnName, action)
+                    subject.addQuizQ(fcnName, action)
 
-            elif (actType == "final_answer"):
-                action = FinalAnswer(key, time)
-                guess = row[10]
-                action.setGuess(guess)
-                subject.addFinalAnswer(fcnName, action)
-            # else:
-            #     print("WARNING: unknown action type")
+                elif (actType == "final_answer"):
+                    action = FinalAnswer(key, time)
+                    guess = row[10]
+                    action.setGuess(guess)
+                    subject.addFinalAnswer(fcnName, action)
+                # else:
+                #     print("WARNING: unknown action type")
+
+                # Get anon ID and write row to anon csv
+                if ID not in idsToAnonIds:
+                    newID = len(idsToAnonIds)
+                    idsToAnonIds[ID] = newID
+                anonID = idsToAnonIds[ID]
+                row[0] = str(anonID)
+                newRow = ",".join(row) + "\n"
+                anon.write(newRow)
+
+    for ID in idsToAnonIds:
+        print("{}, {}".format(ID, idsToAnonIds[ID]))
 
     # Make character mappings using the characters observed
     makeCharaMappings()
