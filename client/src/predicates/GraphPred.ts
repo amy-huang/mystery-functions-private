@@ -1,3 +1,7 @@
+/**
+ * Template for a predicate object that takes in a graph concrete instance
+ * Only missing a function() method that would take in text representing the input instance
+ */
 import ConcreteInstParsing from "./ConcreteInstParsing"
 import Node from "./Node"
 import Bool from "../types/Bool"

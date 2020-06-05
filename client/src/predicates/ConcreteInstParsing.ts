@@ -1,11 +1,13 @@
+/**
+ * Methods for parsing strings representing concrete instances
+ */
 class ConcreteInstParsing {
-    // Checks if inst declaration is correct, though doesn't check
-    // for validity of the items within each set, just set names
-
-
+    // Returns map of names of sets to names of items in the set
+    // If ill-formed, returns empty map
     static setDefs(instance: string): Map<string, Array<string>> {
         var defs = new Map<string, Array<string>>()
         var spaceTokens = instance.trim().split(/\s+/)
+        // Check for well-formed instance structure
         if (spaceTokens.length < 4) {
           alert("Malformed concrete instance")
           return defs
@@ -77,6 +79,7 @@ class ConcreteInstParsing {
               defs.set(setName, [])
             }
 
+            // Add item name to array for this set name
             var newSet = defs.get(setName)
             if (newSet !== undefined) {
               newSet.push(item)
