@@ -1,15 +1,18 @@
 import csv
 import sys
 from datetime import *
-from action_classes import *
 from statistics import *
 
+# For consecutive input similarity
 from Levenshtein import distance, editops
 from distance import jaccard
 from stringdist import rdlevenshtein, levenshtein
 
+# For clustering
 from sklearn.cluster import KMeans
 import numpy as np
+
+from actions import *
 
 if len(sys.argv) < 3:
     print("Usage: python3 csv_parser.py <CSV with all database rows> [<Function name 1> ...]")
@@ -168,21 +171,21 @@ def inputEditOps(fcn:str, first, second: EvalInput):
 def inputEditOpsFromBlank(inp: EvalInput):
     return editops("", inp.input)
 
-def opsToNum(ops):
-    if len(ops) == 0:
-        return 0
+# def opsToNum(ops):
+#     if len(ops) == 0:
+#         return 0
 
-    num = ""
-    for op in ops:
-        if op[0] == "insert":
-            num += "1"
-        if op[0] == "delete":
-            num += "2"
-        if op[0] == "replace":
-            num += "3"
-        num += str(op[1])
-        num += str(op[2])
-    return int(num)
+#     num = ""
+#     for op in ops:
+#         if op[0] == "insert":
+#             num += "1"
+#         if op[0] == "delete":
+#             num += "2"
+#         if op[0] == "replace":
+#             num += "3"
+#         num += str(op[1])
+#         num += str(op[2])
+#     return int(num)
 
 def inputDifference(fcn:str, first, second: EvalInput):
     if fcn == "Induced":
@@ -204,7 +207,32 @@ if __name__ == "__main__":
     # Do initial recording of each subject's traces
     idsToSubs = {}
     idsToAnonIds = {}
-    with open("all_rows_anonymized.csv", "x") as anon:
+    with open("predicates_rows_anonymized.csv", "x") as anon:
+        with open(sys.argv[1], newline='') as csvfile:
+            rows = csv.reader(csvfile, delimiter=',')
+            header = next(rows) # header
+            print(header)
+            anon.write(",".join(header) + "\n")
+
+            for row in rows:
+                print(row)
+                ID = row[0]
+                # Get anon ID and write row to anon csv
+                if ID not in idsToAnonIds:
+                    newID = len(idsToAnonIds)
+                    idsToAnonIds[ID] = newID
+                anonID = idsToAnonIds[ID]
+                row[0] = str(anonID)
+                for i in range(len(row)):
+                    row[i] = "\"{}\"".format(row[i])
+                newRow = ",".join(row) + "\n"
+                anon.write(newRow)
+    for ID in idsToAnonIds:
+        print("{}, {}".format(ID, idsToAnonIds[ID]))
+
+    exit(0)
+
+    with open("predicates_rows_anonymized.csv", "x") as anon:
         with open(sys.argv[1], newline='') as csvfile:
             rows = csv.reader(csvfile, delimiter=',')
             header = next(rows) # header
@@ -272,18 +300,6 @@ if __name__ == "__main__":
                     subject.addFinalAnswer(fcnName, action)
                 # else:
                 #     print("WARNING: unknown action type")
-
-                # Get anon ID and write row to anon csv
-                if ID not in idsToAnonIds:
-                    newID = len(idsToAnonIds)
-                    idsToAnonIds[ID] = newID
-                anonID = idsToAnonIds[ID]
-                row[0] = str(anonID)
-                newRow = ",".join(row) + "\n"
-                anon.write(newRow)
-
-    for ID in idsToAnonIds:
-        print("{}, {}".format(ID, idsToAnonIds[ID]))
 
     # Make character mappings using the characters observed
     makeCharaMappings()
