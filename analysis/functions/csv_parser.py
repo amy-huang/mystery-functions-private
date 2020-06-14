@@ -18,6 +18,9 @@ if len(sys.argv) < 3:
     print("Usage: python3 csv_parser.py <CSV with all database rows> [<Function name 1> ...]")
     exit(1)
 
+# Names of all functions to do analysis onust the names
+ALL_FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween", "Induced"]
+
 #################################################################
 # Input Similarity Comparison
 
@@ -159,6 +162,8 @@ def inducedDiff(first, second: EvalInput):
 def inducedEditOps(first, second: EvalInput):
     return editops(first.input, second.input)
 
+# Gets the edit operations between the given inputs
+# Output specification: https://github.com/ztane/python-Levenshtein/wiki#Levenshtein-editops
 def inputEditOps(fcn:str, first, second: EvalInput):
     if fcn == "Induced":
         return inducedEditOps(first, second)
@@ -168,6 +173,7 @@ def inputEditOps(fcn:str, first, second: EvalInput):
     secondCharas = inType.toCharas(second.input)
     return editops(firstCharas, secondCharas)
 
+# Calculates edit distance from default input value, nothing, to first input
 def inputEditOpsFromBlank(inp: EvalInput):
     return editops("", inp.input)
 
@@ -180,15 +186,16 @@ def inputDifference(fcn:str, first, second: EvalInput):
     secondCharas = inType.toCharas(second.input)
     return rdlevenshtein(firstCharas, secondCharas)
 
-# Just the names
-FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween", "Induced"]
-
 #################################################################
 
 if __name__ == "__main__":
-    # Do initial recording of each subject's traces into Subject objects
-    idsToSubs = {} # Maps IDs to subjects
 
+    # Do initial recording of each subject's traces into Subject objects.
+    # For each database row, record the action
+    # The Subject class has methods that are useful later on for analysis
+    # once all of the actions for a Subject have been recorded.
+
+    idsToSubs = {} # Maps IDs to subjects
     with open(sys.argv[1], newline='') as csvfile:
         rows = csv.reader(csvfile, delimiter=',')
         header = next(rows) # header
@@ -222,6 +229,8 @@ if __name__ == "__main__":
                 out = row[6]
                 action.setInputOutput(inp, out)
 
+                # Used to generate character to integer mappings for use in 
+                # calculating Levenshtein distance
                 recordSeenInts(getIntVals(fcnName, True, inp))
                 recordSeenInts(getIntVals(fcnName, False, out))
 
@@ -252,34 +261,28 @@ if __name__ == "__main__":
                 guess = row[10]
                 action.setGuess(guess)
                 subject.addFinalAnswer(fcnName, action)
-            # else:
+            # else:ust the names
             #     print("WARNING: unknown action type")
 
     # Make character mappings using the characters observed
     makeCharaMappings()
 
-    # Distributions to look at
-    COR = "COR"
-    MCOR = "MCOR"
-    SCOR = "SCOR"
-    XCOR = "XCOR"
-
-    # ID to subject source
+    # ID to subject source (subject pool) #TODO: remove
     subSource = {}
 
-    # Answer ratings, ID to "fcn score"
-    answerRatings = {}
+    ##########################################################################################################
 
-    # Subject to list of comprehensiveness labels they got
-    compRatings = {}
-    allAnswerRatings = {}
+    # Now that we have all Subject action data, go through the answer labels and associate them with the
+    # right subjects so we can do analysis of all of that data together.
 
+    # Will keep track of the well-formedness labels (comp for completion)
+    # and corrections labels (cor for correctness) of subjects by subject pool, function, and ID
     compCorDicts = { "32": FcnSubDivider(), "IU": FcnSubDivider() }
 
     # Open each label guess csv
     # Process function guess labels, add them to each Subject object, and do other calculations
     for subjectPool in ["32", "IU"]:
-        for fcn in FCN_NAMES:
+        for fcn in ALL_FCN_NAMES:
             with open("answer_labels/anon_{}_{}.csv".format(subjectPool, fcn), newline='') as csvfile:
                 rows = csv.reader(csvfile, delimiter=',')
                 header = next(rows) # header
@@ -311,66 +314,41 @@ if __name__ == "__main__":
                     subSource[ID] = subjectPool
                     subject.addSubjectPool(subjectPool)
 
-                    # Map subject pool and ID to answer ratings
-                    if "{}_{}".format(subjectPool, ID) not in answerRatings:
-                        answerRatings["{}_{}".format(subjectPool, ID)] = []
-
                     # Get correctness rating
-                    rating = 0
+                    # rating = 0
                     if "COR" in tags:
-                        rating = 4
                         compCorDicts[subjectPool].addCorRating(ID, fcn, 4)
                     elif "MCOR" in tags:
-                        rating = 3
                         compCorDicts[subjectPool].addCorRating(ID, fcn, 3)
                     elif "SCOR" in tags:
-                        rating = 2
                         compCorDicts[subjectPool].addCorRating(ID, fcn, 2)
                     elif "XCOR" in tags:
-                        rating = 1
                         compCorDicts[subjectPool].addCorRating(ID, fcn, 1)
 
                     # Get well-formedness rating
-                    if ID not in compRatings:
-                        compRatings[ID] = {}
                     if "NONS" in tags:
                         compCorDicts[subjectPool].addCompRating(ID, fcn, "NONS")
-                        compRatings[ID][fcn] = "NONS"
                     elif "IDK" in tags:
                         compCorDicts[subjectPool].addCompRating(ID, fcn, "IDK")
-                        compRatings[ID][fcn] = "IDK"
                     elif "NORM" in tags:
                         compCorDicts[subjectPool].addCompRating(ID, fcn, "NORM")
-                        compRatings[ID][fcn] = "NORM"
                     else:
-                        # compRatings[ID][fcn] = ""
                         print("Warning: {} does not have comprehensiveness rating for {}".format(ID, fcn))
 
+    #############################################################################################################
 
-                    # Record correctness rating
-                    if ID not in allAnswerRatings:
-                        allAnswerRatings[ID] = {}
-                    allAnswerRatings[ID][fcn] = rating
+    # Prints out the completion and correctness ratings for each subject pool 
+    # print("IU Completion and correctness ratings")
+    # print(compCorDicts["IU"])
+    # print("32 Completion and correctness ratings")
+    # print(compCorDicts["32"])
 
-                    if rating == 0:
-                        continue
+    #############################################################################################################
 
-                    # Record well-formedness rating
-                    answerRatings["{}_{}".format(subjectPool, ID)].append("{} {}".format(fcn, rating))
+    # Calculate edit distance and edit operations between input evaluations for each function a subject has done. 
 
-    # Prints out the completion and correctness ratings of 
-    print("IU Completion and correctness ratings")
-    print(compCorDicts["IU"])
-    print("32 Completion and correctness ratings")
-    print(compCorDicts["32"])
-
-    # for arID in answerRatings:
-    #     print(arID)
-    #     print("{}, {}, {}".format(arID.split("_")[0], arID.split("_")[1], len(answerRatings[arID])))    
-
-    # Map fcn to correctness to tag frequencies. uh oh this calls for another class!!!
-    # Then we can look at each fcn's things
-    tagsByRating = TagsByFcn()
+    # Make keeper of tag frequency distribution, by function and correctness rating.
+    tagFrequencies = TagsByFcn()
 
     # fcn to list of diff IDs
     diffsIDs = {} 
@@ -380,10 +358,10 @@ if __name__ == "__main__":
     allIDs = []
     allLists = []
 
-    # ID and fcn to ops vector
+    # Maps ID_FCN to list of lengths of operations groups cor
     numOps = {}
     # ID to num op trace
-    editOps = {}
+    editOps = {} 
     # ID to average len of same op sequence size 2 and up
     stretchLens = {}
     # from this, get line graph, avg/med, frequency
@@ -397,182 +375,160 @@ if __name__ == "__main__":
     # freq of higher/lower relationships - previous one vs. next one
     trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
 
-    # Open a csv for each corr rating, then go through subs and write Ls to csv
-    distros = DistributionKeeper()
+    # For each session (one subject completing one function), record metrics and do calculations
+    # When defined here, this distribution keeper tracks metrics for all function sessions.
+    # Can also create ones for each function
+    distros = DistributionKeeper() 
     for fcn in sys.argv[2:]:
-        with open("COR_Ls.csv", "w") as COR_CSV:
-            with open("MCOR_Ls.csv", "w") as MCOR_CSV:
-                with open("SCOR_Ls.csv", "w") as SCOR_CSV:
-                    with open("XCOR_Ls.csv", "w") as XCOR_CSV:
-                        csv_dict = {}
-                        csv_dict["COR"] = COR_CSV
-                        csv_dict["MCOR"] = MCOR_CSV
-                        csv_dict["SCOR"] = SCOR_CSV
-                        csv_dict["XCOR"] = XCOR_CSV
+        for ID in idsToSubs.keys():
+            # For use as a key value in dicts
+            ID_FCN = "{}_{}".format(ID, fcn)
 
-                        for ID in idsToSubs.keys():
-                            # Get correctness tag for answer
-                            rating = None
-                            tags = idsToSubs[ID].getAnswerTags(fcn)
-                            if tags != None:
-                                if "COR" in tags:
-                                    rating = "COR"
-                                elif "MCOR" in tags:
-                                    rating = "MCOR"
-                                elif "SCOR" in tags:
-                                    rating = "SCOR"
-                                elif "XCOR" in tags:
-                                    rating = "XCOR"
-                                else:
-                                    # print("ID {} fcn {} has no rating".format(ID, fcn))
-                                    continue
+            # Get correctness tag for answer
+            tags = idsToSubs[ID].getAnswerTags(fcn)
+            if tags != None:
+                if "COR" in tags:
+                    rating = "COR"
+                elif "MCOR" in tags:
+                    rating = "MCOR"
+                elif "SCOR" in tags:
+                    rating = "SCOR"
+                elif "XCOR" in tags:
+                    rating = "XCOR"
+                else:
+                    # print("ID {} fcn {} has no rating".format(ID, fcn))
+                    continue
 
-                                tagsByRating.addTags(fcn, tags)
+                # Record the tags for frequency breakdown
+                tagFrequencies.addTags(fcn, tags)
 
-                                # Consec input diffs to csv
-                                evals = idsToSubs[ID].functionAttempts[fcn].allEvals()
-                                distros.addNumEvals(rating, len(evals))
+                # Record the number of input evaluations for this session
+                evals = idsToSubs[ID].functionAttempts[fcn].allEvals()
+                distros.addNumEvals(rating, len(evals))
 
-                                csvfile = csv_dict[rating]
-                                # stretchLens = "{},".format(ID)
-                                maxDiff = 0
-                                diffsArray = []
-                                ID_FCN = "{}_{}".format(ID, fcn)
-                                numOps[ID_FCN] = []
+                # stretchLens = "{},".format(ID)
+                diffsArray = [] # List of edit distances for each pair of inputs
+                editOps[ID_FCN] = [] # List of operation groups in order
+                numOps[ID_FCN] = [] # Lengths of each operation group in order
+            
+                # Variables for recording the lengths of operation chains and edit operations groups
+                currOps = "" # Edit operations group defining the current chain
+                currLen = 0 # Length of current operation chain
 
-                                currOps = ""
-                                currLen = 0
-                                editOps[ID_FCN] = []
+                # For each consecutive pair of inputs evaluated...
+                for i in range(0, len(evals)):
+                    # Calculate edit distance and record
+                    diff = inputDifference(fcn, evals[i-1], evals[i])
+                    diffsArray.append(diff)
+                    
+                    # Get edit operations - list of tuples: (operation name, index)
+                    ops = inputEditOps(fcn, evals[i-1], evals[i])
+                    if i == 0: # If is the first input evaluated
+                        ops = inputEditOpsFromBlank(evals[i])
 
-                                for i in range(0, len(evals)):
-                                    # edit ops
-                                    ops = inputEditOps(fcn, evals[i-1], evals[i])
-                                    # editOps[idfcn].append(opsToNum(ops)) # encoding actual ops
-                                    if i == 0:
-                                        ops = inputEditOpsFromBlank(evals[i])
+                    # Record number of operations in the operations group
+                    numOps[ID_FCN].append(len(ops))
+                    
+                    # From the edit operations, get just the names of operations and then
+                    # combine them into a single space separated string
+                    currOpsList = []
+                    for op in ops:
+                        currOpsList.append(op[0])
+                    nextOps = " ".join(sorted(currOpsList))
 
-                                    numOps[ID_FCN].append(len(ops))
-                                    
-                                    # Look at average length of same op sequences
-                                    currOpsList = []
-                                    for op in ops:
-                                        currOpsList.append(op[0])
-                                    nextOps = " ".join(sorted(currOpsList))
+                    # See if the current stretch of identical operations groups has ended. 
+                    # If not, increase current length
+                    if nextOps == currOps:
+                        currLen += 1
+                    else:
+                        # Otherwise, 
+                        # If the edit operations group is empty, that means the input stayed 
+                        # the same so also just increment current length
+                        if len(nextOps) == 0:
+                            currLen += 1
+                        else:
+                            # Otherwise, that means the current chain has just ended. 
+                            # Record the chain characteristics
+                            if len(currOps) > 0:
+                                # Record length of chain for this ID_FCN
+                                if not ID_FCN in stretchLens:
+                                    stretchLens[ID_FCN] = []
+                                stretchLens[ID_FCN].append(currLen)
 
-                                    # Next group of operations is the same as current streak
-                                    if nextOps == currOps:
-                                        currLen += 1
-                                    else:
-                                        # If no change in input, count as part of streak, keep currOps same
-                                        if len(nextOps) == 0:
-                                            currLen += 1
-                                        else:
-                                            # Change in ops means streak just ended
-                                            if len(currOps) > 0:
-                                                if not ID_FCN in stretchLens:
-                                                    stretchLens[ID_FCN] = []
-                                                stretchLens[ID_FCN].append(currLen)
-                                                editOps[ID_FCN].append(currOps)
+                                # Record edit operation group for this ID_FCN
+                                editOps[ID_FCN].append(currOps)
 
-                                                if currOps not in groupLens:
-                                                    groupLens[currOps] = []
-                                                groupLens[currOps].append(currLen)
-                                                # print("{} change in op {} to {}".format(ID_FCN, currOps, nextOps))
-                                                if nextOps not in opsFreq:
-                                                    opsFreq[nextOps] = []
-                                                opsFreq[nextOps].append(currLen)
+                                # Record length of chain for this operation group
+                                # so later we can see distribution of lengths
+                                if currOps not in groupLens:
+                                    groupLens[currOps] = []
+                                groupLens[currOps].append(currLen)
 
-                                            # Start new streak
-                                            currOps = nextOps
-                                            currLen = 1
+                                # TODO: remove?
+                                if nextOps not in opsFreq:
+                                    opsFreq[nextOps] = []
+                                opsFreq[nextOps].append(currLen)
 
-                                    # Edit distance for writing to csv
-                                    # diff = inputDifference(fcn, evals[i-1], evals[i])
-                                    # diffsArray.append(diff)
-                                    # line += "{},".format(diff) # raw diff
+                            # Start monitoring new chain
+                            currOps = nextOps
+                            currLen = 1
 
-                                    # if diff > maxDiff:
-                                    #     maxDiff = diff
+                # Record the final operation chain that wasn't recorded yet
+                # because there was no change in operation group before we ran out of 
+                # input pairs to look at
+                if len(currOps) > 0:
+                    # Record length of chain for this ID_FCN
+                    if not ID_FCN in stretchLens:
+                        stretchLens[ID_FCN] = []
+                    stretchLens[ID_FCN].append(currLen)
 
-                                # If a stretch went all the way to the end, make sure to record if max
-                                if len(currOps) > 0:
-                                    if not ID_FCN in stretchLens:
-                                        stretchLens[ID_FCN] = []
-                                    stretchLens[ID_FCN].append(currLen)
-                                    editOps[ID_FCN].append(currOps)
+                    # Record edit operation group for this ID_FCN
+                    editOps[ID_FCN].append(currOps)
 
-                                    if currOps not in groupLens:
-                                        groupLens[currOps] = []
-                                    groupLens[currOps].append(currLen)
-                                    # print("{} end trace w streak {}".format(ID_FCN, currOps))
+                    # Record length of chain for this operation group
+                    # so later we can see distribution of lengths
+                    if currOps not in groupLens:
+                        groupLens[currOps] = []
+                    groupLens[currOps].append(currLen)
 
-                                    if nextOps not in opsFreq:
-                                        opsFreq[nextOps] = []
-                                    opsFreq[nextOps].append(currLen)
+                    # TODO: remove?
+                    if nextOps not in opsFreq:
+                        opsFreq[nextOps] = []
+                    opsFreq[nextOps].append(currLen)
 
-                                # Writing edit distance to csv
-                                # line += "\n"
-                                # csvfile.write(line)
-                                distros.addMaxDiff(rating, maxDiff)
+                # clustering, TODO: remove
+                allIDs.append("{}_{}".format(ID, fcn))
+                allLists.append(diffsArray)
+                
+                # Record the number of quiz attempts and the numbers of inputs evaluated
+                # between quiz attempts for this correctness rating
+                sub = idsToSubs[ID]
+                actions, EIs, QAs = sub.allFcnActions(fcn)
+                distros.addQuizAttempts(rating, len(QAs.keys())) 
+                distros.addEIsBwQAs(rating, ID_FCN, sub.getEvalLens(fcn))
 
-                                # Add to list of all diff traces for this fcn
-                                allIDs.append("{}_{}".format(ID, fcn))
-                                allLists.append(diffsArray)
-                                
-                                sub = idsToSubs[ID]
-                                acts, EIs, QAs = sub.allFcnActions(fcn)
+    ##################################################################################################################
 
-                                if subSource[ID] == "32":
-                                    distros.addQuizAttempts(rating, len(QAs.keys()))
-                                    distros.addEIsBwQAs(rating, ID_FCN, sub.getEvalLens(fcn))
-        # Per function printouts
-        
-        # print(distros.firstStretchStats())
+    # Summary metrics to print out, each is by correctness rating
+    # print(distros.firstStretchStats()) # average and median length of first stretch of inputs evaluation before first quiz attempt
+    # print(distros.EIsBwQAs()) # For each ID_FCN, prints out the list numbers of inputs evaluated between quiz attempts
+    # print(distros.numEvals()) # Median number of input evaluations 
+    # print(distros.quizAttempts()) # Number of quiz attempts 
+    # print(tagFrequencies)
 
-        # Print edit ops
-        # for ID in editOps:
-        #     line = "{}, ".format(ID)
-        #     for ops in editOps[ID]:
-        #         line += "{}, ".format(ops)
-        #     print(line)
+    # Average length of each chain by operation group
+    # for opsGroup in sorted(groupLens.keys()):
+    #     print("{}, {}, {}".format(opsGroup, len(groupLens[opsGroup]), sum(groupLens[opsGroup])/ len(groupLens[opsGroup])))
 
-    # print(distros.EIsBwQAs())
-    # # print(distros.highestDiffs())
-    # print(distros.numEvals())
-    # print(distros.quizAttempts())
+    # Frequencies and median length of chains by operation group
+    # for ops in sorted(opsFreq.keys()):
+    #     chainLens = opsFreq[ops]
+    #     numChains = len(chainLens)
+    #     print("{}, {}, {}".format(ops, numChains, chainLens[floor(numChains / 2)]))
 
-    # # Consecutive input difference clustering
-    # maxConsecLen = 0
-    # for t in allLists:
-    #     if len(t) > maxConsecLen:
-    #         maxConsecLen = len(t)
-    # # Fill with 0s
-    # filled = []
-    # for trace in allLists:
-    #     newTrace = []
-    #     for val in trace:
-    #         newTrace.append(val)
-    #     while len(newTrace) < maxConsecLen:
-    #         newTrace.append(0)
-    #     filled.append(newTrace)
+    ##################################################################################################################
 
-    # # Across all printouts
-    # print("Ratings across all fcns done")
-    # for ID in idsToSubs:
-    #     sub = idsToSubs[ID]
-    #     if ID not in subSource:
-    #         continue
-    #     if len(sub.answerTagsByOrder()) == 0:
-    #         continue
-    #     line = "{}, {}, ".format(subSource[ID], ID)
-    #     for rating in sub.answerTagsByOrder():
-    #         line += "{}, ".format(rating)
-    #     totalScore = sum(sub.answerTagsByOrder())
-    #     print(line)
-
-
-
-    print("Ratings across all fcns done")
+    # Prints out the ratings distributions by function
     allRatings = { "32": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }, "IU": { "Average": { 4: 0, 3: 0, 2: 0, 1: 0}, "Median": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityBool": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumParityInt": { 4: 0, 3: 0, 2: 0, 1: 0}, "SumBetween": { 4: 0, 3: 0, 2: 0, 1: 0}, "Induced": { 4: 0, 3: 0, 2: 0, 1: 0} }}
     for ID in idsToSubs:
         sub = idsToSubs[ID]
@@ -580,7 +536,6 @@ if __name__ == "__main__":
         for f in fcns:
             rating = sub.fcnScore(f)
             if rating > 0:
-                # print("{}, {}, {}, {}".format(subSource[ID], ID, f, rating))
                 allRatings[subSource[ID]][f][rating] += 1
 
     for which in allRatings:
@@ -588,209 +543,78 @@ if __name__ == "__main__":
             line = "{}, {}, ".format(which, fcn)
             for rating in range(1, 5):
                 line += "{}, ".format(allRatings[which][fcn][rating])
-            print(line)
+    #           print(line)
 
-    #     sub.EIs
-    # EIsBwQAs
+    ##################################################################################################################
 
-    # avg lens per stretch of each operation group
-    # for opsGroup in sorted(groupLens.keys()):
-    #     print("{}, {}, {}".format(opsGroup, len(groupLens[opsGroup]), sum(groupLens[opsGroup])/ len(groupLens[opsGroup])))
+    # Average deviation from average operation chain length
+    chainLenDiffs = []
+    chainLenDiffFromAvgs = []
+    allChainLens = []
+    for eoID in stretchLens:
+        for sl in stretchLens[eoID]:
+            allChainLens.append(sl)
+    chainLenAvg = sum(allChainLens)/len(allChainLens)
+    print("chain len avg {}".format(chainLenAvg))
+    for eoID in stretchLens:
+        lensTrace = stretchLens[eoID]
+        for i in range(0, len(lensTrace)):
+            if i > 0:
+                diff = abs(lensTrace[i-1] - lensTrace[i])
+                chainLenDiffs.append(diff)
+                if eoID == "mghani1_Median":
+                    print("{} idx {} diff bw lenths is {}".format(eoID, i, diff))
+            diffFromAvg = abs(lensTrace[i] - chainLenAvg)
+            chainLenDiffFromAvgs.append(diffFromAvg)
+            if eoID == "mghani1_Median":
+                print("{} idx {} diff from avg is {}".format(eoID, i, diffFromAvg))
+    avgDiffFromAvg = sum(chainLenDiffFromAvgs)/len(chainLenDiffFromAvgs)
+    avgConsecDiff = sum(chainLenDiffs)/len(chainLenDiffs)
+    # print("Avg chain length diff from average: {} Avg diff b/w consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
 
-    # duds32 = 0
-    # dudsIU = 0
-    # for stretchID in stretchLens:
-    #     ID = stretchID.split("_")[0]
-    #     trace = stretchLens[stretchID]
-    #     if len(trace) < 2:
-    #         if subSource[ID] == "32":
-    #             duds32 += 1
-    #         elif subSource[ID] == "IU":
-    #             dudsIU += 1
-    # print("duds 32 {}".format(duds32))
-    # print("duds IU {}".format(dudsIU))
+    ##################################################################################################################
 
-    # averiage deviation from average change in op chain length
-    # chainLenDiffs = []
-    # chainLenDiffFromAvgs = []
-    # allChainLens = []
-    # for eoID in stretchLens:
-    #     for sl in stretchLens[eoID]:
-    #         allChainLens.append(sl)
-    # chainLenAvg = sum(allChainLens)/len(allChainLens)
-    # print("chain len avg {}".format(chainLenAvg))
-    # for eoID in stretchLens:
-    #     lensTrace = stretchLens[eoID]
-    #     for i in range(0, len(lensTrace)):
-    #         if i > 0:
-    #             diff = abs(lensTrace[i-1] - lensTrace[i])
-    #             chainLenDiffs.append(diff)
-    #             if eoID == "mghani1_Median":
-    #                 print("{} idx {} diff bw lenths is {}".format(eoID, i, diff))
-    #         diffFromAvg = abs(lensTrace[i] - chainLenAvg)
-    #         chainLenDiffFromAvgs.append(diffFromAvg)
-    #         if eoID == "mghani1_Median":
-    #             print("{} idx {} diff from avg is {}".format(eoID, i, diffFromAvg))
-    # avgDiffFromAvg = sum(chainLenDiffFromAvgs)/len(chainLenDiffFromAvgs)
-    # avgConsecDiff = sum(chainLenDiffs)/len(chainLenDiffs)
-    # print("Avg chain length diff from average: {} Avg diff bw consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
+    # The sequences of operation chain lengths, when graph, appear very "spiky": the chain lengths often oscillate
+    # between 1 and higher lengths
+    # To quantify this, I found the likelihood that a length >1 operation chain was only adjacent to chains of length 1
 
-    magnDicts = { "lower": { "lower": [], "same": [], "higher": [] }, "same": { "lower": [], "same": [], "higher": [] }, "higher": { "lower": [], "same": [], "higher": [] } }
-    trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
     adjacentAreOnes = 0
     totalPoints = 0
     pointLens = [] 
-    totalOpsDiff = []
-    avgSetDiff = []
     for stretchID in stretchLens:
         ID = stretchID.split("_")[0]
         trace = stretchLens[stretchID]
-        # print(stretchID, trace)
         for i in range(0, len(trace)):
-            # Current point is > 1
+             # For each chain of length >1...
             if trace[i] > 1:
+                # See if this point is a "spike" point: only adjacent to chains length 1
                 isSpikePoint = False
-                # First point
-                if i == 0:
-                    # If exists next point
-                    if len(trace) > 1:
+                if i == 0: 
+                    if len(trace) > 1: 
+                        # If there exists a 1st chain, see if next chain length is 1
                         totalPoints += 1
-                        # If next point is 1
                         if trace[i+1] == 1:
                             adjacentAreOnes += 1
                             pointLens.append(trace[i])
-
-                            currOps = editOps[stretchID][i].split()
-                            nextOps = editOps[stretchID][i+1].split()
-                            avgNumOpDiff = abs(len(currOps) - len(nextOps))
-                            totalOpsDiff.append(avgNumOpDiff)
-
-                            currSet = set(editOps[stretchID][i].split())
-                            nextSet = set(editOps[stretchID][i+1].split())
-                            maxSetDiff = max(len(currSet - nextSet) , len(nextSet - currSet))
-                            avgSetDiff.append(maxSetDiff)
                 elif i == len(trace) - 1:
-                   # If exists prev point
                     if len(trace) > 1:
+                        # If there exists a last chain, see if previous chain length is 1
                         totalPoints += 1
-                        # If prev point is 1
                         if trace[i-1] == 1:
                             adjacentAreOnes += 1 
                             pointLens.append(trace[i])
-
-                            currOps = editOps[stretchID][i].split()
-                            prevOps = editOps[stretchID][i-1].split()
-                            avgNumOpDiff = abs(len(currOps) - len(prevOps))
-                            totalOpsDiff.append(avgNumOpDiff)
-
-                            prevSet = set(editOps[stretchID][i-1].split())
-                            currSet = set(editOps[stretchID][i].split())
-                            maxSetDiff = max(len(currSet - prevSet) , len(prevSet - currSet))
-                            avgSetDiff.append(maxSetDiff)
                 else:
+                    # If this chain is surrounded by 2 other chains, see if both are length 1
                     totalPoints += 1
                     if trace[i-1] == 1 and trace[i+1] == 1:
                         adjacentAreOnes += 1
                         pointLens.append(trace[i])
 
-                        currOps = editOps[stretchID][i].split()
-                        prevOps = editOps[stretchID][i-1].split()
-                        nextOps = editOps[stretchID][i+1].split()
-                        avgNumOpDiff = abs(len(currOps) - len(prevOps))
-                        avgNumOpDiff = abs(len(currOps) - len(nextOps))
-                        avgNumOpDiff = avgNumOpDiff / 2
-                        totalOpsDiff.append(avgNumOpDiff)
+    # print("Number of operation chains of length > 1 are adjacent only to chains length 1:", adjacentAreOnes)
+    # print("Total # of such chains:", totalPoints)
+    # print("Average length of such chains:", sum(pointLens)/len(pointLens))
 
-                        prevSet = set(editOps[stretchID][i-1].split())
-                        currSet = set(editOps[stretchID][i].split())
-                        nextSet = set(editOps[stretchID][i+1].split())
-                        maxSetDiff = max(len(currSet - prevSet) , len(prevSet - currSet))
-                        maxSetDiff += max(len(currSet - nextSet) , len(prevSet - nextSet))
-                        maxSetDiff = maxSetDiff / 2
-                        avgSetDiff.append(maxSetDiff)
-
-            if i + 1 < len(trace):
-                prevNum = trace[i-1]
-                nextNum = trace[i+1]
-                currNum = trace[i]
-                # print(currNum, prevNum, nextNum)
-
-                prevDict = {}
-                dictName = ""
-                if prevNum < currNum:
-                    dictName = "lower"
-                elif prevNum == currNum:
-                    dictName = "same"
-                elif prevNum > currNum:
-                    dictName = "higher"
-                prevDict = trendDicts[dictName]
-                magD = magnDicts[dictName]
-
-                if nextNum < currNum:
-                    prevDict["lower"] += 1
-                    magD["lower"].append(currNum - nextNum)
-                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "lower"))
-                elif nextNum == currNum:
-                    prevDict["same"] += 1
-                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "same"))
-                elif nextNum > currNum:
-                    prevDict["higher"] += 1
-                    magD["same"].append(nextNum - currNum)
-                    # print("{} length at index {} is {}. prev is {} \({}\) next is {} ({})".format(stretchID, i, currNum, prevNum, dictName, nextNum, "higher"))
-
-    print("adjacent 1s", adjacentAreOnes)
-    print("total points", totalPoints)
-    print("average point lens", sum(pointLens)/len(pointLens))
-    print("average diff in total num ops", sum(totalOpsDiff)/len(totalOpsDiff))
-    print("average ops set diff", sum(avgSetDiff)/len(avgSetDiff))
-
-    # probabilities for spikiness
-    # totals = { "lower": 0, "same": 0, "higher": 0 }
-    # for dictName in sorted(trendDicts.keys()):
-    #     currDict = trendDicts[dictName]
-    #     magnD = magnDicts[dictName]
-    #     for nextRel in sorted(currDict.keys()):
-    #         if len(magnD[nextRel]) > 0:
-    #             print("{} {} {}".format(dictName, nextRel, sum(magnD[nextRel])/len(magnD[nextRel])))
-    #         totals[dictName] += currDict[nextRel]
-    #     print("last data point was {}, total next points is {}".format(dictName, totals[dictName]))
-
-    # for dictName in sorted(trendDicts.keys()):
-    #     currDict = trendDicts[dictName]
-    #     for nextRel in sorted(currDict.keys()):
-    #         print("last data point was {}, next data point is {}: freq is {}, likelihood is {}".format(dictName, nextRel, currDict[nextRel], (100 * currDict[nextRel])/totals[dictName]))
-
-    # BrespondentsPerFcn = { }
-    # IUrespondentsPerFcn = { }
-    # allResps = { "32": {}, "IU": {} }
-    # for combID in stretchLens:
-    #     ID = combID.split("_")[0]
-    #     FCN = combID.split("_")[1]
-
-    #     respDict = {}
-    #     if subSource[ID] == "32":
-    #         respDict = BrespondentsPerFcn
-    #     else:
-    #         respDict = IUrespondentsPerFcn
-
-    #     if FCN not in respDict:
-    #         respDict[FCN] = []
-    #     respDict[FCN].append(ID)
-    #     if ID not in allResps[subSource[ID]]:
-    #         allResps[subSource[ID]][ID] = 1
-    # for fcn in BrespondentsPerFcn:
-    #     print("{}, {}, {},".format("32", fcn, len(BrespondentsPerFcn[fcn])))
-    # for fcn in IUrespondentsPerFcn:
-    #     print("{}, {}, {},".format("IU", fcn, len(IUrespondentsPerFcn[fcn])))
-    # print("{}, {}".format("32", len(allResps["32"])))
-    # print("{}, {}".format("IU", len(allResps["IU"])))
-
-    # # Most common ops between consecutive input evals
-    # print("How many operation chains use these operations, and average lengths")
-    # for ops in sorted(opsFreq.keys()):
-    #     chainLens = opsFreq[ops]
-    #     numChains = len(chainLens)
-    #     print("{}, {}, {}".format(ops, numChains, chainLens[floor(numChains / 2)]))
+    ##################################################################################################################
 
     # Stretch len stats
     with open("sameOps.csv", "x") as SAMEOPS:
@@ -894,61 +718,6 @@ if __name__ == "__main__":
         
     #     print("{}, {},".format(k, curr_sse))
 
-    # print(tagsByRating)
-
-    # print("Function distros")
-    # posToFcnTotals = {}
-    # for pos in range(5):
-    #     posToFcnTotals[pos] = {}
-    #     for fcn in FCN_NAMES:
-    #         posToFcnTotals[pos][fcn] = 0
-    # for ID in idsToSubs:
-    #     sub = idsToSubs[ID]
-    #     distro = sub.getFcnDistro()
-    #     for pos in range(len(distro)):
-    #         if pos in posToFcnTotals:
-    #             fcn = distro[pos]
-    #             if fcn in posToFcnTotals[pos]:
-    #                 posToFcnTotals[pos][fcn] = posToFcnTotals[pos][fcn] + 1
-    # for pos in range(5):
-    #     line = "{}, ".format(pos)
-    #     for fcn in FCN_NAMES:
-    #         line += "{}, ".format(posToFcnTotals[pos][fcn])
-    #     print(line)
-
-    # with open("all_Ls.csv", "x") as csvfile:
-    #     # Map each fcn to map of eval inputs length to list of traces from subjects
-    #     # fcnToTraces = {} 
-    #     for sub in idsToSubs.keys():
-    #         idsToFcnTraces[sub.ID] = {}
-
-    #         # print("{}\n\n".format(sub))
-    #         # TODO: now look at input similarity and also proportions of sections by
-    #         # looping over the subjects - for each subject and fcn, what is 
-    #         # consec similarity look like - graphs?
-    #         for fcn in sub.functionAttempts:
-    #             evals = sub.functionAttempts[fcn].allEvals()
-
-    #             # highestDiff = 0
-    #             # highestDiffIdx = 0
-    #             # for i in range(1, len(evals)):
-    #             #     diff = inputDifference(fcn, evals[i-1], evals[i])
-    #             #     if diff > highestDiff:
-    #             #         highestDiff = diff
-    #             #         highestDiffIdx = i-1
-    #             # quizzesAttempted = 0
-    #             # for idx in sub.functionAttempts[fcn].quizAttemptIndices():
-    #             #     if highestDiffIdx > idx:
-    #             #         quizzesAttempted += 1
-    #             # csvfile.write(fcn + ", " + str(quizzesAttempted) + ",\n")
-
-    #             # if fcn not in fcnToTraces:
-    #             #     fcnToTraces[fcn] = {}
-    #             # if len(evals) not in fcnToTraces[fcn]:
-    #             #     fcnToTraces[fcn][len(evals)] = []
-    #             # fcnToTraces[fcn][len(evals)].append(evals)
-
-    #             idsToFcnTraces[sub.ID][fcn] = evals
 
 
 

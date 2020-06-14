@@ -318,6 +318,10 @@ class Subject:
 
 #################################################################################
 
+# Keeps track of the lengths of input evaluation traces, # of quiz attempts, 
+# # of inputs evaluated between quiz attempts, and the highest edit distance
+# seen between consecutive inputs - 
+# for a single correctness rating kept by DistributionKeeper
 class Distributions:
 	def __init__(self, ID):
 		self.ID = ID
@@ -453,6 +457,7 @@ class Distributions:
 			print("WARNING: EI section lengths being re-assigned")
 		self.EIsbetweenQAs[ID] = evalLens
 
+# Keeps track of distributions correctness rating
 class DistributionKeeper:
 	def __init__(self):
 		self.ratingsToDistros = {}
@@ -495,6 +500,7 @@ class DistributionKeeper:
 			res += "{}, {}".format(rating, self.ratingsToDistros[rating].printMedianEvals())
 		return res
 
+	# Prints average and median length of first stretch of inputs evaluation before first quiz attempt
 	def firstStretchStats(self):
 		res = ""
 		for rating in sorted(self.ratingsToDistros):
@@ -523,6 +529,8 @@ class DistributionKeeper:
 
 #########################################################################
 
+# Keeps a TagsByCorrectness for each function, so that the printout can show
+# the frequencies of answer tags by correctness rating for each function
 class TagsByFcn:
 	def __init__(self):
 		self.tagKeepers = {}
@@ -540,6 +548,7 @@ class TagsByFcn:
 		self.tagKeepers[fcn].addTags(tags)
 
 
+# Keeps track of function guess tag frequencies by correctness rating
 class TagsByCorrectness:
 	def __init__(self, fcn):
 		self.fcn = fcn
