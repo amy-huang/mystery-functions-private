@@ -206,31 +206,6 @@ FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween",
 if __name__ == "__main__":
     # Do initial recording of each subject's traces
     idsToSubs = {}
-    idsToAnonIds = {}
-    with open("predicates_rows_anonymized.csv", "x") as anon:
-        with open(sys.argv[1], newline='') as csvfile:
-            rows = csv.reader(csvfile, delimiter=',')
-            header = next(rows) # header
-            print(header)
-            anon.write(",".join(header) + "\n")
-
-            for row in rows:
-                print(row)
-                ID = row[0]
-                # Get anon ID and write row to anon csv
-                if ID not in idsToAnonIds:
-                    newID = len(idsToAnonIds)
-                    idsToAnonIds[ID] = newID
-                anonID = idsToAnonIds[ID]
-                row[0] = str(anonID)
-                for i in range(len(row)):
-                    row[i] = "\"{}\"".format(row[i])
-                newRow = ",".join(row) + "\n"
-                anon.write(newRow)
-    for ID in idsToAnonIds:
-        print("{}, {}".format(ID, idsToAnonIds[ID]))
-
-    exit(0)
 
     with open("predicates_rows_anonymized.csv", "x") as anon:
         with open(sys.argv[1], newline='') as csvfile:
