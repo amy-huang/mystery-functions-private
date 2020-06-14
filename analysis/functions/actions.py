@@ -127,17 +127,6 @@ class FunctionAttempt:
 		self.QAs[self.currSection].addQuizQ(quizQ)
 
 	def addFinalAnswer(self, finalAnswer: FinalAnswer):
-		# Start new eval input section if necessary
-		# if self.sectionType == ActionType.EvalInput or self.sectionType == None:
-		# 	print("WARNING final answer did not come after a quizQ")
-		# 	self.sectionType = ActionType.FinalAnswer
-		# 	self.currSection = self.counter.nextQuizAttemptSection()
-		# 	self.sectionOrder.append(self.currSection)
-		# 	self.QAs[self.currSection] = QuizAttempt()
-
-		# # Add new quiz question
-		# self.sectionType = ActionType.FinalAnswer # In case was quiz q before
-		# self.QAs[self.currSection].setAnswer(finalAnswer)
 		if self.finalAnswer != None:
 			print("WARNING: another final answer given for this fcn")
 		self.finalAnswer = finalAnswer
@@ -715,5 +704,3 @@ class FcnSubDivider:
 		# Add the rating to both keepers
 		self.subs[ID].addCorRating(fcn, rating)
 		self.fcns.addCorRating(fcn, rating)
-
-	

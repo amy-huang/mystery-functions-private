@@ -349,31 +349,20 @@ if __name__ == "__main__":
 
     # Make keeper of tag frequency distribution, by function and correctness rating.
     tagFrequencies = TagsByFcn()
-
-    # fcn to list of diff IDs
-    diffsIDs = {} 
-    # fcn to list of diff lists
-    diffsLists = {}
-
-    allIDs = []
-    allLists = []
-
-    # Maps ID_FCN to list of lengths of operations groups cor
-    numOps = {}
-    # ID to num op trace
+    
+    # Maps ID_FCN to list of operations groups, a space separated string of the operations, for each session (defined by ID_FCN)
     editOps = {} 
-    # ID to average len of same op sequence size 2 and up
+    # Maps ID_FCN to list of lengths of operation chains for each session
     stretchLens = {}
-    # from this, get line graph, avg/med, frequency
-
-    # ops frequency, list ops to num
-    opsFreq = {}
-
-    # stretch lens of op groups
+    # Maps ID_FCN to list of lengths of operations groups for each session
+    numOps = {}
+    # Maps operation groups to list of operation chains they appear in 
     groupLens = {}
 
-    # freq of higher/lower relationships - previous one vs. next one
-    trendDicts = { "lower": { "lower": 0, "same": 0, "higher": 0 }, "same": { "lower": 0, "same": 0, "higher": 0 }, "higher": { "lower": 0, "same": 0, "higher": 0 } }
+    # Used for vector clustering later on, to figure out which vectors of chain lengths
+    # are in which groups
+    allIDs = []
+    allLists = []
 
     # For each session (one subject completing one function), record metrics and do calculations
     # When defined here, this distribution keeper tracks metrics for all function sessions.
@@ -406,7 +395,6 @@ if __name__ == "__main__":
                 evals = idsToSubs[ID].functionAttempts[fcn].allEvals()
                 distros.addNumEvals(rating, len(evals))
 
-                # stretchLens = "{},".format(ID)
                 diffsArray = [] # List of edit distances for each pair of inputs
                 editOps[ID_FCN] = [] # List of operation groups in order
                 numOps[ID_FCN] = [] # Lengths of each operation group in order
@@ -464,11 +452,6 @@ if __name__ == "__main__":
                                     groupLens[currOps] = []
                                 groupLens[currOps].append(currLen)
 
-                                # TODO: remove?
-                                if nextOps not in opsFreq:
-                                    opsFreq[nextOps] = []
-                                opsFreq[nextOps].append(currLen)
-
                             # Start monitoring new chain
                             currOps = nextOps
                             currLen = 1
@@ -491,12 +474,8 @@ if __name__ == "__main__":
                         groupLens[currOps] = []
                     groupLens[currOps].append(currLen)
 
-                    # TODO: remove?
-                    if nextOps not in opsFreq:
-                        opsFreq[nextOps] = []
-                    opsFreq[nextOps].append(currLen)
-
-                # clustering, TODO: remove
+                # Used for vector clustering later on, to figure out which vectors of chain lengths
+                # are in which groups
                 allIDs.append("{}_{}".format(ID, fcn))
                 allLists.append(diffsArray)
                 
@@ -519,12 +498,6 @@ if __name__ == "__main__":
     # Average length of each chain by operation group
     # for opsGroup in sorted(groupLens.keys()):
     #     print("{}, {}, {}".format(opsGroup, len(groupLens[opsGroup]), sum(groupLens[opsGroup])/ len(groupLens[opsGroup])))
-
-    # Frequencies and median length of chains by operation group
-    # for ops in sorted(opsFreq.keys()):
-    #     chainLens = opsFreq[ops]
-    #     numChains = len(chainLens)
-    #     print("{}, {}, {}".format(ops, numChains, chainLens[floor(numChains / 2)]))
 
     ##################################################################################################################
 
@@ -616,107 +589,69 @@ if __name__ == "__main__":
 
     ##################################################################################################################
 
-    # Stretch len stats
-    with open("sameOps.csv", "x") as SAMEOPS:
-        with open("sameOpStats.csv", "x") as SAMEOPSTATS:
-            for ID_FCN in stretchLens:
-                ID = ID_FCN.split("_")[0]
-                FCN = ID_FCN.split("_")[1]
+    # K-Clustering vectors of operation group lens, to try and pick out patterns in input picking strategies.
+    # Did not end up yielding anything useful, but can be adapted to future clustering uses
+    # Since each trace of operation chain lengths can have a different length, I first found the length of the 
+    # longest one, and padded the rest of them with 0s
 
-                lentrace = ""
-                score = idsToSubs[ID].ratingsByFcn()[FCN]
-                avg = 0
-                median = 0
-                if len(stretchLens[ID_FCN]) > 0:
-                    avg = sum(stretchLens[ID_FCN]) / len(stretchLens[ID_FCN])
-                    median = sorted(stretchLens[ID_FCN])[floor(len(stretchLens[ID_FCN]) / 2)]
+    # Clusters are generated for k = 1 to k = 10 inclusive, and the WSS values are printed out so that the optimal 
+    # number of clusters can be determined using the elbow method. It turned out that chain lengths were not 
+    # easily clustered, and so the elbow shape did not appear.
 
-                    lentrace += "{}, {}, {}, {}, {}, ".format(subSource[ID], len(editOps[ID_FCN]), FCN, score, ID)
+    # To use this, uncomment the line writing to the CSVs and also the one printing out the WSS value for each k
 
-                    # Trace of stretch lengths
-                    lenDistro = {}
-                    for sl in stretchLens[ID_FCN]:
-                        if sl not in lenDistro:
-                            lenDistro[sl] = 0
-                        lenDistro[sl] += 1
-                        lentrace += "{}, ".format(sl)
-
-                    # Terminal printout of same ops stretch length distros
-                    # termPrint = "{}, ".format(ID_FCN)
-                    # for sl in range(sorted(lenDistro.keys())[-1] + 1):
-                    #     if sl not in lenDistro:
-                    #         termPrint += "0, "
-                    #     else:
-                    #         termPrint += "{}, ".format(lenDistro[sl])
-
-                    alleditOps = "{}, {}, {}, {}, {}, ".format(subSource[ID], len(editOps[ID_FCN]), FCN, score, ID)
-                    for opGroup in editOps[ID_FCN]:
-                        alleditOps += "{}, ".format(opGroup)
-                    alleditOps += "\n"
-                    SAMEOPS.write(alleditOps)
-
-                # # Add actual trace of ops
-                # for op in editOps[ID]:
-                #     line += "{}, ".format(op)
-                lentrace += "\n"
-                SAMEOPSTATS.write(lentrace)
-
-    
-
-    # # Consecutive edit ops vector clustering
-    # maxConsecLen = 0
-    # allLists = []
-    # for user in numOps:
-    #     trace = numOps[user]
-    #     if len(trace) > maxConsecLen:
-    #         maxConsecLen = len(trace)
-    #     allLists.append(numOps[user])
+    # Getting all traces and finding the max length
+    maxConsecLen = 0
+    allLists = []
+    for user in stretchLens:
+        trace = stretchLens[user]
+        if len(trace) > maxConsecLen:
+            maxConsecLen = len(trace)
+        allLists.append(stretchLens[user])
         
-    # # Fill with 0s
-    # filled = []
-    # for l in allLists:
-    #     newTrace = []
-    #     for num in l:
-    #         newTrace.append(num)
-    #     while len(newTrace) < maxConsecLen:
-    #         newTrace.append(0)
-    #     filled.append(newTrace)
+    # Padding all shorter vectors with 0s
+    filled = []
+    for l in allLists:
+        newTrace = []
+        for num in l:
+            newTrace.append(num)
+        while len(newTrace) < maxConsecLen:
+            newTrace.append(0)
+        filled.append(newTrace)
 
-    # toCluster = np.array(filled)
-    # print("WSS vals for {}".format("".join(sys.argv[2:])))
-    # # Try a bunch of values for k, and record WSS for each to choose a final result
-    # for k in range(1, 11):
-    #     kmeans = KMeans(n_clusters = k).fit(toCluster)
-    #     centroids = kmeans.cluster_centers_
-    #     pred_clusters = kmeans.predict(toCluster)
-    #     curr_sse = 0
+    toCluster = np.array(filled)
+    for k in range(1, 11):
+        kmeans = KMeans(n_clusters = k).fit(toCluster)
+        centroids = kmeans.cluster_centers_
+        pred_clusters = kmeans.predict(toCluster)
+        curr_sse = 0
 
-    #     # Write result to CSV
-    #     clusterIdxs = {}
-    #     for i in range(len(kmeans.labels_)):
-    #         if kmeans.labels_[i] not in clusterIdxs:
-    #             clusterIdxs[kmeans.labels_[i]] = []
-    #         clusterIdxs[kmeans.labels_[i]].append(i)
+        # Write result to CSV
+        clusterIdxs = {}
+        for i in range(len(kmeans.labels_)):
+            if kmeans.labels_[i] not in clusterIdxs:
+                clusterIdxs[kmeans.labels_[i]] = []
+            clusterIdxs[kmeans.labels_[i]].append(i)
 
-    #     csv_name = "{}_k{}.csv".format("".join(sys.argv[2:]), k)
-    #     with open(csv_name, "w") as CSVFILE:
-    #         for label in sorted(clusterIdxs.keys()):
-    #             CSVFILE.write("Cluster {},\n".format(label))
-    #             for idx in clusterIdxs[label]:
-    #                 ID = allIDs[idx]
-    #                 line = "{}, ".format(ID)
-    #                 trace = allLists[idx]
-    #                 for val in trace:
-    #                     line += "{}, ".format(val)
-    #                 line += "\n"
-    #                 CSVFILE.write(line)
+        # Record the clustering groups to CSV for every value of k t
+        csv_name = "{}_k{}.csv".format("".join(sys.argv[2:]), k)
+        with open(csv_name, "w") as CSVFILE:
+            for label in sorted(clusterIdxs.keys()):
+                CSVFILE.write("Cluster {},\n".format(label))
+                for idx in clusterIdxs[label]:
+                    ID = allIDs[idx]
+                    line = "{}, ".format(ID)
+                    trace = allLists[idx]
+                    for val in trace:
+                        line += "{}, ".format(val)
+                    line += "\n"
+                    # CSVFILE.write(line)
         
-    #     # calculate square of Euclidean distance of each point from its cluster center and add to current WSS
-    #     for i in range(len(toCluster)):
-    #         curr_center = centroids[pred_clusters[i]]
-    #         curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
-        
-    #     print("{}, {},".format(k, curr_sse))
+        # Print out WSS value for this value of K
+        for i in range(len(toCluster)):
+            curr_center = centroids[pred_clusters[i]]
+            curr_sse += (toCluster[i, 0] - curr_center[0]) ** 2 + (toCluster[i, 1] - curr_center[1]) ** 2
+    #       print("{}, {},".format(k, curr_sse))
 
 
 
