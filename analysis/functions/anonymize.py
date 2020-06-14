@@ -1,4 +1,4 @@
-# This script anonymizes a csv file of database rows by assigning a number ID for each real ID
+# This script anonymizes a csv file by assigning a number ID for each real ID
 # and creating a new CSV with the new IDs
 # It prints a csv of the mapping of real IDs to anonymized IDs to terminal
 import csv
@@ -20,13 +20,18 @@ if __name__ == "__main__":
             anon.write(",".join(header) + "\n")
 
             for row in rows:
-                ID = row[0]
-                # Get anon ID and write row to anon csv
+                ID = row[0] # If ID is not in 1st column, change this index
+
+                # Get anon ID 
                 if ID not in idsToAnonIds:
                     newID = len(idsToAnonIds)
                     idsToAnonIds[ID] = newID
                 anonID = idsToAnonIds[ID]
+
+                # Change ID in csv row
                 row[0] = str(anonID)
+
+                # Write csv row to new file
                 for i in range(len(row)):
                     row[i] = "\"{}\"".format(row[i])
                 newRow = ",".join(row) + "\n"

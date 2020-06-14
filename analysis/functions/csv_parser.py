@@ -171,22 +171,6 @@ def inputEditOps(fcn:str, first, second: EvalInput):
 def inputEditOpsFromBlank(inp: EvalInput):
     return editops("", inp.input)
 
-# def opsToNum(ops):
-#     if len(ops) == 0:
-#         return 0
-
-#     num = ""
-#     for op in ops:
-#         if op[0] == "insert":
-#             num += "1"
-#         if op[0] == "delete":
-#             num += "2"
-#         if op[0] == "replace":
-#             num += "3"
-#         num += str(op[1])
-#         num += str(op[2])
-#     return int(num)
-
 def inputDifference(fcn:str, first, second: EvalInput):
     if fcn == "Induced":
         return inducedDiff(first, second)
@@ -196,85 +180,80 @@ def inputDifference(fcn:str, first, second: EvalInput):
     secondCharas = inType.toCharas(second.input)
     return rdlevenshtein(firstCharas, secondCharas)
 
-
-
 # Just the names
 FCN_NAMES = ["Average", "Median", "SumParityBool", "SumParityInt", "SumBetween", "Induced"]
 
 #################################################################
 
 if __name__ == "__main__":
-    # Do initial recording of each subject's traces
-    idsToSubs = {}
+    # Do initial recording of each subject's traces into Subject objects
+    idsToSubs = {} # Maps IDs to subjects
 
-    with open("predicates_rows_anonymized.csv", "x") as anon:
-        with open(sys.argv[1], newline='') as csvfile:
-            rows = csv.reader(csvfile, delimiter=',')
-            header = next(rows) # header
-            print(header)
-            anon.write(",".join(header) + "\n")
+    with open(sys.argv[1], newline='') as csvfile:
+        rows = csv.reader(csvfile, delimiter=',')
+        header = next(rows) # header
 
-            # Current subject we're recording actions for
-            subject = None
+        # Current subject we're recording actions for
+        subject = None
+        # Go through each database row
+        for row in rows:
+            # See if we need to start a new Subject
+            ID = row[0]
+            if subject == None:
+                subject = Subject(ID)
+                idsToSubs[ID] = subject
+            elif ID != subject.ID:
+                subject = Subject(ID)
+                idsToSubs[ID] = subject
 
-            for row in rows:
-                # See if we need to start a new Subject
-                ID = row[0]
-                if subject == None:
-                    subject = Subject(ID)
-                    idsToSubs[ID] = subject
-                elif ID != subject.ID:
-                    subject = Subject(ID)
-                    idsToSubs[ID] = subject
+            fcnName = row[1]
+            key = row[2]
+            time = row[4]
+            actType = row[3]
+            action = None
 
-                fcnName = row[1]
-                key = row[2]
-                time = row[4]
-                actType = row[3]
-                action = None
+            inType = in_out_types[fcnName]
+            outType = in_out_types[fcnName]
 
-                inType = in_out_types[fcnName]
-                outType = in_out_types[fcnName]
+            # Record specific action taken
+            if (actType == "eval_input"):
+                action = EvalInput(key, time)
+                inp = row[5]
+                out = row[6]
+                action.setInputOutput(inp, out)
 
-                # Record specific action taken
-                if (actType == "eval_input"):
-                    action = EvalInput(key, time)
-                    inp = row[5]
-                    out = row[6]
-                    action.setInputOutput(inp, out)
+                recordSeenInts(getIntVals(fcnName, True, inp))
+                recordSeenInts(getIntVals(fcnName, False, out))
 
-                    recordSeenInts(getIntVals(fcnName, True, inp))
-                    recordSeenInts(getIntVals(fcnName, False, out))
+                subject.addEvalInput(fcnName, action)
 
-                    subject.addEvalInput(fcnName, action)
+            elif (actType == "quiz_answer"):
+                action = QuizQ(key, time)
+                quizQ = row[7]
+                inp = row[5]
+                out = row[6]
+                realOut = row[8]
+                result = row[9]
 
-                elif (actType == "quiz_answer"):
-                    action = QuizQ(key, time)
-                    quizQ = row[7]
-                    inp = row[5]
-                    out = row[6]
-                    realOut = row[8]
-                    result = row[9]
+                display = "✗"
+                if (result == "true"):
+                    display = "✓"
 
-                    display = "✗"
-                    if (result == "true"):
-                        display = "✓"
+                action.setQ(quizQ, inp, out, realOut, display)
 
-                    action.setQ(quizQ, inp, out, realOut, display)
+                recordSeenInts(getIntVals(fcnName, True, inp))
+                recordSeenInts(getIntVals(fcnName, False, out))
+                recordSeenInts(getIntVals(fcnName, False, realOut))
 
-                    recordSeenInts(getIntVals(fcnName, True, inp))
-                    recordSeenInts(getIntVals(fcnName, False, out))
-                    recordSeenInts(getIntVals(fcnName, False, realOut))
+                subject.addQuizQ(fcnName, action)
 
-                    subject.addQuizQ(fcnName, action)
-
-                elif (actType == "final_answer"):
-                    action = FinalAnswer(key, time)
-                    guess = row[10]
-                    action.setGuess(guess)
-                    subject.addFinalAnswer(fcnName, action)
-                # else:
-                #     print("WARNING: unknown action type")
+            elif (actType == "final_answer"):
+                action = FinalAnswer(key, time)
+                guess = row[10]
+                action.setGuess(guess)
+                subject.addFinalAnswer(fcnName, action)
+            # else:
+            #     print("WARNING: unknown action type")
 
     # Make character mappings using the characters observed
     makeCharaMappings()
@@ -295,91 +274,95 @@ if __name__ == "__main__":
     compRatings = {}
     allAnswerRatings = {}
 
-    # Get fine grained tags 
-    for whichFile in ["32", "IU"]:
+    compCorDicts = { "32": FcnSubDivider(), "IU": FcnSubDivider() }
+
+    # Open each label guess csv
+    # Process function guess labels, add them to each Subject object, and do other calculations
+    for subjectPool in ["32", "IU"]:
         for fcn in FCN_NAMES:
-            with open("answer_labels/{} fine grained labels - {}.csv".format(whichFile, fcn), newline='') as csvfile:
+            with open("answer_labels/anon_{}_{}.csv".format(subjectPool, fcn), newline='') as csvfile:
                 rows = csv.reader(csvfile, delimiter=',')
                 header = next(rows) # header
 
+                # Each row represents a function guess for a given subject and function
                 for row in rows:
                     ID = row[0]
                     answer = row[1]
                     tags = []
+                    # Make list of each tag for given answer
                     for i in range(2, len(row)):
                         enteredTags = row[i].split()
                         for tag in enteredTags:
                             if tag != '':
                                 tags.append(tag)
 
+                    # Add tags to corresponding Subject
                     if ID not in idsToSubs:
                         print("WARNING: this ID has no subject", ID)
                         continue
                     if idsToSubs[ID] == None:
                         print("WARNING: this ID has None subject", ID)
                         continue
-                    if idsToSubs[ID].didFcn(fcn):
+                    subject = idsToSubs[ID]
+                    if subject.didFcn(fcn):
                         idsToSubs[ID].addAnswerTags(fcn, tags)
 
-                    subSource[ID] = whichFile
+                    # Record subject pool
+                    subSource[ID] = subjectPool
+                    subject.addSubjectPool(subjectPool)
 
-                    if "{}_{}".format(whichFile, ID) not in answerRatings:
-                        answerRatings["{}_{}".format(whichFile, ID)] = []
+                    # Map subject pool and ID to answer ratings
+                    if "{}_{}".format(subjectPool, ID) not in answerRatings:
+                        answerRatings["{}_{}".format(subjectPool, ID)] = []
 
+                    # Get correctness rating
                     rating = 0
                     if "COR" in tags:
                         rating = 4
+                        compCorDicts[subjectPool].addCorRating(ID, fcn, 4)
                     elif "MCOR" in tags:
                         rating = 3
+                        compCorDicts[subjectPool].addCorRating(ID, fcn, 3)
                     elif "SCOR" in tags:
                         rating = 2
+                        compCorDicts[subjectPool].addCorRating(ID, fcn, 2)
                     elif "XCOR" in tags:
                         rating = 1
+                        compCorDicts[subjectPool].addCorRating(ID, fcn, 1)
 
+                    # Get well-formedness rating
                     if ID not in compRatings:
                         compRatings[ID] = {}
                     if "NONS" in tags:
+                        compCorDicts[subjectPool].addCompRating(ID, fcn, "NONS")
                         compRatings[ID][fcn] = "NONS"
                     elif "IDK" in tags:
+                        compCorDicts[subjectPool].addCompRating(ID, fcn, "IDK")
                         compRatings[ID][fcn] = "IDK"
                     elif "NORM" in tags:
+                        compCorDicts[subjectPool].addCompRating(ID, fcn, "NORM")
                         compRatings[ID][fcn] = "NORM"
                     else:
                         # compRatings[ID][fcn] = ""
                         print("Warning: {} does not have comprehensiveness rating for {}".format(ID, fcn))
 
-                    # total comps/cors
+
+                    # Record correctness rating
                     if ID not in allAnswerRatings:
                         allAnswerRatings[ID] = {}
                     allAnswerRatings[ID][fcn] = rating
 
                     if rating == 0:
                         continue
-                    answerRatings["{}_{}".format(whichFile, ID)].append("{} {}".format(fcn, rating))
 
-    BrownComps = FcnSubDivider()
-    IUComps = FcnSubDivider()
-    compRatingLists = {}
-    for ID in idsToSubs:
-        if ID not in compRatings or ID not in allAnswerRatings:
-            continue
-        compRatingLists[ID] = []
-        sub = idsToSubs[ID]
-        # compRatingLists[ID] = [compRatings[name] for name in sub.fcnNames()]
-        # print(sub.fcnNames())
-        for fcn in sub.fcnNames():
-            # print(fcn)
-            if fcn in compRatings[ID]:
-                if subSource[ID] == "IU":
-                    IUComps.addCompRating(ID, fcn, compRatings[ID][fcn])
-                    IUComps.addCorRating(ID, fcn, allAnswerRatings[ID][fcn])
-                else:
-                    BrownComps.addCompRating(ID, fcn, compRatings[ID][fcn])
-                    BrownComps.addCorRating(ID, fcn, allAnswerRatings[ID][fcn])
+                    # Record well-formedness rating
+                    answerRatings["{}_{}".format(subjectPool, ID)].append("{} {}".format(fcn, rating))
 
-
-    print("IU", IUComps)
-    print("Brown", BrownComps)
+    # Prints out the completion and correctness ratings of 
+    print("IU Completion and correctness ratings")
+    print(compCorDicts["IU"])
+    print("32 Completion and correctness ratings")
+    print(compCorDicts["32"])
 
     # for arID in answerRatings:
     #     print(arID)

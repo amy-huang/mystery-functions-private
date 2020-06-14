@@ -181,6 +181,7 @@ class Subject:
 		self.ID = ID
 		self.functionAttempts = {} # Map fcn names to the section
 		self.FAsInOrder = []
+		self.subjectPool = ""
 
 	def __str__(self):
 		res = "Subject {}\n".format(self.ID)
@@ -188,6 +189,10 @@ class Subject:
 			res += "{}\n".format(fcn)
 			res += "{}\n".format(self.functionAttempts[fcn])
 		return res
+
+	# Record name of subject pool ("IU" or "32")
+	def addSubjectPool(self, pool: str):
+		self.subjectPool = pool
 
 	def addEvalInput(self, fcnName: str, evalInput: EvalInput):
 		if fcnName not in self.functionAttempts:
@@ -534,6 +539,7 @@ class TagsByFcn:
 			self.tagKeepers[fcn] = TagsByCorrectness(fcn)
 		self.tagKeepers[fcn].addTags(tags)
 
+
 class TagsByCorrectness:
 	def __init__(self, fcn):
 		self.fcn = fcn
@@ -574,6 +580,9 @@ class TagsByCorrectness:
 				ratingDict[tag] = 0
 			ratingDict[tag] = ratingDict[tag] + 1
 
+# Keeps track of the completion and correctness ratings for one subject
+# Records the functions completed in order, so if that information is desired,
+# adding functions to reveal those functions can use the fcnNames array
 class SubKeeper:
 	def __init__(self, ID):
 		self.ID = ID
@@ -582,18 +591,26 @@ class SubKeeper:
 		self.corRatingsFull = []
 		self.corRatingsCollapsed = []
 
+	# Print csv line of completion ratings
 	def comps(self):
 		line = "{}, ".format(self.ID)
 		for rating in self.compRatings:
 			line += "{}, ".format(rating)
 		return line
 
+	# Print csv lin of correctness ratings
+	# Includes 0s for functions not completed but skipped
+	# So scores could be 3, 0, 1 if 3 functions were attempted
+	# but only the first and last were completed
 	def corsFull(self):
 		line = "{}, ".format(self.ID)
 		for rating in self.corRatingsFull:
 			line += "{}, ".format(rating)
 		return line
 
+	# Print csv lin of correctness ratings
+	# Does not include 0s for functions not completed;
+	# all scores are 1 to 4 inclusive
 	def corsCollapsed(self):
 		line = "{}, ".format(self.ID)
 		for rating in self.corRatingsCollapsed:
@@ -603,18 +620,18 @@ class SubKeeper:
 	def addCompRating(self, fcn, rating: str):
 		self.fcnNames.append(fcn)
 		self.compRatings.append(rating)
-		# self.corRatingsFull.append(0)
 
 	def addCorRating(self, fcn, rating: int):
 		self.fcnNames.append(fcn)
-		# self.compRatings.append("NORM")
 		self.corRatingsCollapsed.append(rating)
 
+# Keeps track of the completion and correctness ratings by function
 class FcnKeeper:
 	def __init__(self):
 		self.compRatings = {}
 		self.corRatings = {}
 
+	# Prints out completion ratings for each function
 	def comps(self):
 		line = ""
 		for fcn in self.compRatings:
@@ -624,56 +641,70 @@ class FcnKeeper:
 			line += "\n"
 		return line
 
+	# Prints out correctness ratings for each function
 	def cors(self):
 		line = ""
 		for fcn in self.corRatings:
 			line += "{}, ".format(fcn)
+			# Lowest to highest ratings, 0 to 4
 			for rating in sorted(self.corRatings[fcn].keys()):
 				line += "{}, ".format(self.corRatings[fcn][rating])
 			line += "\n"
 		return line
 	
 	def addCompRating(self, fcn, rating: str):
+		# Create dict if not existing 
 		if fcn not in self.compRatings:
 			self.compRatings[fcn] = { "NONS": 0, "IDK": 0, "NORM": 0 }
 		self.compRatings[fcn][rating] += 1
 
 	def addCorRating(self, fcn, rating: int):
+		# Create dict if not existing 
 		if fcn not in self.corRatings:
 			self.corRatings[fcn] = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 }
 		self.corRatings[fcn][rating] += 1
-		# self.addCompRating(fcn, "NORM")
 
+# Keeps track of correctness ratings and completion ratings (well-formedness)
+# by subject and by function
 class FcnSubDivider:
 	def __init__(self):
-		self.subs = {}
+		self.subs = {} 
 		self.fcns = FcnKeeper()
 
 	def __str__(self):
-		result = "comps\n"
-		# for ID in self.subs:
-		# 	result += "{}\n".format(self.subs[ID].comps())
+		result = ""
+
+		result += "Completion scores for each subject\n"
+		result += "Subject ID, 1st function completed, 2nd, 3rd, 4th\n"
+		for ID in self.subs:
+			result += "{}\n".format(self.subs[ID].comps())
 		
-		result += "fcn comps\n"
+		result += "Completion labels by function \n"
+		result += "Function, IDK, NONS, NORM\n"
 		result += "{}\n".format(self.fcns.comps())
 
-		result += "fcn cors\n"
+		result += "Correctness scores by function\n"
+		result += "Function, 0, 1, 2, 3, 4\n"
 		result += "{}\n".format(self.fcns.cors())
 		return result
 
+	# Adds completion rating: IDK, NONS, or NORM
 	def addCompRating(self, ID, fcn, rating: str):
+		# Create SubKeeper for the subject if not existing already
 		if ID not in self.subs:
 			self.subs[ID] = SubKeeper(ID)
-		self.subs[ID].addCompRating(fcn, rating)
 
+		# Add the rating to both keepers
+		self.subs[ID].addCompRating(fcn, rating)
 		self.fcns.addCompRating(fcn, rating)
 
+	# Adds correctness rating: 1 to 4
 	def addCorRating(self, ID, fcn, rating: int):
 		if ID not in self.subs:
 			self.subs[ID] = SubKeeper(ID)
-		self.subs[ID].addCorRating(fcn, rating)
 
+		# Add the rating to both keepers
+		self.subs[ID].addCorRating(fcn, rating)
 		self.fcns.addCorRating(fcn, rating)
-		# self.addCompRating(ID,  fcn, "NORM")
 
 	
