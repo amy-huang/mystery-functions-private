@@ -15,7 +15,8 @@ import numpy as np
 from actions import *
 
 if len(sys.argv) < 3:
-    print("Usage: python3 csv_parser.py <CSV with all database rows> [<Function name 1> ...]")
+    print("Usage: python3 csv_parser.py <CSV with all database rows> [<Function names to apply operations to> ...]")
+    print("Functions available for analysis: Average, Median, SumParityBool, SumParityInt, SumBetween, Induced")
     exit(1)
 
 # Names of all functions to do analysis onust the names
@@ -267,9 +268,6 @@ if __name__ == "__main__":
     # Make character mappings using the characters observed
     makeCharaMappings()
 
-    # ID to subject source (subject pool) #TODO: remove
-    subSource = {}
-
     ##########################################################################################################
 
     # Now that we have all Subject action data, go through the answer labels and associate them with the
@@ -311,7 +309,6 @@ if __name__ == "__main__":
                         idsToSubs[ID].addAnswerTags(fcn, tags)
 
                     # Record subject pool
-                    subSource[ID] = subjectPool
                     subject.addSubjectPool(subjectPool)
 
                     # Get correctness rating
@@ -346,6 +343,7 @@ if __name__ == "__main__":
     #############################################################################################################
 
     # Calculate edit distance and edit operations between input evaluations for each function a subject has done. 
+    # The command line arguments passed to this script determines what functions are looked at
 
     # Make keeper of tag frequency distribution, by function and correctness rating.
     tagFrequencies = TagsByFcn()
@@ -509,14 +507,14 @@ if __name__ == "__main__":
         for f in fcns:
             rating = sub.fcnScore(f)
             if rating > 0:
-                allRatings[subSource[ID]][f][rating] += 1
+                allRatings[sub.subjectPool][f][rating] += 1
 
     for which in allRatings:
         for fcn in allRatings[which]:
             line = "{}, {}, ".format(which, fcn)
             for rating in range(1, 5):
                 line += "{}, ".format(allRatings[which][fcn][rating])
-    #           print(line)
+                # print(line)
 
     ##################################################################################################################
 
@@ -528,7 +526,6 @@ if __name__ == "__main__":
         for sl in stretchLens[eoID]:
             allChainLens.append(sl)
     chainLenAvg = sum(allChainLens)/len(allChainLens)
-    print("chain len avg {}".format(chainLenAvg))
     for eoID in stretchLens:
         lensTrace = stretchLens[eoID]
         for i in range(0, len(lensTrace)):
@@ -543,7 +540,8 @@ if __name__ == "__main__":
                 print("{} idx {} diff from avg is {}".format(eoID, i, diffFromAvg))
     avgDiffFromAvg = sum(chainLenDiffFromAvgs)/len(chainLenDiffFromAvgs)
     avgConsecDiff = sum(chainLenDiffs)/len(chainLenDiffs)
-    # print("Avg chain length diff from average: {} Avg diff b/w consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
+    # print("Average chain length {}".format(chainLenAvg))
+    # print("Average chain length diff from average: {} Avg diff b/w consec chain lengths {}".format(avgDiffFromAvg, avgConsecDiff))
 
     ##################################################################################################################
 
@@ -634,18 +632,18 @@ if __name__ == "__main__":
             clusterIdxs[kmeans.labels_[i]].append(i)
 
         # Record the clustering groups to CSV for every value of k t
-        csv_name = "{}_k{}.csv".format("".join(sys.argv[2:]), k)
-        with open(csv_name, "w") as CSVFILE:
-            for label in sorted(clusterIdxs.keys()):
-                CSVFILE.write("Cluster {},\n".format(label))
-                for idx in clusterIdxs[label]:
-                    ID = allIDs[idx]
-                    line = "{}, ".format(ID)
-                    trace = allLists[idx]
-                    for val in trace:
-                        line += "{}, ".format(val)
-                    line += "\n"
-                    # CSVFILE.write(line)
+        # csv_name = "{}_k{}.csv".format("".join(sys.argv[2:]), k)
+        # with open(csv_name, "w") as CSVFILE:
+        #     for label in sorted(clusterIdxs.keys()):
+        #         CSVFILE.write("Cluster {},\n".format(label))
+        #         for idx in clusterIdxs[label]:
+        #             ID = allIDs[idx]
+        #             line = "{}, ".format(ID)
+        #             trace = allLists[idx]
+        #             for val in trace:
+        #                 line += "{}, ".format(val)
+        #             line += "\n"
+        #             CSVFILE.write(line)
         
         # Print out WSS value for this value of K
         for i in range(len(toCluster)):

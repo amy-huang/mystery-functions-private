@@ -413,7 +413,7 @@ class Distributions:
 		# res = ""
 		sum = 0
 		numSubs = 0
-		print("duds", self.traceLens[0] + self.traceLens[1])
+		# print("duds", self.traceLens[0] + self.traceLens[1])
 		for numEvals in sorted(self.traceLens.keys()):
 			freq = self.traceLens[numEvals]
 			for _ in range(freq):
