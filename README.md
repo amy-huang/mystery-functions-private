@@ -6,7 +6,7 @@ The `functions` branch of this repo is Mystery Functions, and the `master` branc
 
 Both versions of the web application consist of a node.js server and a React client; it is deployed on Heroku with a Postgres database.
 
-The `client/` directory contains the React client. The client can be started remotely from the `client/` directory using yarn: “yarn start” on port 300.
+The `client/` directory contains the React client. To run locally, first do `npm install` in the main directory. Then, the client can be started remotely from the `client/` directory using yarn: “yarn start” on port 300.
 
 Upon startup, the server creates a new connection pool for the clients to connect to, the actions table where actions will be logged if it doesn’t exist yet, and starts listening on port 5000.
 
