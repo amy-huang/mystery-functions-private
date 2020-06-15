@@ -40,7 +40,7 @@ function shuffle(a) {
 // shuffle the funcObjs, and then assign at random with the links 
 // with the indices
 var funcs = []
-funcs.push(Dummy)
+funcs.push(coinFlip(Average, Median))
 funcs.push(coinFlip(SecondIntoFirstDivisible, FirstIntoSecondDivisible))
 funcs.push(coinFlip(SumParityBool, SumParityInt))
 funcs.push(Induced)

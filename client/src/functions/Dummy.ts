@@ -1,3 +1,6 @@
+/**
+ * Used for explaining the session workflow in thesis writeup.
+ */
 import ListOfInteger from "../types/ListOfInteger";
 import Float from "../types/Float";
 
