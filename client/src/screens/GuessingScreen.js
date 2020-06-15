@@ -285,7 +285,7 @@ class GuessingScreen extends Component {
                       {funcObj.outputDescription()}
                     </li>
                   </ul>
-                  <Typography color="secondary">The only operators supported are union (+) and cartesian product (->) on single atoms. Also, you can specify an empty set like so: Node = none
+                  <Typography color="secondary">The only operators supported are union (+) and cartesian product (-`&gt;`) on single atoms. Also, you can specify an empty set like so: Node = none
                   
                   </Typography>
                 </Grid>
